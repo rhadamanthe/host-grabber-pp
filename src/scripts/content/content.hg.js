@@ -3,8 +3,9 @@
 browser.runtime.onMessage.addListener(request => {
   var response = '';
   if(request.req === 'source-code') {
-    response = document.documentElement;
+    // We cannot directly pass the DOM document
+    response = document.documentElement.innerHTML;
   }
 
-  return Promise.resolve({content: response});
+  return Promise.resolve(response);
 });

@@ -6,7 +6,7 @@
     "test": "karma start",
     "test:debug": "karma start --no-single-run --auto-watch",
     "lint": "eslint . && ./node_modules/web-ext/bin/web-ext lint",
-    "web-ext": "./node_modules/web-ext/bin/web-ext run",
+    "web-ext": "./node_modules/web-ext/bin/web-ext run --browser-console",
     "build": "./node_modules/web-ext/bin/web-ext build --ignore-files \"tests/**/*\""
   },
   "author": "",

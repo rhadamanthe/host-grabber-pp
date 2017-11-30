@@ -24,15 +24,15 @@ browser.commands.onCommand.addListener((command) => {
 });
 
 
-// Global variables
-var dictionary = null;
-var extractor = {
-  xpath: xpath,
-  replace: replace
-};
-
 // Initialize the dictionary
-var dictionary = loadDictionary();
+var dictionary = null;
+var storageItem = browser.storage.local.get('hostUrl');
+storageItem.then((res) => {
+  var url = res.hostUrl || 'https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml';
+  loadDictionary(url).then( function(downloadedDictionary) {
+    dictionary = downloadedDictionary;
+  });
+});
 
 
 
@@ -48,8 +48,10 @@ function downloadContent() {
   // Background scripts cannot directly get it, so we ask it to our content
   // script (in the currently active tab). So we have to go through the tab API.
   browser.tabs.query({active: true, currentWindow: true}).then( tabs => {
-    browser.tabs.sendMessage( tabs[0].id, {'req':'source-code'}).then( response => {
-      process(response.content, tabs[0].url, dictionary);
+    browser.tabs.sendMessage( tabs[0].id, {'req':'source-code'}).then( sourceAsText => {
+      var sourceDocument = new DOMParser().parseFromString(sourceAsText,'text/html');
+      var links = process(sourceDocument, tabs[0].url, dictionary);
+      console.log(links);
     });
   });
 }

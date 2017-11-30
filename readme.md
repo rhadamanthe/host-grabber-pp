@@ -26,9 +26,6 @@ extension, but unlike it, it is not restricted to downloading images.
 Source code is available on Github.  
 To test and debug it live, use...
 
-* Open "about:debugging" in Firefox.
-* Click **Load Temporary Add-on** and select any file in the module's sources.
-
 CLI options:
 
 ```properties
@@ -44,3 +41,14 @@ npm run lint
 # Package the extension to submit it to addons.mozilla.org
 npm run build
 ```
+
+Testing in a separate browser:
+
+* Make sure you have followed the previous instructions (CLI options).
+* Then type in **npm run web-ext** in your terminal.
+* A new instance of the browser will be launched.
+
+Testing in your usual browser:
+
+* Open **about:debugging** in Firefox.
+* Click **Load Temporary Add-on** and select any file in the module's sources.

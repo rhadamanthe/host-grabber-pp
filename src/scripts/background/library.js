@@ -27,13 +27,14 @@ function loadDictionary(dictionaryUrl) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'document';
     xhr.open('GET', dictionaryUrl, true);
+    xhr.overrideMimeType('application/xml');
     xhr.onload = function () {
       if (this.status >= 200 && this.status < 300) {
-        resolve(xhr.responseXML);
+        resolve(this.responseXML);
       } else {
         reject({
           status: this.status,
-          statusText: xhr.statusText
+          statusText: this.statusText
         });
       }
     };
@@ -41,7 +42,7 @@ function loadDictionary(dictionaryUrl) {
     xhr.onerror = function () {
       reject({
         status: this.status,
-        statusText: xhr.statusText
+        statusText: this.statusText
       });
     };
 

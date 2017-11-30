@@ -17,9 +17,9 @@ function saveOptions(e) {
  * @returns {undefined}
  */
 function restoreOptions() {
-  var storageItem = browser.storage.managed.get('hostUrl') || 'https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml';
+  var storageItem = browser.storage.local.get('hostUrl');
   storageItem.then((res) => {
-    document.querySelector('#host-url').innerText = res.colour;
+    document.querySelector('#host-url').value = res.hostUrl || 'https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml';
   });
 }
 
