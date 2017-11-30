@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/rhadamanthe/host-grabber-pp.svg?branch=master)](https://travis-ci.org/rhadamanthe/host-grabber-pp)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)]()
 &nbsp;
-<img src="docs/logos/firefox_x32.png" alt="Firefox" style="height: 16px" />
+[![Firefox](docs/logos/firefox_x16.png)]()
 
 A web extension that allows to find and download media files from web pages.  
 It was originally designed for Mozilla Firefox but might be adapted to other web browsers.
