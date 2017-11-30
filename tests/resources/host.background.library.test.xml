@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+
+<host id="mimi">
+	<urlpattern>^http://mimi\.[^/]+/.*</urlpattern>
+	<searchpattern>expreg: (http://mimi\.[^"]*\.(jpg|gif|png))</searchpattern>
+</host>
+
+<host id="titi">
+	<urlpattern>^http://titi\.fr/[^"]*$</urlpattern>
+	<searchpattern>replace: 'view\.php\?img=', 'images/'</searchpattern>
+</host>
+
+<host id="bibi">
+	<urlpattern>^(http://bibi\.com/[^"]*\.(jpg|png|gif))$</urlpattern>
+	<searchpattern>self</searchpattern>
+</host>
+
+</root>

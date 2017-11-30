@@ -1,0 +1,21 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "amd": true,
+    "webextensions": true
+  },
+  "rules": {
+    "eqeqeq": "error",
+    "curly": ["error"],
+    "quotes": ["error", "single"],
+    "no-eval": ["error"],
+    "valid-jsdoc": ["error"],
+    "eol-last": ["error", "always"],
+    "indent": ["error", 2],
+    "linebreak-style": ["error", "unix"],
+    "no-tabs": "error",
+    "no-trailing-spaces": "error",
+    "require-jsdoc": ["error"]
+  }
+}

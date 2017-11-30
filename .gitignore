@@ -1,0 +1,14 @@
+bin/
+target/
+state/
+.project
+*.local.launch
+Copy of *.launch
+node_modules
+*~
+~*.docx
+~*.pptx
+com.chronon.sb.browser.launcher.prefs
+Corel Auto-Preserve/
+.DS_Store
+package-lock.json
