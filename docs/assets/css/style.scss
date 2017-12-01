@@ -21,3 +21,7 @@ $table-border-color: #e9ebec !default;
 $hr-border-color: #eff0f1 !default;
 
 @import "{{ site.theme }}";
+
+.project-name::before {
+	content: url(assets/images/logo_x144.png);
+}
