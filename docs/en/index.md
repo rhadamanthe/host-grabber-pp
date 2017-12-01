@@ -1,3 +1,7 @@
+---
+locale: "en"
+---
+
 # Host Grabber ++
 
 Host Grabber is a web extension to find and download media files from a web page.
@@ -62,4 +66,11 @@ a better list of hosts appears somewhere else.
 ## Bugs, Feature Requests...
 
 No bugs or feature request can be reported for the **hosts.xml** file.  
-The extension itself accepts them [here](https://github.com/rhadamanthe/host-grabber-pp/issues).
+For the extension itself, you can submit them [here](https://github.com/rhadamanthe/host-grabber-pp/issues).
+
+
+## Links
+
+* [Source code](https://github.com/rhadamanthe/host-grabber-pp)
+* Download: soon
+* Original **hosts.xml** file on [Github](https://github.com/rhadamanthe/host-grabber-pp-host.xml/blob/master/hosts.xml)

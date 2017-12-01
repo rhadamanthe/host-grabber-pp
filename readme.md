@@ -1,6 +1,7 @@
 # Host Grabber ++
 [![Build Status](https://travis-ci.org/rhadamanthe/host-grabber-pp.svg?branch=master)](https://travis-ci.org/rhadamanthe/host-grabber-pp)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)]()
+[![Web site](https://img.shields.io/badge/website-host-grabber-pp-2A2A57.svg)](https://rhadamanthe.github.io/host-grabber-pp)
 &nbsp;
 [![Firefox](docs/assets/images/firefox_x24.png)]()
 
@@ -12,15 +13,14 @@ extension, but unlike it, it is not restricted to downloading images.
 
 > **This an alpha version**.
 
-> Notice 1: user documentation will come soon.  
+> Notice 1: links extraction is working quite correctly, but downloading is not yet
+> done as Firefox API is very limited. I am thinking to relying on [Download Them All](https://www.downthemall.net/).
+
 > Notice 2: the list of hosts has been seriously purged. Many hosts need to be readded.  
-> Notice 3: links extraction is working quite correctly, but downloading is not yet
-> perfect as Firefox API is very limited. I am thinking to relying on [Download Them All](https://www.downthemall.net/).
 
 
 ## Roadmap
 
-* Add user documentation.
 * Enhance the downloading part. Join the efforts with DTA is an option.
 * Maybe adapt it for other web browsers.
 
@@ -64,3 +64,5 @@ Testing in your usual browser:
 cd docs/
 docker run --rm --label=jekyll --volume=$(pwd):/srv/jekyll -it -p 4000:4000 jekyll/jekyll jekyll serve
 ```
+
+Notice that the startup takes a little time.

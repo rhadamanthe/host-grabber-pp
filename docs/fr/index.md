@@ -1,3 +1,7 @@
+---
+locale: "fr"
+---
+
 # Host Grabber ++
 
 Host Grabber est une extension web qui extrait et télécharge des fichiers média depuis une page web en cours de visite.
@@ -43,7 +47,7 @@ Vous pouvez définir le vôtre et le référencer dans les préférences de l'ex
 
 ## Remarque
 
-**Ce site n'a pas vocation à gére une liste centralisée pour les hébergeurs**.
+**Ce site n'a pas vocation de gérer une liste centralisée pour les hébergeurs**.
 Vous pouvez cloner [la liste originale](https://github.com/rhadamanthe/host-grabber-pp-host.xml),
 ajouter vos propres défintiions et les contribuer via une *pull request*.
 
@@ -62,3 +66,10 @@ sur une page web.
 
 Aucun ticket ne peut être créé pour le fichier **hosts.xml**.  
 Les bugs et demandes d'évolution pour l'extension elle-même, peuvent être reportés [ici](https://github.com/rhadamanthe/host-grabber-pp/issues).
+
+
+## Liens
+
+* [Code source](https://github.com/rhadamanthe/host-grabber-pp)
+* Téléchargement : bientôt
+* Fichier **hosts.xml** original [sur Github](https://github.com/rhadamanthe/host-grabber-pp-host.xml/blob/master/hosts.xml)

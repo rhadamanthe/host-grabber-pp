@@ -38,3 +38,13 @@ $hr-border-color: #eff0f1 !default;
 	right: 0;
 	margin: 0 auto;
 }
+
+.project-name a,
+.project-name a:visited,
+.project-name a:hover {
+	color: #ffffff;
+}
+
+.project-name a:hover {
+	text-decoration: none;
+}
