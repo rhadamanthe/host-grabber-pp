@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="{{ site.lang | default: "en-US" }}">
+  <head>
+    <meta charset="UTF-8">
+
+{% seo %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name"><img src="/assets/images/logo_white.png" alt="" /> {{ site.title }}</h1>
+      {% if page.welcome != 'true' %}
+        <h2 class="project-tagline">{{ site.description[locale] }}</h2>
+      	{% if site.github.is_project_page %}
+        <a href="{{ site.github.repository_url }}" class="btn">{{ site.viewOnGithub[locale] }}</a>
+      	{% endif %}
+      {% endif %}
+    </section>
+
+    <section class="main-content">
+      {{ content }}
+    </section>
+    
+    <footer class="site-footer{% if page.welcome == 'true' %} site-footer-abs{% endif %}">
+      <span class="site-footer-credits">Copyright &copy; {{ site.time | date: '%Y' }}, Rhadamanthe</span>
+    </footer>
+
+  </body>
+</html>

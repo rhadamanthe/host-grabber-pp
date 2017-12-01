@@ -56,3 +56,11 @@ Testing in your usual browser:
 
 * Open **about:debugging** in Firefox.
 * Click **Load Temporary Add-on** and select any file in the module's sources.
+
+
+## Tesing the Documentation
+
+```
+cd docs/
+docker run --rm --label=jekyll --volume=$(pwd):/srv/jekyll -it -p 4000:4000 jekyll/jekyll jekyll serve
+```

@@ -22,7 +22,19 @@ $hr-border-color: #eff0f1 !default;
 
 @import "{{ site.theme }}";
 
-.project-name::before {
-	content: url(../images/logo_white.png);
-	height: 3.25rem;
+.project-name img {
+	height: 2.25rem;
+}
+
+.site-footer {
+	text-align: center;
+	padding-bottom: 5px;
+}
+
+.site-footer-abs {
+	position: absolute;
+	bottom: 5px;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
 }
