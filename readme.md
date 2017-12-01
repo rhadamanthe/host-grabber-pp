@@ -1,6 +1,6 @@
 # Host Grabber ++
-[![Build Status](https://travis-ci.org/rhadamanthe/host-grabber-pp.svg?branch=master)](https://travis-ci.org/rhadamanthe/host-grabber-pp)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)]()
+[![Build Status](https://travis-ci.org/rhadamanthe/host-grabber-pp.svg?branch=master)](https://travis-ci.org/rhadamanthe/host-grabber-pp)
 [![Web site](docs/assets/images/badge.svg)](https://rhadamanthe.github.io/host-grabber-pp)
 &nbsp;
 [![Firefox](docs/assets/images/firefox_x24.png)]()
