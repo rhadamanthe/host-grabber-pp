@@ -15,7 +15,10 @@
 
   "background": {
 	"scripts": [
-	  "src/scripts/background/library.js",
+	  "src/scripts/background/library.utilities.js",
+	  "src/scripts/background/library.strategies.js",
+	  "src/scripts/background/library.processors.js",
+	  "src/scripts/background/library.queue.js",
 	  "src/scripts/background/background.hg.js"
     ]
   },

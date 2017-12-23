@@ -24,6 +24,12 @@ browser.commands.onCommand.addListener((command) => {
 });
 
 
+// Initialize the queues
+// One is about processing links and downloads.
+// The second one is for display purpose.
+var processingQueue = newQueue();
+var allProcessors = [];
+
 // Initialize the dictionary
 var dictionary = null;
 var storageItem = browser.storage.local.get('hostUrl');
@@ -33,7 +39,6 @@ storageItem.then((res) => {
     dictionary = downloadedDictionary;
   });
 });
-
 
 
 // Functions
@@ -49,9 +54,40 @@ function downloadContent() {
   // script (in the currently active tab). So we have to go through the tab API.
   browser.tabs.query({active: true, currentWindow: true}).then( tabs => {
     browser.tabs.sendMessage( tabs[0].id, {'req':'source-code'}).then( sourceAsText => {
+
+      // Parse the source code and find the links
       var sourceDocument = new DOMParser().parseFromString(sourceAsText,'text/html');
-      var links = process(sourceDocument, tabs[0].url, dictionary);
-      console.log(links);
+      var processors = findWhatToProcess(sourceDocument, tabs[0].url, dictionary);
+
+      // We get link candidates to process and/or explore
+      processors.forEach(function(processor) {
+        processingQueue.append(processor);
+        allProcessors.push(processor);
+      });
     });
   });
+}
+
+
+/**
+ * Starts a real download and updates the link object's status on completion.
+ * @param {object} linkObject An object that holds a download link and status.
+ * @param {object} processor The processor that holds the link object.
+ * @returns {undefined}
+ */
+function startDownload(linkObject, processor) {
+/*
+  var options = {
+    conflictAction: 'uniquify',
+    url: linkObject.link
+  };
+
+  var downloading = browser.downloads.download(options).then( function(downloadItemId) {
+    linkObject.status = DlStatus.SUCCESS;
+
+  }, function(error) {
+    linkObject.status = DlStatus.FAILURE;
+  });
+*/
+  console.log(linkObject.link);
 }
