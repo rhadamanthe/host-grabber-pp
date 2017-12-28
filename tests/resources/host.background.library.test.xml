@@ -2,7 +2,7 @@
 <root>
 
 <host id="mimi">
-	<urlpattern>^http://mimi\.[^/]+/.*</urlpattern>
+	<urlpattern>^http://mimi\.[^/]+/[^"]*</urlpattern>
 	<searchpattern>expreg: (http://mimi\.[^"]*\.(jpg|gif|png))</searchpattern>
 </host>
 

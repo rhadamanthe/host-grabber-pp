@@ -1,6 +1,7 @@
 bin/
 target/
 state/
+coverage/
 .project
 *.local.launch
 Copy of *.launch

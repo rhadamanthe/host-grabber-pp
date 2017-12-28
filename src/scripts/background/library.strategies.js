@@ -66,8 +66,7 @@ function extractor() {
 
     var links = new Set();
     var source = sourceDocument.documentElement.innerHTML;
-    var fixedUrlPattern = fixUrlPattern( pattern );
-    var regexp = new RegExp(fixedUrlPattern, 'ig');
+    var regexp = new RegExp(pattern, 'ig');
 
     for( var match = regexp.exec(source); !! match; match = regexp.exec(source)) {
       var url = !! match[1] ? match[1] : match[0];

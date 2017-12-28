@@ -27,7 +27,7 @@ browser.commands.onCommand.addListener((command) => {
 // Initialize the queues
 // One is about processing links and downloads.
 // The second one is for display purpose.
-var processingQueue = newQueue();
+var processingQueue = newQueue(handleProcessor, startDownload);
 var allProcessors = [];
 
 // Initialize the dictionary
@@ -35,7 +35,7 @@ var dictionary = null;
 var storageItem = browser.storage.local.get('hostUrl');
 storageItem.then((res) => {
   var url = res.hostUrl || 'https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml';
-  loadDictionary(url).then( function(downloadedDictionary) {
+  loadRemoteDocument(url).then( function(downloadedDictionary) {
     dictionary = downloadedDictionary;
   });
 });

@@ -15,7 +15,7 @@ module.exports = function(config) {
       'node_modules/sinon-chrome/bundle/sinon-chrome-webextensions.min.js',
 
       // Source
-      'src/**/library.js',
+      'src/**/library.*.js',
 
       // Tests
       'tests/**/*.js',
@@ -50,10 +50,21 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['dots'],
+    reporters: ['dots', 'coverage'],
 
     mochaReporter: {
       showDiff: true
+    },
+
+    // pre-process matching files before serving them to the browser
+    preprocessors: {
+      'src/**/*.js': ['coverage']
+    },
+
+    // configure the COVERAGE reporter
+    coverageReporter: {
+      type: 'html',
+      dir: 'coverage/'
     },
 
     // web server port

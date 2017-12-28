@@ -11,25 +11,22 @@ function loadRemoteDocument(url) {
   return new Promise(function (resolve, reject) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'document';
-    xhr.open('GET', dictionaryUrl, true);
+    xhr.open('GET', url, true);
     xhr.overrideMimeType('application/xml');
-    xhr.onload = function () {
-      if (this.status >= 200 && this.status < 300) {
-        resolve(this.responseXML);
-      } else {
-        reject({
-          status: this.status,
-          statusText: this.statusText
-        });
-      }
-    }
-
     xhr.onerror = function () {
       reject({
         status: this.status,
         statusText: this.statusText
       });
-    }
+    };
+
+    xhr.onload = function () {
+      if (this.status >= 200 && this.status < 300) {
+        resolve(this.responseXML);
+      } else {
+        this.onerror();
+      }
+    };
 
     xhr.send(null);
   });
@@ -52,7 +49,7 @@ function fixUrlPattern(urlPattern) {
     fixedUrlPattern = fixedUrlPattern.substring(0, fixedUrlPattern.length - 1);
   }
 
-  if (fixedUrlPattern.contains('(')) {
+  if (! fixedUrlPattern.startsWith('(')) {
     fixedUrlPattern = '(' + fixedUrlPattern + ')';
   }
 
