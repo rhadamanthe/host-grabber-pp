@@ -10,7 +10,15 @@
   },
   
   "options_ui": {
-  	"page": "src/html/options.html"
+  	"page": "src/html/options.html",
+  	"browser_style": true,
+  	"open_in_tab": true
+  },
+  
+  "browser_action": {
+    "default_icon": "icons/logo_x48.png",
+    "default_title": "Extract",
+    "browser_style": true
   },
 
   "background": {
@@ -25,10 +33,12 @@
 
   "content_scripts": [
   {
-	"matches": ["<all_urls>"],
-	"js": ["src/scripts/content/content.hg.js"]
-  }
-  ],
+    "matches": ["<all_urls>"],
+    "js": [
+      "src/scripts/content/content.hg.js",
+      "src/scripts/list.js"
+    ]
+  }],
   
   "commands": {
     "dl": {
@@ -40,6 +50,7 @@
   	"contextMenus",
   	"tabs",
   	"storage",
+  	"downloads",
   	"<all_urls>"
   ]
 }

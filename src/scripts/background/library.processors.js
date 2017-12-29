@@ -70,7 +70,8 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
       }
 
       // Find all the URLs that match the given pattern
-      var fixedUrlPattern = fixUrlPattern(urlpatterns[0].innerHTML);
+      var fixedUrlPattern = fixUrlPattern(urlpatterns[0].innerHTML.trim());
+      var fixedSearchPattern = removeCDataMarkups(searchpatterns[0].innerHTML.trim());
       var regexp = new RegExp(fixedUrlPattern, 'ig');
       var source = sourceDocument.documentElement.innerHTML;
 
@@ -81,7 +82,7 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
         }
 
         alreadyVisistedUrls.push(fixedLink);
-        processors.push( newProcessor(fixedLink, searchpatterns[0].innerHTML));
+        processors.push( newProcessor(fixedLink, fixedSearchPattern));
       };
     }
   }
@@ -98,6 +99,7 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
  */
 function newProcessor(matchingUrl, searchPattern) {
   return {
+    id: uuid(),
     matchingUrl: matchingUrl,
     searchPattern: searchPattern,
     extMethod: findExtractionMethod(searchPattern),

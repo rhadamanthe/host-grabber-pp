@@ -50,6 +50,42 @@ describe('background => library.processors', function() {
   });
 
 
+  it('should find what to process (with CDATA)', function() {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html><body>
+      <img src="http://titi.fr/gallery/view.php?img=t1.jpg" class="paf" />
+      <br />
+      <img src="http://mimi.com/test/photos/view?t2.jpg" />
+      <br />
+      <img src="http://titi.fr/gallery/view.php?img=t5.gif" />
+      <br />
+      <img src="http://google.com/images/view.php?img=http://titi.fr/gallery/view.php?img=t5.gif" class="g" />
+      <br />
+      <img src="http://titi.fr/gallery/view.php?img=t4.jpg" class="paf" />
+      <br />
+      <img src="http://bibi.com/path/to/this/image1.PNG" />
+      <img src="http://bibi.com/path/to/this/image2.svg" />
+    </body></html>
+    `;
+
+    // Test resources are served by Karma
+    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.cdata.xml');
+    return dictionaryP.then( function(dictionary) {
+
+      // Extract links
+      var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
+
+      // Verify we got them all
+      expect(res.length).to.eql(1);
+
+      expect(res[0].matchingUrl).to.eql('http://mimi.com/test/photos/view?t2.jpg');
+      expect(res[0].extMethod).to.eql(ExtMethods.EXPREG.id);
+      expect(res[0].searchPattern).to.eql('expreg: ">\\s*<a href="([^"]+)">');
+    });
+  });
+
+
   it('should find nothing to process when the URL pattern is missing', function(done) {
 
     var sourceDocument = document.implementation.createHTMLDocument('');
@@ -182,6 +218,7 @@ describe('background => library.processors', function() {
     expect(np.extMethod).to.eql(0);
     expect(np.status).to.eql(ProcessorStatus.WAITING);
     expect(np.downloadLinks).to.eql([]);
+    expect(!! np.id).to.be(true);
 
     np = newProcessor('the url', 'Self');
     expect(np.matchingUrl).to.eql('the url');
@@ -189,6 +226,7 @@ describe('background => library.processors', function() {
     expect(np.extMethod).to.eql(ExtMethods.SELF.id);
     expect(np.status).to.eql(ProcessorStatus.WAITING);
     expect(np.downloadLinks).to.eql([]);
+    expect(!! np.id).to.be(true);
 
     done();
   });

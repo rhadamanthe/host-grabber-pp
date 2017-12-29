@@ -8,7 +8,9 @@ function saveOptions(e) {
   browser.storage.local.set({
     hostUrl: document.querySelector('#host-url').value
   });
+  
   e.preventDefault();
+  browser.runtime.sendMessage({'req':'dictionary-update'});
 }
 
 
@@ -21,6 +23,18 @@ function restoreOptions() {
   storageItem.then((res) => {
     document.querySelector('#host-url').value = res.hostUrl || 'https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml';
   });
+}
+
+
+function switchVisibility(e) {
+  e.preventDefault();
+  if (document.getElementById('local').style.visibility === 'none') {
+    document.getElementById('local').style.visibility = 'block';
+    document.getElementById('remote').style.visibility = 'none';
+  } else {
+    document.getElementById('local').style.visibility = 'none';
+    document.getElementById('remote').style.visibility = 'block';
+  }
 }
 
 document.addEventListener('DOMContentLoaded', restoreOptions);

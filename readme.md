@@ -11,7 +11,8 @@ It was originally designed for Mozilla Firefox but might be adapted to other web
 It works like the former [Image Host Grabber](https://addons.mozilla.org/fr/firefox/addon/imagehost-grabber/)
 extension, but unlike it, it is not restricted to downloading images.
 
-> **This an alpha version**.
+> **This an alpha version**.  
+> First beta release is expected for the end of January (2018 ;)).
 
 > Notice 1: links extraction is working quite correctly, but downloading is not yet
 > done as Firefox API is very limited. I am thinking to relying on [Download Them All](https://www.downthemall.net/).
@@ -20,6 +21,16 @@ extension, but unlike it, it is not restricted to downloading images.
 
 
 ## Roadmap
+
+**Short-term**
+
+* Publish the extension on **addons.mozilla.org**.
+* Add a separate menu to download direct images.
+* Add a panel to test URL and search patterns on the current tab.
+* Add a menu to display the download links without downloading them (download simulation).
+* Allow to use several dictionaries in the preferences.
+
+**Long-term**
 
 * Enhance the downloading part. Join the efforts with DTA is an option.
 * Maybe adapt it for other web browsers.
@@ -66,3 +77,13 @@ docker run --rm --label=jekyll --volume=$(pwd):/srv/jekyll -it -p 4000:4000 jeky
 ```
 
 Notice that the startup takes a little time.
+
+
+## Source Code Organization
+
+This project is a web extension, originally created for Mozilla Firefox.  
+However, it should be possible to adapt it for other web browsers. The source code organization
+may help for this.
+
+* **library.\*.js** files are pure Javascript files. They are independent from browser code. **They must be tested with unit tests!**
+* Other Javascript files contain browser specific code.

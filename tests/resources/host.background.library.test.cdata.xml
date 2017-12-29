@@ -2,7 +2,7 @@
 <root>
 
 <host id="mimi">
-	<urlpattern>^http://www\.mimi\.com/.+/photos/view/</urlpattern>
+	<urlpattern>^http://(www\.)?mimi\.com/.+/photos/view\?[^ "]+</urlpattern>
 	<searchpattern><![CDATA[expreg: ">\s*<a href="([^"]+)">]]></searchpattern>
 </host>
 
