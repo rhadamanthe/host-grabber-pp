@@ -8,6 +8,7 @@ describe('background => library.processors', function() {
     var sourceDocument = document.implementation.createHTMLDocument('');
     sourceDocument.documentElement.innerHTML = `<html><body>
       <img src="http://titi.fr/gallery/view.php?img=t1.jpg" class="paf" />
+      <img src="http://titi.fr/gallery/view.php?img=t2.jpg" class="paf" />
       <br />
       <img src="http://mimi.de/gallery/t2.jpg" />
       <br />
@@ -30,22 +31,29 @@ describe('background => library.processors', function() {
       var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
 
       // Verify we got them all
-      expect(res.length).to.eql(5);
+      expect(res.length).to.eql(6);
 
       expect(res[0].matchingUrl).to.eql('http://mimi.de/gallery/t2.jpg');
       expect(res[0].extMethod).to.eql(ExtMethods.EXPREG.id);
 
       expect(res[1].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t1.jpg');
       expect(res[1].extMethod).to.eql(ExtMethods.REPLACE.id);
-
-      expect(res[2].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t5.gif');
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+      
+      expect(res[2].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t2.jpg');
       expect(res[2].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
 
-      expect(res[3].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t4.jpg');
+      expect(res[3].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t5.gif');
       expect(res[3].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
 
-      expect(res[4].matchingUrl).to.eql('http://bibi.com/path/to/this/image1.PNG');
-      expect(res[4].extMethod).to.eql(ExtMethods.SELF.id);
+      expect(res[4].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t4.jpg');
+      expect(res[4].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[5].matchingUrl).to.eql('http://bibi.com/path/to/this/image1.PNG');
+      expect(res[5].extMethod).to.eql(ExtMethods.SELF.id);
     });
   });
 

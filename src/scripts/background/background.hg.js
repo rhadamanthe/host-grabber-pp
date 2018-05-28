@@ -1,6 +1,17 @@
 'use strict';
 
-// Create the menu
+/* Fields */
+
+// Initialize the queue.
+var processingQueue = newQueue(handleProcessor, startDownload);
+
+// Initialize the dictionary
+var dictionary = null;
+
+
+/* Default actions */
+
+// Create the menus
 browser.contextMenus.create({
   id: 'hg-menu',
   title: 'Host Grabber',
@@ -8,9 +19,17 @@ browser.contextMenus.create({
 });
 
 browser.contextMenus.create({
-  id: 'hg-menu-extract',
+  id: 'hg-menu-download',
   parentId: 'hg-menu',
-  title: 'Extract',
+  title: 'Extract and Download',
+  contexts: ['all'],
+  onclick: downloadContent
+});
+
+browser.contextMenus.create({
+  id: 'hg-menu-find-links',
+  parentId: 'hg-menu',
+  title: 'Find Links',
   contexts: ['all'],
   onclick: downloadContent
 });
@@ -39,19 +58,15 @@ browser.runtime.onMessage.addListener(request => {
   }
 });
 
-
-// Initialize the queues
-// One is about processing links and downloads.
-var processingQueue = newQueue(handleProcessor, startDownload);
-
-// Initialize the dictionary
-var dictionary = null;
-reloadDictionary();
+// Download the dictionary when the browser starts...
+// ... or when the extension is installed or updated.
+browser.runtime.onStartup.addListener(reloadDictionary);
+browser.runtime.onInstalled.addListener(reloadDictionary);
 
 
 
-// Functions
 
+/* Functions */
 
 /**
  * Reloads the dictionary.
@@ -65,6 +80,10 @@ function reloadDictionary() {
     console.log('Loading dictionary from ' + url + '...');
     loadRemoteDocument(url).then( function(downloadedDictionary) {
       dictionary = downloadedDictionary;
+
+    }, function(details) {
+      console.log('Dictionary could not be loaded from ' + url + '.');
+      console.log(details);
     });
   });
 }
@@ -107,16 +126,19 @@ function downloadContent() {
       processors.forEach(function(processor) {
         processingQueue.append(processor);
       });
-      
+
       // Send a notification to the downloads view
       browser.tabs.query({ title: 'HG ++' }).then( function(tabs) {
         if (tabs.length > 0) {
           browser.tabs.sendMessage(tabs[0].id, {req: 'new-processors', obj: processors});
         }
       });
+
+      // Start downloading
+      processingQueue.process();
     });
   });
-  
+
   // Open the download tab
   showDownloadsList();
 }
@@ -129,18 +151,25 @@ function downloadContent() {
  * @returns {undefined}
  */
 function startDownload(linkObject, processor) {
-/*
+
   var options = {
     conflictAction: 'uniquify',
-    url: linkObject.link
+    url: linkObject.link,
+    saveAs: false
   };
 
   var downloading = browser.downloads.download(options).then( function(downloadItemId) {
+    // Update the status
     linkObject.status = DlStatus.SUCCESS;
 
+    // Process the next item
+    processingQueue.process();
+
   }, function(error) {
+    // Update the status
     linkObject.status = DlStatus.FAILURE;
+
+    // Process the next item
+    processingQueue.process();
   });
-*/
-  //console.log(linkObject.link);
 }

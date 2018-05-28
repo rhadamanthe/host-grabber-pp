@@ -71,11 +71,11 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
 
       // Find all the URLs that match the given pattern
       var fixedUrlPattern = fixUrlPattern(urlpatterns[0].innerHTML.trim());
-      var fixedSearchPattern = removeCDataMarkups(searchpatterns[0].innerHTML.trim());
       var regexp = new RegExp(fixedUrlPattern, 'ig');
       var source = sourceDocument.documentElement.innerHTML;
+      var fixedSearchPattern = removeCDataMarkups(searchpatterns[0].innerHTML.trim());
 
-      for( var match = regexp.exec(source); !! match; match = regexp.exec(source)) {
+      for (var match = regexp.exec(source); !! match; match = regexp.exec(source)) {
         var fixedLink = fixRelativeLinks(match[1], url);
         if (alreadyVisistedUrls.indexOf(fixedLink) !== -1 ) {
           continue;
@@ -83,7 +83,7 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
 
         alreadyVisistedUrls.push(fixedLink);
         processors.push( newProcessor(fixedLink, fixedSearchPattern));
-      };
+      }
     }
   }
 
@@ -143,7 +143,9 @@ function handleProcessor(processor, extractor, processingQueue) {
     links = extractor.self(processor.matchingUrl);
 
   } else if (ExtMethods.REPLACE.id === processor.extMethod) {
-    links = extractor.replace(processor.matchingUrl, processor.searchPattern);
+    var match = ExtMethods.REPLACE.pattern.exec(processor.searchPattern);
+    links = extractor.replace(processor.matchingUrl, match[1].trim(), match[2].trim());
+    ExtMethods.REPLACE.pattern.lastIndex = 0;
 
   } else if (! processor.xmlDoc && processor.status === ProcessorStatus.WAITING) {
     processor.status = ProcessorStatus.RETRIEVING_LINKS;
@@ -168,18 +170,22 @@ function handleProcessor(processor, extractor, processingQueue) {
     if (ExtMethods.CLASS.id === processor.extMethod) {
       var match = ExtMethods.CLASS.pattern.exec(processor.searchPattern);
       links = extractor.xpath(processor.xmlDoc, '//img[@class=\'' + match[1].trim() + '\']/@src');
+      ExtMethods.CLASS.pattern.lastIndex = 0;
 
     } else if (ExtMethods.ID.id === processor.extMethod) {
       var match = ExtMethods.ID.pattern.exec(processor.searchPattern);
       links = extractor.xpath(processor.xmlDoc, '//img[@id=\'' + match[1].trim() + '\']/@src');
+      ExtMethods.ID.pattern.lastIndex = 0;
 
     } else if (ExtMethods.XPATH.id === processor.extMethod) {
       var match = ExtMethods.XPATH.pattern.exec(processor.searchPattern);
       links = extractor.xpath(processor.xmlDoc, match[1].trim());
+      ExtMethods.XPATH.pattern.lastIndex = 0;
 
     } else if (ExtMethods.EXPREG.id === processor.extMethod) {
       var match = ExtMethods.EXPREG.pattern.exec(processor.searchPattern);
       links = extractor.expreg(processor.xmlDoc, match[1].trim());
+      ExtMethods.EXPREG.pattern.lastIndex = 0;
     }
   }
 

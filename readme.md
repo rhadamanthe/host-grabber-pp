@@ -68,8 +68,16 @@ Testing in your usual browser:
 * Open **about:debugging** in Firefox.
 * Click **Load Temporary Add-on** and select any file in the module's sources.
 
+Debugging the extension:
 
-## Tesing the Documentation
+* Open **about:debugging** in Firefox.
+* Click **Load Temporary Add-on** and select any file in the module's sources.
+* Check the box labeled **Enable add-on debugging**.
+* Click the **Debug** button next to the extension.
+* Click **OK** in the warning dialog.
+
+
+## Testing the Documentation
 
 ```
 cd docs/

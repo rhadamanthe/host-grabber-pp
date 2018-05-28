@@ -42,8 +42,8 @@ describe('background => library.utilities', function() {
     expect(removeCDataMarkups('this is a some content]]>')).to.eql('this is a some content');
     done();
   });
-  
-  
+
+
   it('should generate a UUID', function(done) {
 
     expect(!! uuid()).to.be(true);

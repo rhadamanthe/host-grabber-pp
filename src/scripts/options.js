@@ -8,7 +8,7 @@ function saveOptions(e) {
   browser.storage.local.set({
     hostUrl: document.querySelector('#host-url').value
   });
-  
+
   e.preventDefault();
   browser.runtime.sendMessage({'req':'dictionary-update'});
 }
@@ -26,6 +26,11 @@ function restoreOptions() {
 }
 
 
+/**
+ * Switches the visibility.
+ * @param {object} e The default event.
+ * @returns {undefined}
+ */
 function switchVisibility(e) {
   e.preventDefault();
   if (document.getElementById('local').style.visibility === 'none') {

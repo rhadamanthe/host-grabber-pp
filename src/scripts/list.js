@@ -53,7 +53,7 @@ function loadProcessors() {
 
 /**
  * Updates a processor from the background script.
- * @param {object} processor A processor. 
+ * @param {object} processor A processor.
  * @returns {undefined}
  */
 function updateProcessor(processor) {
@@ -71,8 +71,13 @@ function updateProcessor(processor) {
 // For the moment, we can manage it all with few code.
 
 
+/**
+ * Displays the new processors.
+ * @param {array} processors The processors.
+ * @returns {undefined}
+ */
 function displayNewProcessors(processors) {
-  
+
   processors.forEach( function(processor) {
     var items = document.getElementById('items');
     var p = document.createElement('p');
@@ -80,7 +85,7 @@ function displayNewProcessors(processors) {
     p.innerHTML = processor.matchingUrl;
     items.appendChild(p);
     console.log(processor.matchingUrl)
-    
+
     processor.downloadLinks.forEach( function(dlLink) {
       var dlp = document.createElement('p');
       dlp.innerHTML = dlLink.link;

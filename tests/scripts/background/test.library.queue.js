@@ -3,7 +3,7 @@
 describe('background => library.queue', function() {
 
 
-  it('should store and pick up elements correctly', function(done) {
+  it('should store elements correctly', function(done) {
 
     // Setup
     var pickedUpProcessors = [];
@@ -38,20 +38,17 @@ describe('background => library.queue', function() {
     queue.append(p1);
     queue.append(p2);
     queue.append(p3);
-
-    // Wait one second and check the content
+    expect(queue.processorQueue.length).to.eql(3);
+    
+    // Wait one second and check the content, again
     setTimeout(function() {
-
-      expect(queue.processorQueue.length).to.eql(0);
-      expect(pickedUpProcessors.length).to.eql(3);
-      expect(pickedUpProcessors).to.eql([p1, p2, p3]);
+      expect(queue.processorQueue.length).to.eql(3);
       done();
-
     }, 1000);
   });
 
 
-  it('should send links for download', function(done) {
+  it('should process items', function(done) {
 
     // Setup
     var downloadCpt = 0;
@@ -81,6 +78,7 @@ describe('background => library.queue', function() {
     expect(queue.processorQueue.length).to.eql(0);
 
     // Submit some stuff
+    // (for every processor, we will find 2 download links)
     var p1 = {downloadLinks: [], id: 1};
     var p2 = {downloadLinks: [], id: 2};
     var p3 = {downloadLinks: [], id: 3};
@@ -88,14 +86,17 @@ describe('background => library.queue', function() {
     queue.append(p1);
     queue.append(p2);
     queue.append(p3);
-
-    // Wait one second and check the content
-    setTimeout(function() {
-
-      expect(queue.processorQueue.length).to.eql(0);
-      expect(downloadCpt).to.eql(6);
-      done();
-
-    }, 1000);
+    expect(queue.processorQueue.length).to.eql(3);
+    expect(downloadCpt).to.eql(0);
+    
+    queue.process();
+    expect(queue.processorQueue.length).to.eql(2);
+    expect(downloadCpt).to.eql(2);
+    
+    queue.process();
+    expect(queue.processorQueue.length).to.eql(1);
+    expect(queue.processorQueue[0]).to.eql(p3);
+    expect(downloadCpt).to.eql(4);
+    done();
   });
 });
