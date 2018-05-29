@@ -11,34 +11,93 @@
 	padding: 0;
 }
 
+body {
+	padding: 20px;
+	font-size: 1.1em;
+}
+
 p {
 	padding: 4px 0;
 }
 
-.matchingUrl {
-	background-color: #888;
-	color: #fff;
-}
-
 .dlLink {
 	padding-left: 40px;
+	cursor: default;
 }
 
-.ok {
-	background-color: green;
+.success {
+	background-color: #32CD32;
 	color: #fff;
+	border-radius: 8px;
 }
 
-.ok {
+.failure {
 	background-color: red;
 	color: #fff;
+	border-radius: 8px;
+}
+
+.waiting {
+	background-color: #FFD700;
+	color: #fff;
+	border-radius: 8px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+th {
+	font-weight: bold;
+	font-size: 18px;
+	padding: 5px 10px;
+	border: solid black 1px;
+}
+
+td:nth-child(even) {
+	width: 20%;
+}
+
+td:nth-child(odd) {
+	width: 80%;
+}
+
+td, th {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+tbody {
+	padding-top: 10px;
+}
+
+tbody > tr:nth-child(1) {
+	background-color: #F5F5F5;
+}
+
+td {
+	padding: 5px 10px;
+}
+
+td > img {
+	height: 14px;
+	margin-right: 10px;
 }
 
 	</style>
 </head>
 
 <body>
-	<div id="items"></div>
+	<table id="items">
+		<tr>
+			<th>Download Link</th>
+			<th>Status</th>
+		</tr>
+	</table>
+
+	<!-- script src="../scripts/lib/bind.min.js"></script  -->
 	<script src="../scripts/list.js"></script>
 </body>
 

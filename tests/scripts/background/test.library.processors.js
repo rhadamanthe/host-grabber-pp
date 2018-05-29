@@ -39,7 +39,7 @@ describe('background => library.processors', function() {
       expect(res[1].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t1.jpg');
       expect(res[1].extMethod).to.eql(ExtMethods.REPLACE.id);
       expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
-      
+
       expect(res[2].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t2.jpg');
       expect(res[2].extMethod).to.eql(ExtMethods.REPLACE.id);
       expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);

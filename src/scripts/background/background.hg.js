@@ -3,7 +3,15 @@
 /* Fields */
 
 // Initialize the queue.
-var processingQueue = newQueue(handleProcessor, startDownload);
+var processingQueue = newQueue(function (processor, extractor, queue) {
+  // We use this function as a proxy so that we can...
+  // Get download links
+  handleProcessor(processor, extractor, queue);
+
+  // Update the view
+  updateProcessorInDownloadView(processor);
+}, startDownload);
+
 
 // Initialize the dictionary
 var dictionary = null;
@@ -25,7 +33,7 @@ browser.contextMenus.create({
   contexts: ['all'],
   onclick: downloadContent
 });
-
+/*
 browser.contextMenus.create({
   id: 'hg-menu-find-links',
   parentId: 'hg-menu',
@@ -33,7 +41,7 @@ browser.contextMenus.create({
   contexts: ['all'],
   onclick: downloadContent
 });
-
+*/
 browser.contextMenus.create({
   id: 'hg-menu-show-dl-list',
   parentId: 'hg-menu',
@@ -55,6 +63,9 @@ browser.commands.onCommand.addListener((command) => {
 browser.runtime.onMessage.addListener(request => {
   if (request.req === 'dictionary-update') {
     reloadDictionary();
+
+  } else if (request.req === 'get-processors') {
+    sendProcessorsToDownloadView(processingQueue.processorHistory);
   }
 });
 
@@ -98,6 +109,8 @@ function showDownloadsList() {
   browser.tabs.query({ title: 'HG ++' }).then( function(tabs) {
     if (tabs.length === 0) {
       browser.tabs.create({url: '/src/html/download-list.html'});
+    } else {
+      browser.tabs.update(tabs[0].id, {active: true});
     }
 
   }, function() {
@@ -111,6 +124,9 @@ function showDownloadsList() {
  * @returns {undefined}
  */
 function downloadContent() {
+
+  // Open the download tab (first!)
+  showDownloadsList();
 
   // Get the page's source code.
   // Background scripts cannot directly get it, so we ask it to our content
@@ -128,19 +144,40 @@ function downloadContent() {
       });
 
       // Send a notification to the downloads view
-      browser.tabs.query({ title: 'HG ++' }).then( function(tabs) {
-        if (tabs.length > 0) {
-          browser.tabs.sendMessage(tabs[0].id, {req: 'new-processors', obj: processors});
-        }
-      });
+      sendProcessorsToDownloadView(processors);
 
       // Start downloading
       processingQueue.process();
     });
   });
+}
 
-  // Open the download tab
-  showDownloadsList();
+
+/**
+ * Sends processors to the download view.
+ * @param {array} processors An array of processors.
+ * @returns {undefined}
+ */
+function sendProcessorsToDownloadView(processors) {
+  browser.tabs.query({ title: 'HG ++' }).then( function(tabs) {
+    if (tabs.length > 0) {
+      browser.tabs.sendMessage(tabs[0].id, {req: 'new-processors', obj: processors});
+    }
+  });
+}
+
+
+/**
+ * Updates a processor in the download view.
+ * @param {object} processor A processor.
+ * @returns {undefined}
+ */
+function updateProcessorInDownloadView(processor) {
+  browser.tabs.query({ title: 'HG ++' }).then( function(tabs) {
+    if (tabs.length > 0) {
+      browser.tabs.sendMessage(tabs[0].id, {req: 'update-processor', obj: processor});
+    }
+  });
 }
 
 
@@ -161,6 +198,8 @@ function startDownload(linkObject, processor) {
   var downloading = browser.downloads.download(options).then( function(downloadItemId) {
     // Update the status
     linkObject.status = DlStatus.SUCCESS;
+    linkObject.downloadItemId = downloadItemId;
+    updateProcessorInDownloadView(processor);
 
     // Process the next item
     processingQueue.process();
@@ -168,6 +207,7 @@ function startDownload(linkObject, processor) {
   }, function(error) {
     // Update the status
     linkObject.status = DlStatus.FAILURE;
+    updateProcessorInDownloadView(processor);
 
     // Process the next item
     processingQueue.process();

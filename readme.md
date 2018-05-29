@@ -11,27 +11,31 @@ It was originally designed for Mozilla Firefox but might be adapted to other web
 It works like the former [Image Host Grabber](https://addons.mozilla.org/fr/firefox/addon/imagehost-grabber/)
 extension, but unlike it, it is not restricted to downloading images.
 
-> **This an alpha version**.  
-> First beta release is expected for the end of January (2018 ;)).
+> **This an alpha version**.
 
-> Notice 1: links extraction is working quite correctly, but downloading is not yet
-> done as Firefox API is very limited. I am thinking to relying on [Download Them All](https://www.downthemall.net/).
+> Notice 1: links extraction is working quite correctly, but downloading is very
+> limited due to restrictions set by the Firefox API. I was thinking to rely on
+> [Download Them All](https://www.downthemall.net/), but the extension is not yet available
+> for the last Firefox versions.
 
-> Notice 2: the list of hosts has been seriously purged. Many hosts need to be readded.  
+> Notice 2: the list of hosts has been seriously purged.  
+> And the current list is not always up-to-date.
 
 
 ## Roadmap
 
 **Short-term**
 
-* Publish the extension on **addons.mozilla.org**.
-* Add a separate menu to download direct images.
-* Add a panel to test URL and search patterns on the current tab.
+* Make the **options** page more beautiful.
 * Add a menu to display the download links without downloading them (download simulation).
-* Allow to use several dictionaries in the preferences.
+* Add a panel to test URL and search patterns on the current tab.
+* Add a way to manage a dictionary locally (add, remove, enable, disable rules).
+* Update the list of hosts.
 
 **Long-term**
 
+* Add a separate menu to download direct images.
+* Allow to use several dictionaries in the preferences.
 * Enhance the downloading part. Join the efforts with DTA is an option.
 * Maybe adapt it for other web browsers.
 

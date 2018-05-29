@@ -11,6 +11,7 @@ function newQueue(handleProcessorFn, startDownloadFn) {
 
   var queue = {
     processorQueue: [],
+    processorHistory: [],
     extractor: extractor(),
     append: append,
     process: process
@@ -24,6 +25,7 @@ function newQueue(handleProcessorFn, startDownloadFn) {
    */
   function append(processor) {
     queue.processorQueue.push(processor);
+    queue.processorHistory.push(processor);
   }
 
 

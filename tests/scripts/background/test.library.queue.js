@@ -39,7 +39,7 @@ describe('background => library.queue', function() {
     queue.append(p2);
     queue.append(p3);
     expect(queue.processorQueue.length).to.eql(3);
-    
+
     // Wait one second and check the content, again
     setTimeout(function() {
       expect(queue.processorQueue.length).to.eql(3);
@@ -88,11 +88,11 @@ describe('background => library.queue', function() {
     queue.append(p3);
     expect(queue.processorQueue.length).to.eql(3);
     expect(downloadCpt).to.eql(0);
-    
+
     queue.process();
     expect(queue.processorQueue.length).to.eql(2);
     expect(downloadCpt).to.eql(2);
-    
+
     queue.process();
     expect(queue.processorQueue.length).to.eql(1);
     expect(queue.processorQueue[0]).to.eql(p3);
