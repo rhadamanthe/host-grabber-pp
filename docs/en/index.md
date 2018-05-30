@@ -44,7 +44,7 @@ find download links.
 The default dictionary is hosted [here](https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml).  
 You can define your own one if you want and specify it through the extension preferences.
 
-*Add details here*.
+*Details will be added later*.
 
 
 ## Notice

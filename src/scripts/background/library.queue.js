@@ -4,17 +4,15 @@
 /**
  * Creates a new processing queue.
  * @param {function} handleProcessorFn The function to handle a processor when it is picked up in the queue.
- * @param {function} startDownloadFn The function to start downloading some file.
  * @returns {object} A new queue object.
  */
-function newQueue(handleProcessorFn, startDownloadFn) {
+function newQueue(handleProcessorFn) {
 
   var queue = {
-    processorQueue: [],
-    processorHistory: [],
-    extractor: extractor(),
+    processingQueue: [],
+    processingHistory: [],
     append: append,
-    process: process
+    processNextItem: processNextItem
   };
 
 
@@ -24,30 +22,23 @@ function newQueue(handleProcessorFn, startDownloadFn) {
    * @returns {undefined}
    */
   function append(processor) {
-    queue.processorQueue.push(processor);
-    queue.processorHistory.push(processor);
+    queue.processingQueue.push(processor);
+    queue.processingHistory.push(processor);
   }
 
 
   /**
    * Picks the first item in the queue and processes it.
-   * <p>
-   * If there are other items to process, rescheduling is done.
-   * </p>
-   *
    * @returns {undefined}
    */
-  function process() {
+  function processNextItem() {
 
     // Get an item to process
-    var processor = queue.processorQueue.shift();
+    var processor = queue.processingQueue.shift();
 
     // Handle it, provided it exists
     if (!! processor) {
-      handleProcessorFn(processor, queue.extractor, queue);
-      for (var i=0; i<processor.downloadLinks.length; i++) {
-        startDownloadFn(processor.downloadLinks[i], processor);
-      }
+      handleProcessorFn(processor);
     }
   }
 

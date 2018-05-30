@@ -4,15 +4,19 @@
 /**
  * Loads a remote XML document from an URL.
  * @param {string} url The URL.
+ * @param {string} mimeType The MIME type (optional).
  * @returns {promise} a promise with the DOM document in case of successful download.
  */
-function loadRemoteDocument(url) {
+function loadRemoteDocument(url, mimeType) {
 
   return new Promise(function (resolve, reject) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'document';
+    if (!! mimeType) {
+      xhr.overrideMimeType(mimeType);
+    }
+
     xhr.open('GET', url, true);
-    xhr.overrideMimeType('application/xml');
     xhr.onerror = function () {
       reject({
         status: this.status,
@@ -55,6 +59,7 @@ function fixUrlPattern(urlPattern) {
 
   fixedUrlPattern = fixedUrlPattern.replace('&lt;', '<');
   fixedUrlPattern = fixedUrlPattern.replace('&gt;', '>');
+  fixedUrlPattern = fixedUrlPattern.replace('&amp;', '&');
   return fixedUrlPattern;
 }
 

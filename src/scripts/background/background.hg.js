@@ -3,15 +3,7 @@
 /* Fields */
 
 // Initialize the queue.
-var processingQueue = newQueue(function (processor, extractor, queue) {
-  // We use this function as a proxy so that we can...
-  // Get download links
-  handleProcessor(processor, extractor, queue);
-
-  // Update the view
-  updateProcessorInDownloadView(processor);
-}, startDownload);
-
+var queue = newQueue(handleProcessorFn);
 
 // Initialize the dictionary
 var dictionary = null;
@@ -65,7 +57,7 @@ browser.runtime.onMessage.addListener(request => {
     reloadDictionary();
 
   } else if (request.req === 'get-processors') {
-    sendProcessorsToDownloadView(processingQueue.processorHistory);
+    sendProcessorsToDownloadView(queue.processingHistory);
   }
 });
 
@@ -89,7 +81,7 @@ function reloadDictionary() {
   storageItem.then((res) => {
     var url = res.hostUrl || 'https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml';
     console.log('Loading dictionary from ' + url + '...');
-    loadRemoteDocument(url).then( function(downloadedDictionary) {
+    loadRemoteDocument(url, 'application/xml').then( function(downloadedDictionary) {
       dictionary = downloadedDictionary;
 
     }, function(details) {
@@ -140,14 +132,14 @@ function downloadContent() {
 
       // We get link candidates to process and/or explore
       processors.forEach(function(processor) {
-        processingQueue.append(processor);
+        queue.append(processor);
       });
 
       // Send a notification to the downloads view
       sendProcessorsToDownloadView(processors);
 
       // Start downloading
-      processingQueue.process();
+      queue.processNextItem();
     });
   });
 }
@@ -202,7 +194,7 @@ function startDownload(linkObject, processor) {
     updateProcessorInDownloadView(processor);
 
     // Process the next item
-    processingQueue.process();
+    queue.processNextItem();
 
   }, function(error) {
     // Update the status
@@ -210,6 +202,19 @@ function startDownload(linkObject, processor) {
     updateProcessorInDownloadView(processor);
 
     // Process the next item
-    processingQueue.process();
+    queue.processNextItem();
   });
+}
+
+
+/**
+ * Handles the execution of a processor.
+ * @param {object} processor A processor.
+ * @returns {undefined}
+ */
+function handleProcessorFn(processor) {
+  // We use this function as a proxy so that we can...
+  // Get download links
+  // Update the view
+  handleProcessor(processor, extractor(), queue, startDownload, updateProcessorInDownloadView);
 }

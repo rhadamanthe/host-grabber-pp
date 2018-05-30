@@ -2,7 +2,6 @@
 
 describe('background => library.processors', function() {
 
-
   it('should find what to process', function() {
 
     var sourceDocument = document.implementation.createHTMLDocument('');
@@ -301,229 +300,311 @@ describe('background => library.processors', function() {
 
   it('should handle processors correctly (SELF)', function(done) {
 
-    var invoked = false;
     var p = newProcessor('test', 'self');
+    var idleFn = function() {};
+    var queue = {
+      modified: false,
+      processNextItem: function() {
+        this.modified = true;
+      }
+    };
+
     var extractor = {
+      invoked: false,
       self: function(url) {
-        invoked = true;
+        this.invoked = true;
         expect(url).to.eql('test');
         return [url];
       }
     };
 
     expect(p.downloadLinks.length).to.eql(0);
-    handleProcessor(p, extractor);
+    handleProcessor(p, extractor, queue, idleFn, idleFn);
 
-    expect(invoked).to.be(true);
+    expect(extractor.invoked).to.be(true);
     expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
     expect(p.downloadLinks.length).to.eql(1);
     expect(p.downloadLinks[0].link).to.eql('test');
     expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
+    expect(queue.modified).to.eql(false);
     done();
   });
 
 
   it('should handle processors correctly (REPLACE)', function(done) {
 
-    var invoked = false;
     var p = newProcessor('test', 'replace: \'.*\', \'\'');
+    var idleFn = function() {};
+    var queue = {
+      modified: false,
+      processNextItem: function() {
+        this.modified = true;
+      }
+    };
+
     var extractor = {
+      invoked: false,
       replace: function(url, xmlSearchPattern) {
-        invoked = true;
+        this.invoked = true;
         expect(url).to.eql('test');
         return [url];
       }
     };
 
     expect(p.downloadLinks.length).to.eql(0);
-    handleProcessor(p, extractor);
+    handleProcessor(p, extractor, queue, idleFn, idleFn);
 
-    expect(invoked).to.be(true);
+    expect(extractor.invoked).to.be(true);
     expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
     expect(p.downloadLinks.length).to.eql(1);
     expect(p.downloadLinks[0].link).to.eql('test');
     expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
+    expect(queue.modified).to.eql(false);
     done();
-  });
-
-
-  it('should handle processors correctly (CLASS)', function(done) {
-
-    var invoked = false;
-    var p = newProcessor('test', 'class: toto');
-    p.xmlDoc = document.implementation.createHTMLDocument('');
-    p.status = ProcessorStatus.RETRIEVING_LINKS_DONE;
-
-    var extractor = {
-      xpath: function(doc, xpathExpr) {
-        invoked = true;
-        return ['test1', 'test2'];
-      }
-    };
-
-    expect(p.downloadLinks.length).to.eql(0);
-    handleProcessor(p, extractor);
-
-    expect(invoked).to.be(true);
-    expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
-    expect(p.downloadLinks.length).to.eql(2);
-
-    expect(p.downloadLinks[0].link).to.eql('test1');
-    expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
-
-    expect(p.downloadLinks[1].link).to.eql('test2');
-    expect(p.downloadLinks[1].status).to.eql(DlStatus.WAITING);
-    done();
-  });
-
-
-  it('should handle processors correctly (CLASS with links not retrieved)', function(done) {
-
-    var invoked = false;
-    var p = newProcessor('test', 'class: toto');
-    p.xmlDoc = document.implementation.createHTMLDocument('');
-    p.status = ProcessorStatus.RETRIEVING_LINKS_FAILURE;
-
-    var extractor = {
-      xpath: function(doc, xpathExpr) {
-        invoked = true;
-        return [];
-      }
-    };
-
-    expect(p.downloadLinks.length).to.eql(0);
-    handleProcessor(p, extractor);
-
-    expect(invoked).to.be(true);
-    expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
-    expect(p.downloadLinks.length).to.eql(0);
-    done();
-  });
-
-
-  it('should handle processors correctly (ID)', function(done) {
-
-    var invoked = false;
-    var p = newProcessor('test', 'id: toto');
-    p.xmlDoc = document.implementation.createHTMLDocument('');
-    p.status = ProcessorStatus.RETRIEVING_LINKS_DONE;
-
-    var extractor = {
-      xpath: function(doc, xpathExpr) {
-        invoked = true;
-        return ['test1'];
-      }
-    };
-
-    expect(p.downloadLinks.length).to.eql(0);
-    handleProcessor(p, extractor);
-
-    expect(invoked).to.be(true);
-    expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
-    expect(p.downloadLinks.length).to.eql(1);
-
-    expect(p.downloadLinks[0].link).to.eql('test1');
-    expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
-    done();
-  });
-
-
-  it('should handle processors correctly (XPATH)', function(done) {
-
-    var invoked = false;
-    var p = newProcessor('test', 'xpath: //test');
-    p.xmlDoc = document.implementation.createHTMLDocument('');
-    p.status = ProcessorStatus.RETRIEVING_LINKS_DONE;
-
-    var extractor = {
-      xpath: function(doc, xpathExpr) {
-        invoked = true;
-        return ['test1'];
-      }
-    };
-
-    expect(p.downloadLinks.length).to.eql(0);
-    handleProcessor(p, extractor);
-
-    expect(invoked).to.be(true);
-    expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
-    expect(p.downloadLinks.length).to.eql(1);
-
-    expect(p.downloadLinks[0].link).to.eql('test1');
-    expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
-    done();
-  });
-
-
-  it('should handle processors correctly (EXPREG)', function(done) {
-
-    var invoked = false;
-    var p = newProcessor('test', 'expreg: src="([^)]+)"');
-    p.xmlDoc = document.implementation.createHTMLDocument('');
-    p.status = ProcessorStatus.RETRIEVING_LINKS_DONE;
-
-    var extractor = {
-      expreg: function(doc, xpathExpr) {
-        invoked = true;
-        return ['test1'];
-      }
-    };
-
-    expect(p.downloadLinks.length).to.eql(0);
-    handleProcessor(p, extractor);
-
-    expect(invoked).to.be(true);
-    expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
-    expect(p.downloadLinks.length).to.eql(1);
-
-    expect(p.downloadLinks[0].link).to.eql('test1');
-    expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
-    done();
-  });
-
-
-  it('should handle processors correctly (need to download a remote document successfully)', function(done) {
-
-    var p = newProcessor('test', 'id: toto');
-    p.matchingUrl = 'http://localhost:9876/base/tests/resources/host.background.library.test.xml';
-
-    expect(!! p.xmlDoc).to.be(false);
-    handleProcessor(p, extractor);
-
-    setTimeout(function() {
-      checkCompletion(p, done, ProcessorStatus.RETRIEVING_LINKS_DONE);
-    }, 1000);
-  });
-
-
-  it('should handle processors correctly (need to download a remote document UNsuccessfully)', function(done) {
-
-    var p = newProcessor('test', 'id: toto');
-    p.matchingUrl = 'http://localhost:9876/base/tests/resources/not.found.xml';
-
-    expect(!! p.xmlDoc).to.be(false);
-    handleProcessor(p, extractor);
-
-    setTimeout(function() {
-      checkCompletion(p, done, ProcessorStatus.RETRIEVING_LINKS_FAILURE);
-    }, 1000);
   });
 
 
   /**
-   * Verifies the completion of processor handling when a document must be downloaded.
-   * @param {object} p A processor.
-   * @param {function} done The function to invoke when this one completes.
-   * @param {integer} expectedStatus The expected status (see ProcessorStatus constants).
-   * @returns {undefined}
+   * A utility promise that waits for a given time.
+   * @param {integer} ms The number of milliseconds to wait.
+   * @return {Promise} A promise.
    */
-  function checkCompletion(p, done, expectedStatus) {
-
-    // The processor's status was updated
-    expect(p.status).to.eql(expectedStatus);
-
-    // There is a document if it could be downloaded successfully
-    expect(!! p.xmlDoc).to.be(expectedStatus === ProcessorStatus.RETRIEVING_LINKS_DONE);
-    done();
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+
+  // No "done "callback for this test.
+  // Instead, we return a promise. If it fails, it will fail the test.
+  it('should handle processors correctly (CLASS)', function() {
+
+    var p = newProcessor('test', 'class: toto');
+    p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
+
+    var idleFn = function() {};
+    var queue = {
+      modified: false,
+      processNextItem: function() {
+        this.modified = true;
+      }
+    };
+
+    var extractor = {
+      invoked: false,
+      xpath: function(doc, xpathExpr) {
+        this.invoked = true;
+        return ['test1', 'test2'];
+      }
+    };
+
+    // Execute the test
+    expect(p.downloadLinks.length).to.eql(0);
+    handleProcessor(p, extractor, queue, idleFn, idleFn);
+
+    // In this case, processing is asynchronous.
+    return sleep(1000).then(function() {
+      expect(extractor.invoked).to.be(true);
+      expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
+      expect(p.downloadLinks.length).to.eql(2);
+
+      expect(p.downloadLinks[0].link).to.eql('test1');
+      expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
+
+      expect(p.downloadLinks[1].link).to.eql('test2');
+      expect(p.downloadLinks[1].status).to.eql(DlStatus.WAITING);
+      expect(queue.modified).to.eql(false);
+    });
+  });
+
+
+  // No "done "callback for this test.
+  // Instead, we return a promise. If it fails, it will fail the test.
+  it('should handle processors correctly (CLASS with unreachable remote page)', function() {
+
+    var p = newProcessor('test', 'class: toto');
+    p.matchingUrl = 'http://localhost:9876/base/tests/resources/it.does.not.exist.html';
+
+    var idleFn = function() {};
+    var queue = {
+      modified: false,
+      processNextItem: function() {
+        this.modified = true;
+      }
+    };
+
+    var extractor = {
+      invoked: false,
+      xpath: function(doc, xpathExpr) {
+        this.invoked = true;
+        return [];
+      }
+    };
+
+    // Execute the test
+    expect(p.downloadLinks.length).to.eql(0);
+    handleProcessor(p, extractor, queue, idleFn, idleFn);
+
+    // In this case, processing is asynchronous.
+    return sleep(1000).then(function() {
+      expect(extractor.invoked).to.be(false);
+      expect(queue.modified).to.eql(true);
+      expect(p.status).to.eql(ProcessorStatus.RETRIEVING_LINKS_FAILURE);
+      expect(p.downloadLinks.length).to.eql(0);
+    });
+  });
+
+
+  // No "done "callback for this test.
+  // Instead, we return a promise. If it fails, it will fail the test.
+  it('should handle processors correctly (CLASS with no found link)', function() {
+
+    var p = newProcessor('test', 'class: toto');
+    p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
+
+    var idleFn = function() {};
+    var queue = {
+      modified: false,
+      processNextItem: function() {
+        this.modified = true;
+      }
+    };
+
+    var extractor = {
+      invoked: true,
+      xpath: function(doc, xpathExpr) {
+        this.invoked = true;
+        return [];
+      }
+    };
+
+    // Execute the test
+    expect(p.downloadLinks.length).to.eql(0);
+    handleProcessor(p, extractor, queue, idleFn, idleFn);
+
+    // In this case, processing is asynchronous.
+    return sleep(1000).then(function() {
+      expect(extractor.invoked).to.be(true);
+      expect(queue.modified).to.eql(true);
+      expect(p.status).to.eql(ProcessorStatus.NO_LINK_FOUND);
+      expect(p.downloadLinks.length).to.eql(0);
+    });
+  });
+
+
+  // No "done "callback for this test.
+  // Instead, we return a promise. If it fails, it will fail the test.
+  it('should handle processors correctly (ID)', function() {
+
+    var p = newProcessor('test', 'id: toto');
+    p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
+
+    var idleFn = function() {};
+    var queue = {
+      modified: false,
+      processNextItem: function() {
+        this.modified = true;
+      }
+    };
+
+    var extractor = {
+      invoked: false,
+      xpath: function(doc, xpathExpr) {
+        this.invoked = true;
+        return ['test3'];
+      }
+    };
+
+    // Execute the test
+    expect(p.downloadLinks.length).to.eql(0);
+    handleProcessor(p, extractor, queue, idleFn, idleFn);
+
+    // In this case, processing is asynchronous.
+    return sleep(1000).then(function() {
+      expect(extractor.invoked).to.be(true);
+      expect(p.downloadLinks.length).to.eql(1);
+      expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
+
+      expect(p.downloadLinks[0].link).to.eql('test3');
+      expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
+      expect(queue.modified).to.eql(false);
+    });
+  });
+
+
+  // No "done "callback for this test.
+  // Instead, we return a promise. If it fails, it will fail the test.
+  it('should handle processors correctly (XPATH)', function() {
+
+    var p = newProcessor('test', 'xpath: //test');
+    p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
+
+    var idleFn = function() {};
+    var queue = {
+      modified: false,
+      processNextItem: function() {
+        this.modified = true;
+      }
+    };
+
+    var extractor = {
+      invoked: false,
+      xpath: function(doc, xpathExpr) {
+        this.invoked = true;
+        return ['test1'];
+      }
+    };
+
+    // Execute the test
+    expect(p.downloadLinks.length).to.eql(0);
+    handleProcessor(p, extractor, queue, idleFn, idleFn);
+
+    // In this case, processing is asynchronous.
+    return sleep(1000).then(function() {
+      expect(extractor.invoked).to.be(true);
+      expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
+      expect(p.downloadLinks.length).to.eql(1);
+
+      expect(p.downloadLinks[0].link).to.eql('test1');
+      expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
+      expect(queue.modified).to.eql(false);
+    });
+  });
+
+
+  it('should handle processors correctly (EXPREG)', function() {
+
+    var p = newProcessor('test', 'expreg: src="([^)]+)"');
+    p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
+
+    var idleFn = function() {};
+    var queue = {
+      modified: false,
+      processNextItem: function() {
+        this.modified = true;
+      }
+    };
+
+    var extractor = {
+      invoked: false,
+      expreg: function(doc, xpathExpr) {
+        this.invoked = true;
+        return ['test1'];
+      }
+    };
+
+    // Execute the test
+    expect(p.downloadLinks.length).to.eql(0);
+    handleProcessor(p, extractor, queue, idleFn, idleFn);
+
+    // In this case, processing is asynchronous.
+    return sleep(1000).then(function() {
+      expect(extractor.invoked).to.be(true);
+      expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
+      expect(p.downloadLinks.length).to.eql(1);
+
+      expect(p.downloadLinks[0].link).to.eql('test1');
+      expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
+      expect(queue.modified).to.eql(false);
+    });
+  });
 });

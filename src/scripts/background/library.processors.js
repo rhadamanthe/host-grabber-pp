@@ -21,7 +21,8 @@ const ProcessorStatus = {
   DL_SUCCESS: 4,
   DL_FAILURE: 5,
   RETRIEVING_LINKS_FAILURE: 6,
-  RETRIEVING_LINKS_DONE: 7
+  RETRIEVING_LINKS_DONE: 7,
+  NO_LINK_FOUND: 8
 };
 
 const DlStatus = {
@@ -133,63 +134,51 @@ function findExtractionMethod(searchPattern) {
  * Handles a processor to retrieve download links.
  * @param {object} processor The processor.
  * @param {object} extractor The extractor object, with methods to find download links in a HTML page.
- * @param {object} processingQueue The processing queue, to reschedule an item.
+ * @param {object} queue The queue, to process another item.
+ * @param {function} startDownloadFn The function to start downloading some file.
+ * @param {function} updateProcessorInDownloadView The function to update the view.
  * @returns {undefined}
  */
-function handleProcessor(processor, extractor, processingQueue) {
+function handleProcessor(processor, extractor, queue, startDownloadFn, updateProcessorInDownloadView) {
 
-  var links = null;
   if (ExtMethods.SELF.id === processor.extMethod) {
-    links = extractor.self(processor.matchingUrl);
+    var links = extractor.self(processor.matchingUrl);
+    onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView);
 
   } else if (ExtMethods.REPLACE.id === processor.extMethod) {
     var match = ExtMethods.REPLACE.pattern.exec(processor.searchPattern);
-    links = extractor.replace(processor.matchingUrl, match[1].trim(), match[2].trim());
+    var links = extractor.replace(processor.matchingUrl, match[1].trim(), match[2].trim());
     ExtMethods.REPLACE.pattern.lastIndex = 0;
+    onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView);
 
   } else if (! processor.xmlDoc && processor.status === ProcessorStatus.WAITING) {
     processor.status = ProcessorStatus.RETRIEVING_LINKS;
     loadRemoteDocument(processor.matchingUrl).then( function(xmlDoc) {
-      // Store the document and resubmit the processor
-      processor.xmlDoc = xmlDoc;
       processor.status = ProcessorStatus.RETRIEVING_LINKS_DONE;
-      processingQueue.append(processor);
+      var links = processDocument(processor, xmlDoc, extractor);
+      onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView);
 
     }, function() {
       processor.status = ProcessorStatus.RETRIEVING_LINKS_FAILURE;
+      queue.processNextItem();
     });
-
-  } else if (processor.status === ProcessorStatus.RETRIEVING_LINKS) {
-    // We are already downloading the document, try again in 2 seconds
-    setTimeout( function() {
-      processingQueue.append(processor);
-    }, 2000);
-
-  } else if (!! processor.xmlDoc ) {
-
-    if (ExtMethods.CLASS.id === processor.extMethod) {
-      var match = ExtMethods.CLASS.pattern.exec(processor.searchPattern);
-      links = extractor.xpath(processor.xmlDoc, '//img[@class=\'' + match[1].trim() + '\']/@src');
-      ExtMethods.CLASS.pattern.lastIndex = 0;
-
-    } else if (ExtMethods.ID.id === processor.extMethod) {
-      var match = ExtMethods.ID.pattern.exec(processor.searchPattern);
-      links = extractor.xpath(processor.xmlDoc, '//img[@id=\'' + match[1].trim() + '\']/@src');
-      ExtMethods.ID.pattern.lastIndex = 0;
-
-    } else if (ExtMethods.XPATH.id === processor.extMethod) {
-      var match = ExtMethods.XPATH.pattern.exec(processor.searchPattern);
-      links = extractor.xpath(processor.xmlDoc, match[1].trim());
-      ExtMethods.XPATH.pattern.lastIndex = 0;
-
-    } else if (ExtMethods.EXPREG.id === processor.extMethod) {
-      var match = ExtMethods.EXPREG.pattern.exec(processor.searchPattern);
-      links = extractor.expreg(processor.xmlDoc, match[1].trim());
-      ExtMethods.EXPREG.pattern.lastIndex = 0;
-    }
   }
+}
 
-  if (!! links) {
+
+/**
+ * Performs what is necessary when links were found (synchronously or asynchronously).
+ * @param {object} processor The Processor to associated with the links.
+ * @param {object} links The found links.
+ * @param {object} queue The queue, to process the next item if no link was found.
+ * @param {function} startDownloadFn The function that triggers the real download action.
+ * @param {function} updateProcessorInDownloadView The function that updates the download view when links were found.
+ * @returns {undefined}
+ */
+function onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView) {
+
+  // If we have links, let things go on
+  if (!! links && links.length > 0) {
     links.forEach( function(link) {
       processor.downloadLinks.push({
         link: link,
@@ -197,6 +186,54 @@ function handleProcessor(processor, extractor, processingQueue) {
       });
     });
 
+    // Show the links
+    updateProcessorInDownloadView(processor);
+
+    // Start downloading
     processor.status = ProcessorStatus.GOT_LINKS;
+    processor.downloadLinks.forEach(function(dlLink) {
+      startDownloadFn(dlLink, processor);
+    });
   }
+
+  // Otherwise, process the next item in the queue
+  else {
+    processor.status = ProcessorStatus.NO_LINK_FOUND;
+    queue.processNextItem();
+  }
+}
+
+
+/**
+ * Processes a downloaded document (asynchronous search of links).
+ * @param {object} processor The processor.
+ * @param {object} xmlDoc The XML / HTML document that was downloaded.
+ * @param {object} extractor The extractor.
+ * @returns {array} The found links (can be empty).
+ */
+function processDocument(processor, xmlDoc, extractor) {
+
+  var links = [];
+  if (ExtMethods.CLASS.id === processor.extMethod) {
+    var match = ExtMethods.CLASS.pattern.exec(processor.searchPattern);
+    links = extractor.xpath(xmlDoc, '//img[@class=\'' + match[1].trim() + '\']/@src');
+    ExtMethods.CLASS.pattern.lastIndex = 0;
+
+  } else if (ExtMethods.ID.id === processor.extMethod) {
+    var match = ExtMethods.ID.pattern.exec(processor.searchPattern);
+    links = extractor.xpath(xmlDoc, '//img[@id=\'' + match[1].trim() + '\']/@src');
+    ExtMethods.ID.pattern.lastIndex = 0;
+
+  } else if (ExtMethods.XPATH.id === processor.extMethod) {
+    var match = ExtMethods.XPATH.pattern.exec(processor.searchPattern);
+    links = extractor.xpath(xmlDoc, match[1].trim());
+    ExtMethods.XPATH.pattern.lastIndex = 0;
+
+  } else if (ExtMethods.EXPREG.id === processor.extMethod) {
+    var match = ExtMethods.EXPREG.pattern.exec(processor.searchPattern);
+    links = extractor.expreg(xmlDoc, match[1].trim());
+    ExtMethods.EXPREG.pattern.lastIndex = 0;
+  }
+
+  return links;
 }

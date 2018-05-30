@@ -27,6 +27,9 @@ extension, but unlike it, it is not restricted to downloading images.
 **Short-term**
 
 * Make the **options** page more beautiful.
+* Add a command to purge downloads.
+* Add a command to retry a failed download.
+* Add a redirection mechanism (e.g. for PixHost).
 * Add a menu to display the download links without downloading them (download simulation).
 * Add a panel to test URL and search patterns on the current tab.
 * Add a way to manage a dictionary locally (add, remove, enable, disable rules).

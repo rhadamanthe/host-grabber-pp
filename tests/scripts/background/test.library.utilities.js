@@ -2,7 +2,6 @@
 
 describe('background => library.utilities', function() {
 
-
   it('should fix relative links correctly', function(done) {
 
     expect(fixRelativeLinks('http://toto.fr/test.jpg', 'http://origin.com/path/to/current/page')).to.eql('http://toto.fr/test.jpg');
@@ -30,6 +29,7 @@ describe('background => library.utilities', function() {
     expect(fixUrlPattern('http://origin.com/test.jpg$')).to.eql('(http://origin.com/test.jpg)');
     expect(fixUrlPattern('(http://origin.com/test.jpg)')).to.eql('(http://origin.com/test.jpg)');
     expect(fixUrlPattern('http://(www.)?origin.com/test.jpg')).to.eql('(http://(www.)?origin.com/test.jpg)');
+    expect(fixUrlPattern('http://origin.com/[^&lt;&gt;&amp;"]+.jpg')).to.eql('(http://origin.com/[^<>&"]+.jpg)');
     done();
   });
 
@@ -58,6 +58,28 @@ describe('background => library.utilities', function() {
     // Test resources are served by Karma
     return loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml').then( function(xmlDoc) {
       expect(xmlDoc.documentElement.tagName).to.eql('root');
+    });
+  });
+
+
+  // No "done "callback for this test.
+  // Instead, we return a promise. If it fails, it will fail the test.
+  it('should load remote documents, even when forcing the MIME type', function() {
+
+    // Test resources are served by Karma
+    return loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml', 'text/xml').then( function(xmlDoc) {
+      expect(xmlDoc.documentElement.tagName).to.eql('root');
+    });
+  });
+
+
+  // No "done "callback for this test.
+  // Instead, we return a promise. If it fails, it will fail the test.
+  it('should load remote XML documents (but still valid HTML ones)', function() {
+
+    // Test resources are served by Karma
+    return loadRemoteDocument('http://localhost:9876/base/tests/resources/invalid-xml.html').then( function(xmlDoc) {
+      expect(xmlDoc.documentElement.tagName.toLowerCase()).to.eql('html');
     });
   });
 
