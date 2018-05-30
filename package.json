@@ -7,7 +7,7 @@
     "test:debug": "karma start --no-single-run --auto-watch",
     "lint": "eslint . && web-ext lint --ignore-files \"coverage/**/*\" --ignore-files \"docs/**/*\"",
     "web-ext": "web-ext run --browser-console",
-    "build": "web-ext build --ignore-files \"tests/**/*\""
+    "build": "web-ext build --ignore-files tests coverage docs karma.conf.js package*.json readme.md"
   },
   "author": "Rhadamanthe",
   "license": "MPL-2.0",

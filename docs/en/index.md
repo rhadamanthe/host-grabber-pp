@@ -19,7 +19,11 @@ options that existed before.
 
 ## Screenshots
 
-*Later*
+> The project is still in **alpha** version.
+
+<img src="../assets/images/dl-view-1.jpg" alt="The download view" />
+
+<img src="../assets/images/dl-view-2.jpg" alt="The menu" />
 
 
 ## Installation

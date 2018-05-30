@@ -18,7 +18,11 @@ avec quelques différences:
 
 ## Captures d'Écran
 
-*Plus tard*
+> Le projet est en version **alpha**.
+
+<img src="../assets/images/dl-view-1.jpg" alt="La vue des téléchargements" />
+
+<img src="../assets/images/dl-view-2.jpg" alt="Le menu contextuel" />
 
 
 ## Installation
@@ -42,7 +46,7 @@ L'analyse effectuée s'appuie sur un catalogue qui précise comment trouver les 
 Le catalogue par défaut est hébergée [ici](https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml).  
 Vous pouvez définir le vôtre et le référencer dans les préférences de l'extension..
 
-*Ajouter des détails ici*.
+*De plus amples détails seront ajoutés plus tard*.
 
 
 ## Remarque
