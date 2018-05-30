@@ -28,7 +28,7 @@ options that existed before.
 
 ## Installation
 
-*The web extension is not yet available on addons.mozilla.org.*
+You can install it from [addons.mozilla.org](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/).
 
 
 ## Usage
@@ -76,5 +76,5 @@ For the extension itself, you can submit them [here](https://github.com/rhadaman
 ## Links
 
 * [Source code](https://github.com/rhadamanthe/host-grabber-pp)
-* Download: soon
+* Download from [addons.mozilla.org](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/)
 * Original **hosts.xml** file on [Github](https://github.com/rhadamanthe/host-grabber-pp-host.xml/blob/master/hosts.xml)

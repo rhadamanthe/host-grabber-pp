@@ -27,7 +27,7 @@ avec quelques différences:
 
 ## Installation
 
-*Cette extension n'est pas encore disponible sur addons.mozilla.org.*
+Vous pouvez installer cette extension depuis [addons.mozilla.org](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/).
 
 
 ## Utilisation
@@ -75,5 +75,5 @@ Les bugs et demandes d'évolution pour l'extension elle-même, peuvent être rep
 ## Liens
 
 * [Code source](https://github.com/rhadamanthe/host-grabber-pp)
-* Téléchargement : bientôt
+* Téléchargement depuis [addons.mozilla.org](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/)
 * Fichier **hosts.xml** original [sur Github](https://github.com/rhadamanthe/host-grabber-pp-host.xml/blob/master/hosts.xml)
