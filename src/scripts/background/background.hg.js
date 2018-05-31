@@ -93,20 +93,33 @@ function reloadDictionary() {
 
 
 /**
- * Shows the download list in a new tab.
+ * Shows the download list.
  * @returns {undefined}
  */
 function showDownloadsList() {
 
   browser.tabs.query({ title: 'HG ++' }).then( function(tabs) {
     if (tabs.length === 0) {
-      browser.tabs.create({url: '/src/html/download-list.html'});
+      openDownloadsList();
     } else {
       browser.tabs.update(tabs[0].id, {active: true});
     }
+  });
+}
 
-  }, function() {
-    browser.tabs.create({url: '/src/html/download-list.html'});
+
+/**
+ * Opens the download list.
+ * @returns {undefined}
+ */
+function openDownloadsList() {
+
+  // Open it next to the current tab
+  browser.tabs.query({active: true}).then( function(tabs) {
+    browser.tabs.create({
+      openerTabId: tabs[0].id,
+      url: '/src/html/download-list.html'
+    });
   });
 }
 
