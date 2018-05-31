@@ -16,13 +16,10 @@ body {
 	font-size: 1.1em;
 }
 
-p {
-	padding: 4px 0;
-}
-
 .dlLink {
-	padding-left: 40px;
+	margin-left: 17px;
 	cursor: default;
+	font-size: 24px;
 }
 
 .success {
@@ -37,67 +34,114 @@ p {
 	border-radius: 8px;
 }
 
+.mixed {
+	background-color: orange;
+	color: #fff;
+	border-radius: 8px;
+}
+
 .waiting {
 	background-color: #FFD700;
 	color: #fff;
 	border-radius: 8px;
 }
 
-table {
-	width: 100%;
-	border-collapse: collapse;
+.col1 {
+	width: 70%;
+	display: inline-block;
+	height: 18px;
 }
 
-th {
-	font-weight: bold;
-	font-size: 18px;
-	padding: 5px 10px;
-	border: solid black 1px;
+.col2 {
+	width: 27%;
+	display: inline-block;
+	height: 18px;
 }
 
-td:nth-child(even) {
-	width: 20%;
-}
-
-td:nth-child(odd) {
-	width: 80%;
-}
-
-td, th {
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-
-tbody {
-	padding-top: 10px;
-}
-
-tbody > tr:nth-child(1) {
-	background-color: #F5F5F5;
-}
-
-td {
-	padding: 5px 10px;
-}
-
-td > img {
+.col1 > img {
+	margin-right: 8px;
 	height: 14px;
-	margin-right: 10px;
+}
+
+/* Collapsable items                         */
+/* See https://alligator.io/css/collapsible/ */
+
+input[type='checkbox'] {
+  display: none;
+}
+
+.lbl-toggle {
+  font-weight: bold;
+  font-family: monospace;
+  font-size: 24px;
+  padding: 8px;
+  border-radius: 7px;
+  transition: all 0.25s ease-out;
+}
+
+.lbl-toggle:hover {
+  color: #7C5A0B;
+}
+
+.lbl-toggle::before {
+  content: ' ';
+  display: inline-block;
+
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid currentColor;
+
+  vertical-align: middle;
+  margin-right: .7rem;
+  transform: translateY(-2px);
+  transition: transform .2s ease-out;
+}
+
+.collapsible-content .content-inner {
+  border-bottom: 1px solid rgba(250, 224, 66, .45);
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+  margin: 9px 0 7px;
+}
+
+.collapsible-content {
+  max-height: 0px;
+  overflow: hidden;
+  transition: max-height .25s ease-in-out;
+}
+
+.toggle:checked + .lbl-toggle + .col2 + .collapsible-content {
+  max-height: 350px;
+}
+
+.toggle:checked + .lbl-toggle::before {
+  transform: rotate(90deg) translateX(-3px);
+}
+
+.toggle:checked + .lbl-toggle {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.title {
+	font-weight: bold;
+	font-size: 24px;
+	padding: 10px 10px 18px;
+	border: solid black 1px;
+	margin-bottom: 15px;
+	text-align: center;
 }
 
 	</style>
 </head>
 
 <body>
-	<table id="items">
-		<tr>
-			<th>Download Link</th>
-			<th>Status</th>
-		</tr>
-	</table>
+	<div class="col1 title">Elements to Explore / Download</div>
+	<div class="col2 title">Status</div>
+	<div id="items"></div>
 
 	<!-- script src="../scripts/lib/bind.min.js"></script  -->
+	<script src="../scripts/library.list.js"></script>
 	<script src="../scripts/list.js"></script>
 </body>
 

@@ -91,6 +91,10 @@ function updateProcessor(processor) {
     p.downloadLinks = processor.downloadLinks;
     // FIXME: save?
 
+    // Update the processor's status
+    var pStatus = document.getElementById(processor.id + '-status');
+    pStatus.className = findClassNameFromProcessor(processor) + ' col2';
+
     // Update the view
     p.downloadLinks.forEach( function(dlLink) {
       var id = buildDLId(processor, dlLink);
@@ -98,9 +102,9 @@ function updateProcessor(processor) {
       // Status and download links
       var item = document.getElementById(id + '-status');
       if (!! item) {
-        item.className = findClassNameFromStatus(dlLink);
+        item.className = findClassNameFromStatus(dlLink) + ' col2';
       } else {
-        displayNewLink(processor, dlLink, id);
+        displayNewLink(processor.id, dlLink, id);
       }
 
       // If the item was downloaded, update the link in the view
@@ -127,21 +131,40 @@ function displayNewProcessors(processors) {
 
     // Create new elements
     var items = document.getElementById('items');
-    var tBody = document.createElement('tbody');
-    tBody.id = processor.id;
-    items.appendChild(tBody);
+    var collapsible = document.createElement('div');
+    collapsible.id = processor.id;
+    collapsible.className = 'wrap-collabsible';
+    items.appendChild(collapsible);
 
-    var tr = document.createElement('tr');
-    tBody.appendChild(tr);
+    var input = document.createElement('input');
+    input.id = processor.id + '-collapsible';
+    input.className = 'toggle';
+    input.type = 'checkbox';
+    collapsible.appendChild(input);
 
-    var td = document.createElement('td');
-    td.colspan = 2;
-    td.textContent = processor.matchingUrl;
-    tr.appendChild(td);
+    var label = document.createElement('label');
+    label.htmlFor = processor.id + '-collapsible';
+    label.className = 'lbl-toggle col1';
+    label.textContent = processor.matchingUrl;
+    collapsible.appendChild(label);
+
+    var p = document.createElement('p');
+    p.className = findClassNameFromProcessor(processor) + ' col2';
+    p.id = processor.id + '-status';
+    collapsible.appendChild(p);
+
+    var subC1 = document.createElement('div');
+    subC1.className = 'collapsible-content';
+    collapsible.appendChild(subC1);
+
+    var subC2 = document.createElement('div');
+    subC2.className = 'content-inner';
+    subC2.id = processor.id + '-inner';
+    subC1.appendChild(subC2);
 
     processor.downloadLinks.forEach( function(dlLink) {
       var id = buildDLId(processor, dlLink);
-      displayNewLink(processor, dlLink, id);
+      displayNewLink(processor.id, dlLink, id);
     });
   });
 }
@@ -149,32 +172,29 @@ function displayNewProcessors(processors) {
 
 /**
  * Displays a new link.
- * @param {object} processor The processor that owns the link.
+ * @param {string} processorId The processor ID.
  * @param {object} dlLink The download link object.
  * @param {string} id The base ID for this link.
  * @returns {undefined}
  */
-function displayNewLink(processor, dlLink, id) {
+function displayNewLink(processorId, dlLink, id) {
 
   // Update the DOM
-  var tBody = document.getElementById(processor.id);
-  var tr = document.createElement('tr');
-  tBody.appendChild(tr);
+  var innerContentDiv = document.getElementById(processorId + '-inner');
+  var p = document.createElement('p');
+  p.className = 'dlLink col1';
+  p.id = id + '-link';
+  p.textContent = dlLink.link;
+  innerContentDiv.appendChild(p);
 
-  var td = document.createElement('td');
-  td.textContent = dlLink.link;
-  td.className = 'dlLink';
-  td.id = id + '-link';
-  tr.appendChild(td);
-
-  td = document.createElement('td');
-  td.id = id + '-status';
-  td.className = findClassNameFromStatus(dlLink);
-  tr.appendChild(td);
+  p = document.createElement('p');
+  p.className = findClassNameFromStatus(dlLink) + ' col2';
+  p.id = id + '-status';
+  innerContentDiv.appendChild(p);
 
   // Update the view with download information
   updateDownloadLinkInView(dlLink, id);
-  
+
   // Scroll down if necessary
   window.scrollTo(0, document.body.scrollHeight);
 }
@@ -225,34 +245,3 @@ function openDownloadedItem(dlLink) {
     browser.downloads.open(dlLink.downloadItemId);
   }
 }
-
-
-/**
- * Builds the base ID for a download link.
- * @param {object} processor The processor that holds this link.
- * @param {object} dlLink A download link object.
- * @returns {string} A base ID.
- */
-function buildDLId(processor, dlLink) {
-  var index = processor.downloadLinks.indexOf(dlLink);
-  return processor.id + '-' + index;
-}
-
-
-/**
- * Finds the class name from the status of a download link.
- * @param {object} dlLink A download link.
- * @returns {string} A CSS class name.
- */
-function findClassNameFromStatus(dlLink) {
-
-  var result = '';
-  switch(dlLink.status) {
-  case /*DlStatus.FAILURE*/ 3: result = 'failure'; break;
-  case /*DlStatus.SUCCESS*/ 2: result = 'success'; break;
-  case /*DlStatus.WAITING*/ 1: result = 'waiting'; break;
-  }
-
-  return result;
-}
-
