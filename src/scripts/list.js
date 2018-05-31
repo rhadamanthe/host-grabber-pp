@@ -16,6 +16,12 @@ var allProcessors = new Map();
 loadProcessors();
 
 
+/* Callbacks */
+
+
+document.getElementById('remove-completed').onclick = removeCompleted;
+
+
 /* React to messages */
 
 
@@ -244,4 +250,37 @@ function openDownloadedItem(dlLink) {
   if (!! dlLink.downloadItemId) {
     browser.downloads.open(dlLink.downloadItemId);
   }
+}
+
+
+/**
+ * Removes a processor from both the view and the model.
+ * @param {object} processor A processor.
+ * @returns {undefined}
+ */
+function removeProcessor(processor) {
+
+  // Remove from the view
+  var item = document.getElementById(processor.id);
+  if (!! item) {
+    item.parentNode.removeChild(item);
+  }
+
+  // Remove from the model
+  allProcessors.delete(processor.id);
+  browser.runtime.sendMessage({req: 'remove-processor', obj: processor.id});
+}
+
+
+/**
+ * Removes all the processors whose downloads have successfully completed.
+ * @returns {undefined}
+ */
+function removeCompleted() {
+
+  allProcessors.forEach( function(processor, processorId) {
+    if (findClassNameFromProcessor(processor) === 'success') {
+      removeProcessor(processor);
+    }
+  });
 }

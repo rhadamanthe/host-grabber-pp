@@ -132,6 +132,31 @@ input[type='checkbox'] {
 	text-align: center;
 }
 
+/* Controls bar */
+
+#controls {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 60px;
+	border-top: solid black 4px;
+	padding: 8px 40px;
+}
+
+button {
+	background-color: #333;
+    border: none;
+    color: white;
+    padding: 10px 32px;
+    text-align: center;
+    font-weight: bold;
+    display: inline-block;
+    font-size: 20px;
+	border-radius: 6px;
+	margin-top: 6px;
+}
+
 	</style>
 </head>
 
@@ -139,6 +164,10 @@ input[type='checkbox'] {
 	<div class="col1 title">Elements to Explore / Download</div>
 	<div class="col2 title">Status</div>
 	<div id="items"></div>
+
+	<div id="controls">
+		<button id="remove-completed">Clear Complete Downloads</button>
+	</div>
 
 	<!-- script src="../scripts/lib/bind.min.js"></script  -->
 	<script src="../scripts/library.list.js"></script>

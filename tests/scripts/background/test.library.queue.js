@@ -1,19 +1,20 @@
 'use strict';
 
 describe('background => library.queue', function() {
+  var callbackInvoked = false;
+
+  /**
+   * A mock function.
+   * @param {object} processor A processor.
+   * @returns {undefined}
+   */
+  function handleProcessorTestFn(processor) {
+    callbackInvoked = true;
+  }
+
 
   it('should store elements correctly', function(done) {
-
-    // Setup
-    var pickedUpProcessors = [];
-
-    /**
-     * @param {object} processor The processor.
-     * @returns {undefined}
-     */
-    function handleProcessorTestFn(processor) {
-      pickedUpProcessors.push(processor);
-    }
+    callbackInvoked = false;
 
     // Create the queue
     var queue = newQueue(handleProcessorTestFn);
@@ -22,33 +23,24 @@ describe('background => library.queue', function() {
     expect(queue.processingQueue.length).to.eql(0);
 
     // Submit some stuff
-    var p1 = {downloadLinks: [], id: 1};
-    var p2 = {downloadLinks: [], id: 2};
-    var p3 = {downloadLinks: [], id: 3};
-
-    queue.append(p1);
-    queue.append(p2);
-    queue.append(p3);
+    queue.append({downloadLinks: [], id: 1});
+    queue.append({downloadLinks: [], id: 2});
+    queue.append({downloadLinks: [], id: 3});
     expect(queue.processingQueue.length).to.eql(3);
+    expect(callbackInvoked).to.eql(false);
 
     // Wait one second and check the content, again
     setTimeout(function() {
       expect(queue.processingQueue.length).to.eql(3);
       done();
     }, 1000);
+
+    expect(callbackInvoked).to.eql(false);
   });
 
 
   it('should process items', function(done) {
-
-    /**
-     * @param {object} processor The processor.
-     * @returns {undefined}
-     */
-    function handleProcessorTestFn(processor) {
-      processor.downloadLinks.push('');
-      processor.downloadLinks.push('');
-    }
+    callbackInvoked = false;
 
     // Create the queue
     var queue = newQueue(handleProcessorTestFn);
@@ -59,25 +51,51 @@ describe('background => library.queue', function() {
     // Process an empty queue works
     queue.processNextItem();
     expect(queue.processingQueue.length).to.eql(0);
+    expect(callbackInvoked).to.eql(false);
 
     // Submit some stuff
-    var p1 = {downloadLinks: [], id: 1};
-    var p2 = {downloadLinks: [], id: 2};
-    var p3 = {downloadLinks: [], id: 3};
+    queue.append({downloadLinks: [], id: 1});
+    queue.append({downloadLinks: [], id: 2});
 
-    queue.append(p1);
-    queue.append(p2);
+    var p3 = {downloadLinks: [], id: 3};
     queue.append(p3);
+
     expect(queue.processingQueue.length).to.eql(3);
-    expect(queue.processingHistory.length).to.eql(3);
+    expect(queue.processingHistory.size).to.eql(3);
 
     queue.processNextItem();
     expect(queue.processingQueue.length).to.eql(2);
+    expect(callbackInvoked).to.eql(true);
 
     queue.processNextItem();
     expect(queue.processingQueue.length).to.eql(1);
-    expect(queue.processingHistory.length).to.eql(3);
+    expect(queue.processingHistory.size).to.eql(3);
     expect(queue.processingQueue[0]).to.eql(p3);
+    done();
+  });
+
+
+  it('should remove items from the history', function(done) {
+
+    var queue = newQueue(handleProcessorTestFn);
+    queue.append({downloadLinks: [], id: 1});
+    queue.append({downloadLinks: [], id: 2});
+    queue.append({downloadLinks: [], id: 3});
+    expect(queue.processingQueue.length).to.eql(3);
+    expect(queue.processingHistory.size).to.eql(3);
+
+    queue.remove(2);
+    expect(queue.processingQueue.length).to.eql(2);
+    expect(queue.processingHistory.size).to.eql(2);
+
+    queue.remove(4);
+    expect(queue.processingQueue.length).to.eql(2);
+    expect(queue.processingHistory.size).to.eql(2);
+
+    queue.remove(1);
+    queue.remove(3);
+    expect(queue.processingQueue.length).to.eql(0);
+    expect(queue.processingHistory.size).to.eql(0);
     done();
   });
 });

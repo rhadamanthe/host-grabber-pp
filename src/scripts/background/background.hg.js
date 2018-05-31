@@ -57,7 +57,11 @@ browser.runtime.onMessage.addListener(request => {
     reloadDictionary();
 
   } else if (request.req === 'get-processors') {
-    sendProcessorsToDownloadView(queue.processingHistory);
+    var history = Array.from(queue.processingHistory.values());
+    sendProcessorsToDownloadView(history);
+
+  } else if (request.req === 'remove-processor') {
+    queue.remove(request.obj);
   }
 });
 
@@ -65,7 +69,6 @@ browser.runtime.onMessage.addListener(request => {
 // ... or when the extension is installed or updated.
 browser.runtime.onStartup.addListener(reloadDictionary);
 browser.runtime.onInstalled.addListener(reloadDictionary);
-
 
 
 

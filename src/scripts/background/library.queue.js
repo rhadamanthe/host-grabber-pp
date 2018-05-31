@@ -1,6 +1,5 @@
 'use strict';
 
-
 /**
  * Creates a new processing queue.
  * @param {function} handleProcessorFn The function to handle a processor when it is picked up in the queue.
@@ -10,9 +9,10 @@ function newQueue(handleProcessorFn) {
 
   var queue = {
     processingQueue: [],
-    processingHistory: [],
+    processingHistory: new Map(),
     append: append,
-    processNextItem: processNextItem
+    processNextItem: processNextItem,
+    remove: remove
   };
 
 
@@ -23,7 +23,23 @@ function newQueue(handleProcessorFn) {
    */
   function append(processor) {
     queue.processingQueue.push(processor);
-    queue.processingHistory.push(processor);
+    queue.processingHistory.set(processor.id, processor);
+  }
+
+
+  /**
+   * Removes a processor from the processing queue and history.
+   * @param {string} processorId The processor ID.
+   * @returns {undefined}
+   */
+  function remove(processorId) {
+    var processor = queue.processingHistory.get(processorId);
+    queue.processingHistory.delete(processorId);
+
+    var index = queue.processingQueue.indexOf(processor);
+    if (index > -1) {
+      queue.processingQueue.splice(index, 1);
+    }
   }
 
 
