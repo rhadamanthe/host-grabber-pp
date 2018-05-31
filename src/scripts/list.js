@@ -174,6 +174,9 @@ function displayNewLink(processor, dlLink, id) {
 
   // Update the view with download information
   updateDownloadLinkInView(dlLink, id);
+  
+  // Scroll down if necessary
+  window.scrollTo(0, document.body.scrollHeight);
 }
 
 
