@@ -79,6 +79,32 @@ Cependant, voici un exemple pour trouver les pages hébergées par *mon-hebergeu
 ```
 
 
+## Redirection
+
+Il peut arriver que certains hébergeurs changent de nom de domaine.  
+C'est assez rare, mais c'est pourtant ce qui est arrivé à PixHost. Jusqu'à
+fin 2017, ce site utilisait le domaine **pixhost.org**. Depuis 2018, il a perdu ce nom
+de domaine et a dû basculer sur **pixhost.to**. Host Grabber ++ propose un mécanisme pour
+rediriger les références du « .org » vers le « .to ».
+
+Voici un exemple...  
+Quand un lien est trouvé et qui pointe vers pixhost.to, l'extension ira sur la bonne
+page mais sur le domaine pixhost.org. Cette redirection est effectuée avant l'application du
+modèle de recherche. Cela fonctionne donc avec toutes les stratégies décrites plus bas.
+
+```xml
+<host id="pixhost-org">
+	<urlpattern>https?://pixhost\.org/show/[^&lt;&gt;"]+</urlpattern>
+	<redirect-from>pixhost.org/</redirect-from>
+	<redirect-to>pixhost.to/</redirect-to>
+	<searchpattern>ID: image</searchpattern>
+</host>
+```
+
+Le remplacement est textuel.  
+Pas d'expression régulière dans les éléments **redirect-from** et **redirect-to**.
+
+
 ## Modèle de Recherche
 
 Le modèle d'URL permet de trouver quoi explorer.    

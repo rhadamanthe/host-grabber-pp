@@ -77,4 +77,6 @@ For the extension itself, you can submit them [here](https://github.com/rhadaman
 
 * [Source code](https://github.com/rhadamanthe/host-grabber-pp)
 * Download from [addons.mozilla.org](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/)
+* [Release notes](https://github.com/rhadamanthe/host-grabber-pp/releases)
+* Chat on [Gitter](https://gitter.im/host-grabber-pp/Lobby)
 * Original **hosts.xml** file on [Github](https://github.com/rhadamanthe/host-grabber-pp-host.xml/blob/master/hosts.xml)

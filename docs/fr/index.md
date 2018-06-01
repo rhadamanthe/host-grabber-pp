@@ -76,4 +76,6 @@ Les bugs et demandes d'évolution pour l'extension elle-même, peuvent être rep
 
 * [Code source](https://github.com/rhadamanthe/host-grabber-pp)
 * Téléchargement depuis [addons.mozilla.org](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/)
+* [Notes de livraisons](https://github.com/rhadamanthe/host-grabber-pp/releases)
+* Salon de discussion sur [Gitter](https://gitter.im/host-grabber-pp/Lobby)
 * Fichier **hosts.xml** original [sur Github](https://github.com/rhadamanthe/host-grabber-pp-host.xml/blob/master/hosts.xml)

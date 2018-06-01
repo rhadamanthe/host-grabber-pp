@@ -16,4 +16,23 @@
 	<searchpattern>self</searchpattern>
 </host>
 
+<host id="host1">
+	<urlpattern>^(http://host1\.com/[^"&lt;&gt;]+\.(jpg|png|gif))$</urlpattern>
+	<redirect-from>host1</redirect-from>
+	<redirect-to>host_1</redirect-to>
+	<searchpattern>self</searchpattern>
+</host>
+
+<host id="host2">
+	<urlpattern>^(http://host2\.com/[^"&lt;&gt;]+\.(jpg|png|gif))$</urlpattern>
+	<redirect-from>host_2</redirect-from>
+	<searchpattern>self</searchpattern>
+</host>
+
+<host id="host3">
+	<urlpattern>^(http://host3\.com/[^"&lt;&gt;]+\.(jpg|png|gif))$</urlpattern>
+	<redirect-to>host_3</redirect-to>
+	<searchpattern>self</searchpattern>
+</host>
+
 </root>

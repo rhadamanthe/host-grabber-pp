@@ -78,6 +78,32 @@ However, here is an example of URL pattern to find pages hosted by *my-image-hos
 ```
 
 
+## Redirections
+
+Web sites might change their domain address.  
+This is very rare. And still it is what happened to PixHost. It used
+to be reachable to **pixhost.org**. At the beginning of 2018, it losts its
+domain and had to adopt **pixhost.to**. Host Grabber ++ provides a mechanism 
+to redirect references from the « .org » to the « .to ».
+
+Here is an example...  
+When it finds a link that points to pixhost.to, it will inspect the right page
+but on pixhost.org. This redirection is performed before the search pattern is applied.
+Which means it works with all the strategies described below.
+
+```xml
+<host id="pixhost-org">
+	<urlpattern>https?://pixhost\.org/show/[^&lt;&gt;"]+</urlpattern>
+	<redirect-from>pixhost.org/</redirect-from>
+	<redirect-to>pixhost.to/</redirect-to>
+	<searchpattern>ID: image</searchpattern>
+</host>
+```
+
+Replacement is done textually.  
+Regular expressions are not available with **redirect-from** and **redirect-to**.
+
+
 ## Search Patterns
 
 The URL pattern allows to find what to explore.  

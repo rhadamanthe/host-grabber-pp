@@ -58,6 +58,12 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
     for (var i = 0; i < tags.length; i++) {
 
       // Verify the dictionary item
+      var tmpRedirect = tags[i].getElementsByTagName('redirect-from');
+      var optionalRedirectFrom = tmpRedirect.length === 0 ? '' : tmpRedirect[0].innerHTML.trim();
+
+      tmpRedirect = tags[i].getElementsByTagName('redirect-to');
+      var optionalRedirectTo = tmpRedirect.length === 0 ? '' : tmpRedirect[0].innerHTML.trim();
+
       var urlpatterns = tags[i].getElementsByTagName('urlpattern');
       if(urlpatterns.length < 1 ) {
         console.log('Expected an URL pattern for ' + tags[i].id);
@@ -78,6 +84,10 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
 
       for (var match = regexp.exec(source); !! match; match = regexp.exec(source)) {
         var fixedLink = fixRelativeLinks(match[1], url);
+        if (!! optionalRedirectFrom && !! optionalRedirectTo) {
+          fixedLink = fixedLink.replace(optionalRedirectFrom, optionalRedirectTo);
+        }
+
         if (alreadyVisistedUrls.indexOf(fixedLink) !== -1 ) {
           continue;
         }

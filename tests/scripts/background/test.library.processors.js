@@ -57,6 +57,47 @@ describe('background => library.processors', function() {
   });
 
 
+  it('should find what to process (when there are redirections)', function() {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html><body>
+      <img src="http://bibi.com/path/to/this/image1.PNG" />
+      <img src="http://host1.com/another/path/to/this/image1.jpg" />
+      <img src="http://host2.com/another/path/to/this/image1.jpg" />
+      <img src="http://host1.com/another/path/to/this/image2.jpg" />
+      <img src="http://host3.com/path/to/this/image1.jpg" />
+    </body></html>
+    `;
+
+    // Test resources are served by Karma
+    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml');
+    return dictionaryP.then( function(dictionary) {
+
+      // Extract links
+      var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
+
+      // Verify we got them all.
+      // The only valid redirection is about host1. Others are not redirected.
+      expect(res.length).to.eql(5);
+
+      expect(res[0].matchingUrl).to.eql('http://bibi.com/path/to/this/image1.PNG');
+      expect(res[0].extMethod).to.eql(ExtMethods.SELF.id);
+
+      expect(res[1].matchingUrl).to.eql('http://host_1.com/another/path/to/this/image1.jpg');
+      expect(res[1].extMethod).to.eql(ExtMethods.SELF.id);
+
+      expect(res[2].matchingUrl).to.eql('http://host_1.com/another/path/to/this/image2.jpg');
+      expect(res[2].extMethod).to.eql(ExtMethods.SELF.id);
+
+      expect(res[3].matchingUrl).to.eql('http://host2.com/another/path/to/this/image1.jpg');
+      expect(res[3].extMethod).to.eql(ExtMethods.SELF.id);
+
+      expect(res[4].matchingUrl).to.eql('http://host3.com/path/to/this/image1.jpg');
+      expect(res[4].extMethod).to.eql(ExtMethods.SELF.id);
+    });
+  });
+
+
   it('should find what to process (with CDATA)', function() {
 
     var sourceDocument = document.implementation.createHTMLDocument('');
