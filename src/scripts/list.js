@@ -20,6 +20,7 @@ loadProcessors();
 
 
 document.getElementById('remove-completed').onclick = removeCompleted;
+document.getElementById('options').onclick = openOptionsPage;
 
 
 /* React to messages */
@@ -79,6 +80,23 @@ function loadProcessors() {
 
   // Eventually, retrieve the new ones
   browser.runtime.sendMessage({req: 'get-processors'});
+}
+
+
+/**
+ * Opens the options page.
+ * @returns {undefined}
+ */
+function openOptionsPage() {
+
+  // Open it next to the current tab
+  // (unlike browser.runtime.openOptionsPage())
+  browser.tabs.query({active: true}).then( function(tabs) {
+    browser.tabs.create({
+      openerTabId: tabs[0].id,
+      url: '/src/html/options.html'
+    });
+  });
 }
 
 

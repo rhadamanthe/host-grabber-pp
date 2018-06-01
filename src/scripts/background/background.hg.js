@@ -80,17 +80,33 @@ browser.runtime.onInstalled.addListener(reloadDictionary);
  */
 function reloadDictionary() {
 
-  var storageItem = browser.storage.local.get('hostUrl');
-  storageItem.then((res) => {
-    var url = res.hostUrl || 'https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml';
+  browser.storage.local.get('dictionaryUrl').then((res) => {
+    var url = res.dictionaryUrl || 'https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml';
     console.log('Loading dictionary from ' + url + '...');
     loadRemoteDocument(url, 'application/xml').then( function(downloadedDictionary) {
       dictionary = downloadedDictionary;
+      notifyDictionaryReload('ok');
 
     }, function(details) {
+      notifyDictionaryReload('ko');
       console.log('Dictionary could not be loaded from ' + url + '.');
       console.log(details);
     });
+  });
+}
+
+
+/**
+ * Notifies a dictionary reload to the options page (provided it is open).
+ * @param {string} status The status ('ok' or 'ko').
+ * @returns {undefined}
+ */
+function notifyDictionaryReload(status) {
+
+  browser.tabs.query({ title: 'Options - HG ++' }).then( function(tabs) {
+    if (tabs.length > 0) {
+      browser.tabs.sendMessage(tabs[0].id, {req: 'dictionary-reload-cb', status: status});
+    }
   });
 }
 

@@ -3,19 +3,147 @@
 <html>
 <head>
 	<meta charset="utf-8" />
+	<title>Options - HG ++</title>
+	<style type="text/css">
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	padding: 20px;
+	font-size: 1.1em;
+}
+
+legend {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+fieldset {
+	padding: 8px 20px 16px;
+	margin-top: 60px;
+}
+
+input[type=text] {
+	width: 98%;
+    padding: 6px 12px;
+    margin: 8px 0;
+    border: solid black 1px;
+}
+
+input[type=checkbox] {
+    margin-right: 6px;
+}
+
+.updated-ok {
+	background-color: green;
+	color: white;
+	font-weight: bold;
+}
+
+.updated-ko {
+	background-color: red;
+	color: white;
+	font-weight: bold;
+}
+
+#dictionary-url {
+	transition: background-color 2s ease-out;
+}
+
+input[type=number] {
+    margin-left: 6px;
+    width: 140px;
+    text-align: center;
+    padding: 2px 0;
+}
+
+form > label {
+	font-weight: bold;
+}
+
+button {
+	background-color: #333;
+    border: none;
+    color: white;
+    padding: 10px 32px;
+    text-align: center;
+    font-weight: bold;
+    display: inline-block;
+    font-size: 20px;
+	border-radius: 6px;
+	margin-top: 6px;
+}
+
+button {
+	float: right;
+	margin-right: 7px;
+}
+
+#options {
+	position: absolute;
+	left: 200px;
+	right: 10px;
+	top: 20px;
+}
+
+#logo {
+	position: fixed;
+}
+
+p.block {
+	display: inline-block;
+	margin-top: 12px;
+}
+
+p.warning {
+	font-style: italic;
+}
+
+	</style>
 </head>
 
 <body>
-	<form>
-		<textarea name="dictionaries" id="dictionaries"></textarea>
-	
-		<button>New Dictionary</button>
-		<button>Delete Dictionary</button>
-		<button>Load temporarily a local Dictionary</button>
-	
-		<input type="file" id="host-local" accept="xml/*" style="display: none" />
-		<button type="submit" id="save-btn">Save</button>
-	</form>
+	<img src="/icons/logo_x144.png" alt="Host Grabber ++" id="logo" />
+	<div id="options">
+		<form>
+			<label for="dictionary-url">Dictionary URL:</label><br />
+			<input name="dictionary-url" id="dictionary-url" type="text" />
+
+			<br />
+			<button type="button" id="reload-btn">Reload Dictionary</button>
+			<button type="button" id="restore-btn">Restore Default URL</button>
+			<button type="button" id="save-btn">Save Dictionary URL</button>
+
+			<br />
+			<fieldset>
+				<legend>Download Settings</legend>
+
+				<p class="block">
+				<input type="checkbox" name="dl-clear-completed" id="dl-clear-completed" />
+				<label for="dl-clear-completed">Automatically clear downloads that successfully completed</label>
+				</p>
+
+				<br />
+				<p class="block">
+				<label for="dl-max-parallel">Maximum number of parallel downloads</label>
+				<input type="number" name="dl-max-parallel" id="dl-max-parallel" />
+				</p>
+
+				<br />
+				<p class="block warning">
+				Notice that downloads are performed by Firefox.<br />Parallel downloads to a same server are
+				natively limited by Firefox (by default, at most 6 active connections). Please, visit
+				<a href="https://support.mozilla.org/fr/questions/992338">this link</a> for more details.
+				This setting allows to limit the number of downloads started by this extension. Other items will
+				then start after previous ones complete.
+				</p>
+			</fieldset>
+		</form>
+	</div>
+
 	<script src="../scripts/options.js"></script>
 </body>
 

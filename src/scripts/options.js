@@ -1,46 +1,80 @@
-
-/**
- * Saves the options.
- * @param {object} e The event.
- * @returns {undefined}
- */
-function saveOptions(e) {
-  browser.storage.local.set({
-    hostUrl: document.querySelector('#host-url').value
-  });
-
-  e.preventDefault();
-  browser.runtime.sendMessage({'req':'dictionary-update'});
-}
-
+// Restore stuff
+document.addEventListener('DOMContentLoaded', restoreOptions);
+const defaultUrl = 'https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml';
 
 /**
  * Loads the preferences.
  * @returns {undefined}
  */
 function restoreOptions() {
-  var storageItem = browser.storage.local.get('hostUrl');
-  storageItem.then((res) => {
-    document.querySelector('#host-url').value = res.hostUrl || 'https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml';
+
+  browser.storage.local.get('dictionaryUrl').then((res) => {
+    document.querySelector('#dictionary-url').value = res.dictionaryUrl || defaultUrl;
+  });
+
+  browser.storage.local.get('dlClearCompleted').then((res) => {
+    document.querySelector('#dl-clear-completed').checked = res.dlClearCompleted || false;
+  });
+
+  browser.storage.local.get('dlMaxParallel').then((res) => {
+    document.querySelector('#dl-max-parallel').value = res.dlMaxParallel || 3;
   });
 }
 
+// Save stuff
+document.querySelector('#dl-max-parallel').addEventListener('change', function() {
+  browser.storage.local.set({
+    dlMaxParallel: document.querySelector('#dl-max-parallel').value
+  });
+});
+
+document.querySelector('#dl-clear-completed').addEventListener('change', function() {
+  browser.storage.local.set({
+    dlClearCompleted: document.querySelector('#dl-clear-completed').checked
+  });
+});
+
+document.querySelector('#save-btn').addEventListener('click', function() {
+  browser.storage.local.set({
+    dictionaryUrl: document.querySelector('#dictionary-url').value
+  });
+
+  reloadDictionary();
+});
+
+
+// Callbacks
 
 /**
- * Switches the visibility.
- * @param {object} e The default event.
+ * Asks the background content to reload the dictionary.
  * @returns {undefined}
  */
-function switchVisibility(e) {
-  e.preventDefault();
-  if (document.getElementById('local').style.visibility === 'none') {
-    document.getElementById('local').style.visibility = 'block';
-    document.getElementById('remote').style.visibility = 'none';
-  } else {
-    document.getElementById('local').style.visibility = 'none';
-    document.getElementById('remote').style.visibility = 'block';
-  }
+function reloadDictionary() {
+  browser.runtime.sendMessage({'req':'dictionary-update'});
 }
 
-document.addEventListener('DOMContentLoaded', restoreOptions);
-document.querySelector('form').addEventListener('submit', saveOptions);
+document.querySelector('#reload-btn').addEventListener('click', reloadDictionary);
+document.querySelector('#restore-btn').addEventListener('click', function() {
+  document.querySelector('#dictionary-url').value = defaultUrl;
+  browser.storage.local.set({
+    dictionaryUrl: defaultUrl
+  });
+
+  reloadDictionary();
+});
+
+
+browser.runtime.onMessage.addListener(request => {
+  if (request.req === 'dictionary-reload-cb') {
+    console.log(request.status)
+    if (request.status === 'ok') {
+      document.querySelector('#dictionary-url').className = 'updated-ok';
+    } else {
+      document.querySelector('#dictionary-url').className = 'updated-ko';
+    }
+
+    setTimeout( function() {
+      document.querySelector('#dictionary-url').className = '';
+    }, 5000);
+  }
+});
