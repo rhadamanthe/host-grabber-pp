@@ -89,19 +89,50 @@ body {
 }
 
 .col3 {
-	width: 1%;
-	min-width: 14px;
 	display: inline-block;
 }
 
-.col3 > input[type="checkbox"] {
-	margin-left: 44px;
-	vertical-align: 9px;
+.col33 {
+	padding-left: 35px;
+	padding-right: 35px;
 }
 
 .col11 > img {
 	margin-right: 8px;
 	height: 14px;
+}
+
+/* Custom check box */
+
+.col3 > input[type="checkbox"] {
+	visibility: hidden;
+	position: absolute;
+}
+
+.col3 > label {
+	cursor: pointer;
+	width: 20px;
+	height: 15px;
+	margin-bottom: 7px;
+	display: inline-block;
+	background-color: #ddd;
+	border: 1px solid #ccc;
+}
+
+.col3 > input[type=checkbox]:not(:checked) + label:hover {
+    background-color: #bbb;
+	border: 1px solid #aaa;
+}
+
+.col3 > input[type=checkbox]:checked + label:after {
+	display: inline-block;
+	border: 1px solid #ccc;
+	width: 20px;
+	color: white;
+	background-color: #333;
+	vertical-align: 7px;
+	padding-left: 4px;
+    content: '\2713';
 }
 
 /* Collapsable items                         */

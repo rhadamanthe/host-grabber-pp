@@ -199,13 +199,18 @@ function displayNewProcessors(processors) {
     collapsible.appendChild(p);
 
     p = document.createElement('p');
-    p.className = 'col3';
+    p.className = 'col3 col33';
+    p.onclick = switchCheckedValueForCol3;
     collapsible.appendChild(p);
 
     input = document.createElement('input');
     input.type = 'checkbox';
     input.id = processor.id;
     p.appendChild(input);
+
+    label = document.createElement('label');
+    label.htmlFor = processor.id;
+    p.appendChild(label);
 
     var subC1 = document.createElement('div');
     subC1.className = 'collapsible-content';
@@ -375,4 +380,13 @@ function retryDownloads() {
     browser.runtime.sendMessage({req: 'restart-download', obj: processorId});
     item.checked = false;
   });
+}
+
+
+/**
+ * Input boxes in col3 elements should be updated when their parent is clicked.
+ * @returns {undefined}
+ */
+function switchCheckedValueForCol3() {
+  this.firstChild.checked = ! this.firstChild.checked;
 }
