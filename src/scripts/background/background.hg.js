@@ -62,6 +62,9 @@ browser.runtime.onMessage.addListener(request => {
 
   } else if (request.req === 'remove-processor') {
     queue.remove(request.obj);
+
+  } else if (request.req === 'restart-download') {
+    queue.reschedule(request.obj);
   }
 });
 

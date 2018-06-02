@@ -121,6 +121,17 @@ function newProcessor(matchingUrl, searchPattern) {
 
 
 /**
+ * Resets a processor.
+ * @param {object} processor A processor.
+ * @returns {undefined}
+ */
+function resetProcessor(processor) {
+  processor.downloadLinks = [];
+  processor.status = ProcessorStatus.WAITING;
+}
+
+
+/**
  * Finds the extraction method for a given search pattern.
  * @param {string} searchPattern The search pattern.
  * @returns {integer} The ID of an extraction method.

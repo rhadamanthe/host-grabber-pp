@@ -98,4 +98,32 @@ describe('background => library.queue', function() {
     expect(queue.processingHistory.size).to.eql(0);
     done();
   });
+
+
+  it('should reschedule an item to process', function(done) {
+
+    var queue = newQueue(handleProcessorTestFn);
+    var processor = {downloadLinks: [], id: 1};
+
+    queue.reschedule(processor.id);
+    expect(queue.processingQueue.length).to.eql(0);
+    expect(queue.processingHistory.size).to.eql(0);
+
+    queue.append(processor);
+    expect(queue.processingQueue.length).to.eql(1);
+    expect(queue.processingHistory.size).to.eql(1);
+
+    queue.processingQueue = [];
+    expect(queue.processingQueue.length).to.eql(0);
+    expect(queue.processingHistory.size).to.eql(1);
+
+    queue.reschedule(processor.id);
+    expect(queue.processingQueue.length).to.eql(1);
+    expect(queue.processingHistory.size).to.eql(1);
+
+    queue.remove(processor.id);
+    expect(queue.processingQueue.length).to.eql(0);
+    expect(queue.processingHistory.size).to.eql(0);
+    done();
+  });
 });

@@ -24,6 +24,11 @@ body {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	padding: 4px;
+	color: blue;
+}
+
+.dlLink:hover {
+	text-decoration: underline;
 }
 
 .success {
@@ -53,7 +58,7 @@ body {
 .title {
 	font-weight: bold;
 	font-size: 24px;
-	padding: 10px 10px 18px;
+	padding: 10px;
 	border-top: solid black 1px;
 	border-bottom: solid black 1px;
 	margin-bottom: 15px;
@@ -89,7 +94,7 @@ body {
 	display: inline-block;
 }
 
-.col3 > input {
+.col3 > input[type="checkbox"] {
 	margin-left: 44px;
 	vertical-align: 9px;
 }
@@ -207,10 +212,11 @@ button {
 
 	<div id="items"></div>
 	<div id="controls">
-		<button id="remove-completed">Clear Complete Downloads</button>
-		<button id="options">Options</button>
+		<button id="remove-completed" title="Clears all the items whose exploration and download successfully completed">Clear Complete Downloads</button>
+		<button id="options" title="Open the options page">Options</button>
 
 		<button class="right-button" id="remove-selection" title="Removes the selected downloads">Clear Selected Downloads</button>
+		<button class="right-button" id="retry-downloads" title="Retry to download the selected items">Retry Selected Downloads</button>
 	</div>
 
 	<!-- script src="../scripts/lib/bind.min.js"></script  -->

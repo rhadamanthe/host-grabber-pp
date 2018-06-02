@@ -339,6 +339,21 @@ describe('background => library.processors', function() {
   });
 
 
+  it('should make sure processor can be reset', function(done) {
+
+    var p = {
+      status: ProcessorStatus.RETRIEVING_LINKS_FAILURE,
+      downloadLinks: [{}, {}]
+    };
+
+    expect(p.downloadLinks.length).to.eql(2);
+    resetProcessor(p);
+    expect(p.downloadLinks.length).to.eql(0);
+    expect(p.status).to.eql(ProcessorStatus.WAITING);
+    done();
+  });
+
+
   it('should handle processors correctly (SELF)', function(done) {
 
     var p = newProcessor('test', 'self');

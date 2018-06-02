@@ -26,6 +26,7 @@ browser.storage.local.get('dlClearCompleted').then((res) => {
 document.getElementById('options').onclick = showOptionsPage;
 document.getElementById('remove-completed').onclick = removeCompleted;
 document.getElementById('remove-selection').onclick = removeSelection;
+document.getElementById('retry-downloads').onclick = retryDownloads;
 
 browser.storage.onChanged.addListener(function(changes, area) {
   if (area !== 'local') {
@@ -135,9 +136,9 @@ function updateProcessor(processor) {
       var id = buildDLId(processor, dlLink);
 
       // Status and download links
-      var item = document.getElementById(id + '-status');
+      var item = document.getElementById(id + '-link');
       if (!! item) {
-        item.className = findClassNameFromStatus(dlLink) + ' col2';
+        document.getElementById(id + '-status').className = findClassNameFromStatus(dlLink) + ' col2';
       } else {
         displayNewLink(processor.id, dlLink, id);
       }
@@ -175,7 +176,6 @@ function displayNewProcessors(processors) {
     // Create new elements
     var items = document.getElementById('items');
     var collapsible = document.createElement('div');
-    collapsible.id = processor.id;
     collapsible.className = 'wrap-collabsible';
     items.appendChild(collapsible);
 
@@ -187,7 +187,7 @@ function displayNewProcessors(processors) {
 
     var label = document.createElement('label');
     label.htmlFor = processor.id + '-collapsible';
-    label.className = 'lbl-toggle selectable col1';
+    label.className = 'lbl-toggle col1';
     label.textContent = processor.matchingUrl;
     collapsible.appendChild(label);
 
@@ -204,7 +204,7 @@ function displayNewProcessors(processors) {
 
     input = document.createElement('input');
     input.type = 'checkbox';
-    input.id = processor.id + '--processor';
+    input.id = processor.id;
     p.appendChild(input);
 
     var subC1 = document.createElement('div');
@@ -236,10 +236,13 @@ function displayNewLink(processorId, dlLink, id) {
   // Update the DOM
   var innerContentDiv = document.getElementById(processorId + '-inner');
   var p = document.createElement('p');
-  p.className = 'dlLink selectable col11';
+  p.className = 'dlLink col11';
   p.id = id + '-link';
   p.textContent = dlLink.link;
   innerContentDiv.appendChild(p);
+  p.addEventListener('click', function() {
+    openDownloadItem(dlLink);
+  });
 
   var class_ = findClassNameFromStatus(dlLink);
   p = document.createElement('p');
@@ -247,15 +250,6 @@ function displayNewLink(processorId, dlLink, id) {
   p.id = id + '-status';
   p.textContent = '[ ' + class_ + ' ]';
   innerContentDiv.appendChild(p);
-
-  p = document.createElement('p');
-  p.className = 'col3';
-  innerContentDiv.appendChild(p);
-
-  var input = document.createElement('input');
-  input.type = 'checkbox';
-  input.id = id + '--dlLink';
-  p.appendChild(input);
 
   // Update the view with download information
   updateDownloadLinkInView(dlLink, id);
@@ -275,21 +269,14 @@ function displayNewLink(processorId, dlLink, id) {
  */
 function updateDownloadLinkInView(dlLink, id) {
 
+  // Get the icon and update the view
   if (!! dlLink.downloadItemId) {
-
-    // Allow to open the files from the view
-    var cb = function() {
-      openDownloadedItem(dlLink);
-    };
-
-    // Get the icon and update the view
     browser.downloads.getFileIcon(dlLink.downloadItemId).then(function(iconUrl) {
       var item = document.getElementById(id + '-link');
       if (!! item) {
         var img = document.createElement('img');
         img.src = iconUrl;
         item.insertBefore(img, item.childNodes[0]);
-        item.addEventListener('dblclick', cb);
       }
 
     }, function() {
@@ -300,13 +287,18 @@ function updateDownloadLinkInView(dlLink, id) {
 
 
 /**
- * Opens a downloaded item.
+ * Opens a download item.
  * @param {object} dlLink The download link object.
  * @returns {undefined}
  */
-function openDownloadedItem(dlLink) {
+function openDownloadItem(dlLink) {
+
+  // The file was downloaded, open it
   if (!! dlLink.downloadItemId) {
     browser.downloads.open(dlLink.downloadItemId);
+  } else {
+    // Otherwise, open the link in the browser
+    openTab(dlLink.link);
   }
 }
 
@@ -351,10 +343,36 @@ function removeCompleted() {
 function removeSelection() {
 
   document.querySelectorAll('.col3 > input:checked').forEach( function(item) {
-    if (item.id.endsWith('--processor')) {
-      var id = item.id.replace(/--processor$/, '');
-      console.log(id)
-      removeProcessor(id);
+    removeProcessor(item.id);
+  });
+}
+
+
+/**
+ * Tries to download items that failed.
+ * @returns {undefined}
+ */
+function retryDownloads() {
+
+  document.querySelectorAll('.col3 > input:checked').forEach( function(item) {
+    var processorId = item.id;
+
+    // Remove download items from the view
+    var innerContentDiv = document.getElementById(processorId + '-inner');
+    if (!! innerContentDiv) {
+      while (innerContentDiv.hasChildNodes()) {
+        innerContentDiv.removeChild(innerContentDiv.lastChild);
+      }
     }
+
+    // Reset the state of the processor
+    var statusItem = document.getElementById(processorId + '-status');
+    if (!! statusItem) {
+      statusItem.className = 'waiting col2';
+    }
+
+    // Notify the background it should process this item once again
+    browser.runtime.sendMessage({req: 'restart-download', obj: processorId});
+    item.checked = false;
   });
 }

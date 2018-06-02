@@ -11,6 +11,7 @@ function newQueue(handleProcessorFn) {
     processingQueue: [],
     processingHistory: new Map(),
     append: append,
+    reschedule: reschedule,
     processNextItem: processNextItem,
     remove: remove
   };
@@ -24,6 +25,21 @@ function newQueue(handleProcessorFn) {
   function append(processor) {
     queue.processingQueue.push(processor);
     queue.processingHistory.set(processor.id, processor);
+  }
+
+
+  /**
+   * Re-adds a processor so that it processed once again.
+   * @param {string} processorId A Processor ID.
+   * @returns {undefined}
+   */
+  function reschedule(processorId) {
+    var processor = queue.processingHistory.get(processorId);
+    if (!! processor) {
+      resetProcessor(processor);
+      queue.processingQueue.push(processor);
+      handleProcessorFn(processor);
+    }
   }
 
 
