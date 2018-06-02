@@ -66,7 +66,6 @@ document.querySelector('#restore-btn').addEventListener('click', function() {
 
 browser.runtime.onMessage.addListener(request => {
   if (request.req === 'dictionary-reload-cb') {
-    console.log(request.status)
     if (request.status === 'ok') {
       document.querySelector('#dictionary-url').className = 'updated-ok';
     } else {

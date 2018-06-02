@@ -1,5 +1,4 @@
-// Initial comments:
-// this extension does not use data-binding functions.
+// This extension does not use data-binding frameworks.
 // We push model updates directly to our view (old partial MVC).
 // To achieve this, we can match any view element to a model
 // part through IDs.
@@ -15,12 +14,31 @@
 var allProcessors = new Map();
 loadProcessors();
 
+var removeCompletedDlAutomatically = false;
+browser.storage.local.get('dlClearCompleted').then((res) => {
+  removeCompletedDlAutomatically = res.dlClearCompleted || false;
+});
+
 
 /* Callbacks */
 
 
 document.getElementById('remove-completed').onclick = removeCompleted;
 document.getElementById('options').onclick = openOptionsPage;
+
+browser.storage.onChanged.addListener(function(changes, area) {
+  if (area !== 'local') {
+    return;
+  }
+
+  // Case: clear the completed downloads automatically
+  if (changes.hasOwnProperty( 'dlClearCompleted' )) {
+    removeCompletedDlAutomatically = changes.dlClearCompleted.newValue;
+    if (removeCompletedDlAutomatically) {
+      removeCompleted();
+    }
+  }
+});
 
 
 /* React to messages */
@@ -134,6 +152,14 @@ function updateProcessor(processor) {
       // If the item was downloaded, update the link in the view
       updateDownloadLinkInView(dlLink, id);
     });
+
+    // Do we need to remove completed downloads automatically?
+    // If so, let people see their item reach the green color.
+    if (removeCompletedDlAutomatically) {
+      setTimeout(function() {
+        removeProcessor(processor);
+      }, 1000);
+    }
   }
 }
 
@@ -220,7 +246,9 @@ function displayNewLink(processorId, dlLink, id) {
   updateDownloadLinkInView(dlLink, id);
 
   // Scroll down if necessary
-  window.scrollTo(0, document.body.scrollHeight);
+  if (! removeCompletedDlAutomatically) {
+    window.scrollTo(0, document.body.scrollHeight);
+  }
 }
 
 
