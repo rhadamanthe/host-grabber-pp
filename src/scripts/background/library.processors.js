@@ -200,8 +200,9 @@ function onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorI
 
   // If we have links, let things go on
   if (!! links && links.length > 0) {
-    links.forEach( function(link) {
+    links.forEach( function(link, index) {
       processor.downloadLinks.push({
+        id: processor.id + '-' + index,
         link: link,
         status: DlStatus.WAITING
       });

@@ -21,9 +21,9 @@ options that existed before.
 
 > The project is still in **alpha** version.
 
-<img src="../assets/images/dl-view-1.jpg" alt="The download view" />
+<img src="../assets/images/dl-view-1--v0.2.jpg" alt="The download view" />
 
-<img src="../assets/images/dl-view-2.jpg" alt="The menu" />
+<img src="../assets/images/dl-view-2--v0.2.jpg" alt="The menu" />
 
 
 ## Installation
@@ -45,10 +45,16 @@ find download links.
 
 ## Preferences
 
-The default dictionary is hosted [here](https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml).  
-You can define your own one if you want and specify it through the extension preferences.
+Here is a short description of the preferences.
 
-*Details will be added later*.
+* **Catalog URL**: the default dictionary is hosted [here](https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml).  
+You can define your own one if you want and specify it through the extension preferences.
+* **Hide downloads that successfully completed**: this option hides from the download view
+all the downloads that were successful. Those with failures will remain visible.
+* **Limit the number of simultaneous downloads**: this option allows to limit the number of
+parallel downloads started by HG ++. Notice that by default, Firefox already limits the number
+of active connections towards a same server (by default,
+[this value](https://support.mozilla.org/fr/questions/992338) is 6).
 
 
 ## Notice
@@ -65,6 +71,28 @@ a better list of hosts appears somewhere else.
 ## Hosts Definitions
 
 [This page](hosts-definition.html) explains the various strategies available to find media files to download on a web page.
+
+
+## Reuse by other Web Extensions
+
+The first use case for this extension is to be invoked by a user through a menu
+or a shortcut. However, it may also be used by other web extensions through an API.
+They can indeed send a request to HG ++ so that it explores a given URL and downloads
+media files from it.
+
+Here is a sample code showing how to invoke HG ++ from your own extension.  
+Notice that IG ++ does not return any response, it only explores the URL,
+opens its downloads view and the retrieve the media files it found.
+
+```xml
+browser.runtime.sendMessage(
+  'hg.pp@rhadamanthe.github',
+  {
+    req: 'explore-page',
+    page: 'The URL of the page to explore.'
+  }
+);
+```
 
 
 ## Bugs, Feature Requests...

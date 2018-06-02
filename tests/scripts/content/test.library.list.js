@@ -2,21 +2,6 @@
 
 describe('donwload view => list.functions', function() {
 
-  it('should build element IDs correctly', function(done) {
-
-    var processor = {
-      id: 'test0',
-      downloadLinks: ['d1', 'd2', 'd3']
-    };
-
-    expect(buildDLId(processor, 'd1')).to.eql('test0-0');
-    expect(buildDLId(processor, 'd3')).to.eql('test0-2');
-    expect(buildDLId(processor, 'd2')).to.eql('test0-1');
-    expect(buildDLId(processor, 'd50')).to.eql('test0--1');
-    done();
-  });
-
-
   it('should find class names from a download link', function(done) {
 
     expect(findClassNameFromStatus({status: 1})).to.eql('waiting');

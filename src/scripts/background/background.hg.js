@@ -23,17 +23,9 @@ browser.contextMenus.create({
   parentId: 'hg-menu',
   title: 'Extract and Download',
   contexts: ['all'],
-  onclick: downloadContent
+  onclick: downloadContentFromCurrentTab
 });
-/*
-browser.contextMenus.create({
-  id: 'hg-menu-find-links',
-  parentId: 'hg-menu',
-  title: 'Find Links',
-  contexts: ['all'],
-  onclick: downloadContent
-});
-*/
+
 browser.contextMenus.create({
   id: 'hg-menu-show-dl-list',
   parentId: 'hg-menu',
@@ -46,7 +38,7 @@ browser.contextMenus.create({
 // Commands
 browser.commands.onCommand.addListener((command) => {
   if (command === 'dl') {
-    downloadContent();
+    downloadContentFromCurrentTab();
   }
 });
 
@@ -68,6 +60,12 @@ browser.runtime.onMessage.addListener(request => {
   }
 });
 
+browser.runtime.onMessageExternal.addListener(request => {
+  if (request.req === 'explore-page' && typeof request.page === 'string') {
+
+  }
+});
+
 // Download the dictionary when the browser starts...
 // ... or when the extension is installed or updated.
 browser.runtime.onStartup.addListener(reloadDictionary);
@@ -86,7 +84,7 @@ function reloadDictionary() {
   browser.storage.local.get('dictionaryUrl').then((res) => {
     var url = res.dictionaryUrl || 'https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml';
     console.log('Loading dictionary from ' + url + '...');
-    loadRemoteDocument(url, 'application/xml').then( function(downloadedDictionary) {
+    loadRemoteDocument(url, true, 'application/xml').then( function(downloadedDictionary) {
       dictionary = downloadedDictionary;
       notifyDictionaryReload('ok');
 
@@ -127,33 +125,60 @@ function showDownloadsList() {
  * Downloads the content by analyzing the source code of the current tab.
  * @returns {undefined}
  */
-function downloadContent() {
-
-  // Open the download tab (first!)
-  showDownloadsList();
+function downloadContentFromCurrentTab() {
 
   // Get the page's source code.
   // Background scripts cannot directly get it, so we ask it to our content
   // script (in the currently active tab). So we have to go through the tab API.
   browser.tabs.query({active: true, currentWindow: true}).then( tabs => {
     browser.tabs.sendMessage( tabs[0].id, {req: 'source-code'}).then( sourceAsText => {
-
-      // Parse the source code and find the links
-      var sourceDocument = new DOMParser().parseFromString(sourceAsText,'text/html');
-      var processors = findWhatToProcess(sourceDocument, tabs[0].url, dictionary);
-
-      // We get link candidates to process and/or explore
-      processors.forEach(function(processor) {
-        queue.append(processor);
-      });
-
-      // Send a notification to the downloads view
-      sendProcessorsToDownloadView(processors);
-
-      // Start downloading
-      queue.processNextItem();
+      downloadContentFromText(sourceAsText, tabs[0].url);
     });
   });
+}
+
+
+/**
+ * Downloads the content by analyzing a given URL.
+ * @param {string} url An URL to explore.
+ * @returns {undefined}
+ */
+function downloadContentFromURL(url) {
+
+  // Get the page's source code.
+  loadRemoteDocument(url, false).then( sourceAsText => {
+    downloadContentFromText(sourceAsText, url);
+  }, error => {
+    consolt.log('Failed to get the source code from: ' + url);
+  });
+}
+
+
+/**
+ * Downloads the content by analyzing a given source code.
+ * @param {string} sourceAsText The source code to analyze.
+ * @param {string} url The URL of the page.
+ * @returns {undefined}
+ */
+function downloadContentFromText(sourceAsText, url) {
+
+  // Open the download tab
+  showDownloadsList();
+
+  // Parse the source code and find the links
+  var sourceDocument = new DOMParser().parseFromString(sourceAsText,'text/html');
+  var processors = findWhatToProcess(sourceDocument, url, dictionary);
+
+  // We get link candidates to process and/or explore
+  processors.forEach(function(processor) {
+    queue.append(processor);
+  });
+
+  // Send a notification to the downloads view
+  sendProcessorsToDownloadView(processors);
+
+  // Start downloading
+  queue.processNextItem();
 }
 
 

@@ -124,7 +124,23 @@ function updateProcessor(processor) {
 
     // Update the model
     p.status = processor.status;
-    p.downloadLinks = processor.downloadLinks;
+
+    // Do not overwrite the download links, update them
+    var index = new Map();
+    p.downloadLinks.forEach( function(oldDlLink) {
+      index.set(oldDlLink.id, oldDlLink);
+    });
+
+    processor.downloadLinks.forEach( function(newDlLink) {
+      if (index.has(newDlLink.id)) {
+        var oldDlLink = index.get(newDlLink.id);
+        oldDlLink.status = newDlLink.status;
+        oldDlLink.downloadItemId = newDlLink.downloadItemId;
+      } else {
+        p.downloadLinks.push(newDlLink);
+      }
+    });
+
     // FIXME: save?
 
     // Update the processor's status
@@ -133,18 +149,17 @@ function updateProcessor(processor) {
 
     // Update the view
     p.downloadLinks.forEach( function(dlLink) {
-      var id = buildDLId(processor, dlLink);
 
       // Status and download links
-      var item = document.getElementById(id + '-link');
+      var item = document.getElementById(dlLink.id + '-link');
       if (!! item) {
-        document.getElementById(id + '-status').className = findClassNameFromStatus(dlLink) + ' col2';
+        document.getElementById(dlLink.id + '-status').className = findClassNameFromStatus(dlLink) + ' col2';
       } else {
-        displayNewLink(processor.id, dlLink, id);
+        displayNewLink(processor.id, dlLink);
       }
 
       // If the item was downloaded, update the link in the view
-      updateDownloadLinkInView(dlLink, id);
+      updateDownloadLinkInView(dlLink);
     });
 
     // Do we need to remove completed downloads automatically?
@@ -222,8 +237,7 @@ function displayNewProcessors(processors) {
     subC1.appendChild(subC2);
 
     processor.downloadLinks.forEach( function(dlLink) {
-      var id = buildDLId(processor, dlLink);
-      displayNewLink(processor.id, dlLink, id);
+      displayNewLink(processor.id, dlLink);
     });
   });
 }
@@ -233,18 +247,18 @@ function displayNewProcessors(processors) {
  * Displays a new link.
  * @param {string} processorId The processor ID.
  * @param {object} dlLink The download link object.
- * @param {string} id The base ID for this link.
  * @returns {undefined}
  */
-function displayNewLink(processorId, dlLink, id) {
+function displayNewLink(processorId, dlLink) {
 
   // Update the DOM
   var innerContentDiv = document.getElementById(processorId + '-inner');
   var p = document.createElement('p');
   p.className = 'dlLink col11';
-  p.id = id + '-link';
+  p.id = dlLink.id + '-link';
   p.textContent = dlLink.link;
   innerContentDiv.appendChild(p);
+
   p.addEventListener('click', function() {
     openDownloadItem(dlLink);
   });
@@ -252,12 +266,12 @@ function displayNewLink(processorId, dlLink, id) {
   var class_ = findClassNameFromStatus(dlLink);
   p = document.createElement('p');
   p.className = class_ + ' col2';
-  p.id = id + '-status';
+  p.id = dlLink.id + '-status';
   p.textContent = '[ ' + class_ + ' ]';
   innerContentDiv.appendChild(p);
 
   // Update the view with download information
-  updateDownloadLinkInView(dlLink, id);
+  updateDownloadLinkInView(dlLink);
 
   // Scroll down if necessary
   if (! removeCompletedDlAutomatically) {
@@ -269,15 +283,14 @@ function displayNewLink(processorId, dlLink, id) {
 /**
  * Updates a download link in the view.
  * @param {object} dlLink The download link object.
- * @param {string} id The base ID for the link.
  * @returns {undefined}
  */
-function updateDownloadLinkInView(dlLink, id) {
+function updateDownloadLinkInView(dlLink) {
 
   // Get the icon and update the view
   if (!! dlLink.downloadItemId) {
     browser.downloads.getFileIcon(dlLink.downloadItemId).then(function(iconUrl) {
-      var item = document.getElementById(id + '-link');
+      var item = document.getElementById(dlLink.id + '-link');
       if (!! item) {
         var img = document.createElement('img');
         img.src = iconUrl;
@@ -298,11 +311,18 @@ function updateDownloadLinkInView(dlLink, id) {
  */
 function openDownloadItem(dlLink) {
 
-  // The file was downloaded, open it
+  // The file was downloaded, open it.
+  // Otherwise, open the link in the browser.
   if (!! dlLink.downloadItemId) {
-    browser.downloads.open(dlLink.downloadItemId);
-  } else {
-    // Otherwise, open the link in the browser
+    browser.downloads.open(dlLink.downloadItemId).then(function() {
+      // nothing
+    }, function() {
+      openTab(dlLink.link);
+    });
+  }
+
+  // If the link is visible, allow to open it in the browser.
+  else {
     openTab(dlLink.link);
   }
 }

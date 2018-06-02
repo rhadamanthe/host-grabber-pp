@@ -1,18 +1,6 @@
 // Functions that can be tested independently
 
 /**
- * Builds the base ID for a download link.
- * @param {object} processor The processor that holds this link.
- * @param {object} dlLink A download link object.
- * @returns {string} A base ID.
- */
-function buildDLId(processor, dlLink) {
-  var index = processor.downloadLinks.indexOf(dlLink);
-  return processor.id + '-' + index;
-}
-
-
-/**
  * Finds the class name from the status of a download link.
  * @param {object} dlLink A download link.
  * @returns {string} A CSS class name.

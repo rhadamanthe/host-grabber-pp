@@ -4,14 +4,18 @@
 /**
  * Loads a remote XML document from an URL.
  * @param {string} url The URL.
+ * @param {boolean} asDoc True if the result should be a DOM document, false to get text.
  * @param {string} mimeType The MIME type (optional).
  * @returns {promise} a promise with the DOM document in case of successful download.
  */
-function loadRemoteDocument(url, mimeType) {
+function loadRemoteDocument(url, asDoc = true, mimeType) {
 
   return new Promise(function (resolve, reject) {
     var xhr = new XMLHttpRequest();
-    xhr.responseType = 'document';
+    if (asDoc) {
+      xhr.responseType = 'document';
+    }
+
     if (!! mimeType) {
       xhr.overrideMimeType(mimeType);
     }
@@ -25,8 +29,9 @@ function loadRemoteDocument(url, mimeType) {
     };
 
     xhr.onload = function () {
+      var result = asDoc ? this.responseXML : this.responseText;
       if (this.status >= 200 && this.status < 300) {
-        resolve(this.responseXML);
+        resolve(result);
       } else {
         this.onerror();
       }

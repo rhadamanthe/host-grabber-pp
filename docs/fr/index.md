@@ -20,9 +20,9 @@ avec quelques différences:
 
 > Le projet est en version **alpha**.
 
-<img src="../assets/images/dl-view-1.jpg" alt="La vue des téléchargements" />
+<img src="../assets/images/dl-view-1--v0.2.jpg" alt="La vue des téléchargements" />
 
-<img src="../assets/images/dl-view-2.jpg" alt="Le menu contextuel" />
+<img src="../assets/images/dl-view-2--v0.2.jpg" alt="Le menu contextuel" />
 
 
 ## Installation
@@ -43,10 +43,16 @@ L'analyse effectuée s'appuie sur un catalogue qui précise comment trouver les 
 
 ## Préférences
 
-Le catalogue par défaut est hébergée [ici](https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml).  
-Vous pouvez définir le vôtre et le référencer dans les préférences de l'extension..
+Voici une présentation des préférences disponibles.
 
-*De plus amples détails seront ajoutés plus tard*.
+* **URL du catalogue** : le catalogue par défaut est hébergé [ici](https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml).  
+Vous pouvez définir le vôtre et le référencer dans les préférences de l'extension.
+* **Masquer les téléchargments terminés avec succès** : cette option enlève de la vue
+des téléchargements, tous ceux qui se sont terminés avec succès. Ceux avec des échecs resteront visibles.
+* **Limiter le nombre de téléchargements simultanés** : cette option permet de limiter
+le nombre de téléchargements lancés par HG ++. Il faut noter aussi que Firefox limite de toute
+façon le nombre de connexions simultanées vers un même serveur (par défaut,
+[cette valeur](https://support.mozilla.org/fr/questions/992338) vaut 6).
 
 
 ## Remarque
@@ -66,11 +72,31 @@ fera son apparition quelque part ailleurs.
 sur une page web.
 
 
+## Réutilisation par d'autres Extensions Web
+
+Le cas nominal d'utilisation de cette extension concerne une personne qui
+lance une exploration par clic droit ou raccourci clavier. Toutefois, HG ++
+propose aussi une API pour les autres extensions web. Cette API permet de lancer
+HG ++ et d'explorer une URL donnée pour y découvrir et télécharger des fichiers média.
+
+Voici un exemple de code pour utiliser cette API.  
+Notez que HG ++ ne retourne aucune réponse. Il explore l'URL, ouvre sa
+vue des téléchargements et récupère les liens découverts.
+
+```xml
+browser.runtime.sendMessage(
+  'hg.pp@rhadamanthe.github',
+  {
+    req: 'explore-page',
+    page: 'L'URL de la page à explorer.'
+  }
+);
+```
+
 ## Bugs, Demandes d'Évolution...
 
 Aucun ticket ne peut être créé pour le fichier **hosts.xml**.  
-Les bugs et demandes d'évolution pour l'extension elle-même, peuvent être reportés [ici](https://github.com/rhadamanthe/host-grabber-pp/issues).
-
+Les bugs et demandes d'évolution pour l'extension elle-même, peuvent être reportés [ici](https://github.com/rhadamanthe/host-grabber-pp/issues)
 
 ## Liens
 

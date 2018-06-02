@@ -67,8 +67,19 @@ describe('background => library.utilities', function() {
   it('should load remote documents, even when forcing the MIME type', function() {
 
     // Test resources are served by Karma
-    return loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml', 'text/xml').then( function(xmlDoc) {
+    return loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml', true, 'text/xml').then( function(xmlDoc) {
       expect(xmlDoc.documentElement.tagName).to.eql('root');
+    });
+  });
+
+
+  // No "done "callback for this test.
+  // Instead, we return a promise. If it fails, it will fail the test.
+  it('should load remote documents as text files', function() {
+
+    // Test resources are served by Karma
+    return loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml', false).then( function(sourceAsText) {
+      expect(typeof sourceAsText).to.eql('string');
     });
   });
 
