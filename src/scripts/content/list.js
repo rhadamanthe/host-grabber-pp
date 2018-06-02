@@ -23,8 +23,9 @@ browser.storage.local.get('dlClearCompleted').then((res) => {
 /* Callbacks */
 
 
+document.getElementById('options').onclick = showOptionsPage;
 document.getElementById('remove-completed').onclick = removeCompleted;
-document.getElementById('options').onclick = openOptionsPage;
+document.getElementById('remove-selection').onclick = removeSelection;
 
 browser.storage.onChanged.addListener(function(changes, area) {
   if (area !== 'local') {
@@ -102,19 +103,11 @@ function loadProcessors() {
 
 
 /**
- * Opens the options page.
+ * Shows the options page.
  * @returns {undefined}
  */
-function openOptionsPage() {
-
-  // Open it next to the current tab
-  // (unlike browser.runtime.openOptionsPage())
-  browser.tabs.query({active: true}).then( function(tabs) {
-    browser.tabs.create({
-      openerTabId: tabs[0].id,
-      url: '/src/html/options.html'
-    });
-  });
+function showOptionsPage() {
+  showTab('Options - HG ++', '/src/html/options.html');
 }
 
 
@@ -157,7 +150,7 @@ function updateProcessor(processor) {
     // If so, let people see their item reach the green color.
     if (removeCompletedDlAutomatically) {
       setTimeout(function() {
-        removeProcessor(processor);
+        removeProcessor(processor.id);
       }, 1000);
     }
   }
@@ -194,14 +187,25 @@ function displayNewProcessors(processors) {
 
     var label = document.createElement('label');
     label.htmlFor = processor.id + '-collapsible';
-    label.className = 'lbl-toggle col1';
+    label.className = 'lbl-toggle selectable col1';
     label.textContent = processor.matchingUrl;
     collapsible.appendChild(label);
 
+    var class_ = findClassNameFromProcessor(processor);
     var p = document.createElement('p');
-    p.className = findClassNameFromProcessor(processor) + ' col2';
+    p.className = class_ + ' col2';
     p.id = processor.id + '-status';
+    p.textContent = '[ ' + class_ + ' ]';
     collapsible.appendChild(p);
+
+    p = document.createElement('p');
+    p.className = 'col3';
+    collapsible.appendChild(p);
+
+    input = document.createElement('input');
+    input.type = 'checkbox';
+    input.id = processor.id + '--processor';
+    p.appendChild(input);
 
     var subC1 = document.createElement('div');
     subC1.className = 'collapsible-content';
@@ -232,15 +236,26 @@ function displayNewLink(processorId, dlLink, id) {
   // Update the DOM
   var innerContentDiv = document.getElementById(processorId + '-inner');
   var p = document.createElement('p');
-  p.className = 'dlLink col1';
+  p.className = 'dlLink selectable col11';
   p.id = id + '-link';
   p.textContent = dlLink.link;
   innerContentDiv.appendChild(p);
 
+  var class_ = findClassNameFromStatus(dlLink);
   p = document.createElement('p');
-  p.className = findClassNameFromStatus(dlLink) + ' col2';
+  p.className = class_ + ' col2';
   p.id = id + '-status';
+  p.textContent = '[ ' + class_ + ' ]';
   innerContentDiv.appendChild(p);
+
+  p = document.createElement('p');
+  p.className = 'col3';
+  innerContentDiv.appendChild(p);
+
+  var input = document.createElement('input');
+  input.type = 'checkbox';
+  input.id = id + '--dlLink';
+  p.appendChild(input);
 
   // Update the view with download information
   updateDownloadLinkInView(dlLink, id);
@@ -274,10 +289,7 @@ function updateDownloadLinkInView(dlLink, id) {
         var img = document.createElement('img');
         img.src = iconUrl;
         item.insertBefore(img, item.childNodes[0]);
-
-        item.addEventListener('click', cb);
-        item = document.getElementById(id + '-status');
-        item.addEventListener('click', cb);
+        item.addEventListener('dblclick', cb);
       }
 
     }, function() {
@@ -301,20 +313,20 @@ function openDownloadedItem(dlLink) {
 
 /**
  * Removes a processor from both the view and the model.
- * @param {object} processor A processor.
+ * @param {object} processorId A processor ID.
  * @returns {undefined}
  */
-function removeProcessor(processor) {
+function removeProcessor(processorId) {
 
   // Remove from the view
-  var item = document.getElementById(processor.id);
+  var item = document.getElementById(processorId);
   if (!! item) {
     item.parentNode.removeChild(item);
   }
 
   // Remove from the model
-  allProcessors.delete(processor.id);
-  browser.runtime.sendMessage({req: 'remove-processor', obj: processor.id});
+  allProcessors.delete(processorId);
+  browser.runtime.sendMessage({req: 'remove-processor', obj: processorId});
 }
 
 
@@ -326,7 +338,23 @@ function removeCompleted() {
 
   allProcessors.forEach( function(processor, processorId) {
     if (findClassNameFromProcessor(processor) === 'success') {
-      removeProcessor(processor);
+      removeProcessor(processor.id);
+    }
+  });
+}
+
+
+/**
+ * Removes the selected processors.
+ * @returns {undefined}
+ */
+function removeSelection() {
+
+  document.querySelectorAll('.col3 > input:checked').forEach( function(item) {
+    if (item.id.endsWith('--processor')) {
+      var id = item.id.replace(/--processor$/, '');
+      console.log(id)
+      removeProcessor(id);
     }
   });
 }

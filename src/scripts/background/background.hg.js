@@ -116,30 +116,7 @@ function notifyDictionaryReload(status) {
  * @returns {undefined}
  */
 function showDownloadsList() {
-
-  browser.tabs.query({ title: 'HG ++' }).then( function(tabs) {
-    if (tabs.length === 0) {
-      openDownloadsList();
-    } else {
-      browser.tabs.update(tabs[0].id, {active: true});
-    }
-  });
-}
-
-
-/**
- * Opens the download list.
- * @returns {undefined}
- */
-function openDownloadsList() {
-
-  // Open it next to the current tab
-  browser.tabs.query({active: true}).then( function(tabs) {
-    browser.tabs.create({
-      openerTabId: tabs[0].id,
-      url: '/src/html/download-list.html'
-    });
-  });
+  showTab('HG ++', '/src/html/download-list.html');
 }
 
 
