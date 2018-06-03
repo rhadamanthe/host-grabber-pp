@@ -32,37 +32,60 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
       tmpRedirect = tags[i].getElementsByTagName('redirect-to');
       var optionalRedirectTo = tmpRedirect.length === 0 ? '' : tmpRedirect[0].innerHTML.trim();
 
-      var urlpatterns = tags[i].getElementsByTagName('urlpattern');
-      if(urlpatterns.length < 1 ) {
-        console.log('Expected an URL pattern for ' + tags[i].id);
+      var domains = tags[i].getElementsByTagName('domain');
+      if(domains.length < 1 ) {
+        console.log('Expected a domain for ' + tags[i].id);
         continue;
       }
 
-      var searchpatterns = tags[i].getElementsByTagName('searchpattern');
-      if(searchpatterns.length < 1 ) {
+      var pathPatterns = tags[i].getElementsByTagName('path-pattern');
+      if(pathPatterns.length < 1 ) {
+        console.log('Expected a path pattern for ' + tags[i].id);
+        continue;
+      }
+
+      var searchPatterns = tags[i].getElementsByTagName('search-pattern');
+      if(searchPatterns.length < 1 ) {
         console.log('Expected a search pattern for ' + tags[i].id);
         continue;
       }
 
-      // Find all the URLs that match the given pattern
-      var fixedUrlPattern = fixUrlPattern(urlpatterns[0].innerHTML.trim());
-      var regexp = new RegExp(fixedUrlPattern, 'ig');
+      // Build the patterns to identify
       var source = sourceDocument.documentElement.innerHTML;
-      var fixedSearchPattern = removeCDataMarkups(searchpatterns[0].innerHTML.trim());
+      var fixedSearchPattern = removeCDataMarkups(searchPatterns[0].innerHTML.trim());
+      var urlPatternWrappers = buildUrlPatterns(
+          url,
+          domains[0].innerHTML.trim(),
+          pathPatterns[0].innerHTML.trim(),
+          tags[i].id
+      );
 
-      for (var match = regexp.exec(source); !! match; match = regexp.exec(source)) {
-        var fixedLink = fixRelativeLinks(match[1], url);
-        if (!! optionalRedirectFrom && !! optionalRedirectTo) {
-          fixedLink = fixedLink.replace(optionalRedirectFrom, optionalRedirectTo);
+      // Find all the URLs that match the given pattern
+      urlPatternWrappers.forEach( function(urlPatternWrapper) {
+
+        var regexp = new RegExp(urlPatternWrapper.pattern, 'ig');
+        for (var match = regexp.exec(source); !! match; match = regexp.exec(source)) {
+
+          // Relative links should not include any host
+          if (urlPatternWrapper.excludeHost && match[1].includes('://')) {
+            continue;
+          }
+
+          // Resolve relative links as absolute ones
+          var fixedLink = fixRelativeLinks(match[1], url);
+          if (!! optionalRedirectFrom && !! optionalRedirectTo) {
+            fixedLink = fixedLink.replace(optionalRedirectFrom, optionalRedirectTo);
+          }
+
+          // Avoid duplicates
+          if (alreadyVisistedUrls.indexOf(fixedLink) !== -1 ) {
+            continue;
+          }
+
+          alreadyVisistedUrls.push(fixedLink);
+          processors.push( newProcessor(fixedLink, fixedSearchPattern));
         }
-
-        if (alreadyVisistedUrls.indexOf(fixedLink) !== -1 ) {
-          continue;
-        }
-
-        alreadyVisistedUrls.push(fixedLink);
-        processors.push( newProcessor(fixedLink, fixedSearchPattern));
-      }
+      });
     }
   }
 

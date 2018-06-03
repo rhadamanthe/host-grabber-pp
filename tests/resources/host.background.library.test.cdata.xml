@@ -2,8 +2,9 @@
 <root>
 
 <host id="mimi">
-	<urlpattern>^http://(www\.)?mimi\.com/.+/photos/view\?[^ "]+</urlpattern>
-	<searchpattern><![CDATA[expreg: ">\s*<a href="([^"]+)">]]></searchpattern>
+	<domain>mimi.net</domain>
+	<path-pattern>.+/photos/view\?[^ "]+</path-pattern>
+	<search-pattern><![CDATA[expreg: ">\s*<a href="([^"]+)">]]></search-pattern>
 </host>
 
 </root>

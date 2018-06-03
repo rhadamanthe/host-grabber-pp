@@ -41,34 +41,6 @@ function loadRemoteDocument(url, asDoc = true, mimeType) {
   });
 }
 
-
-/**
- * Fixes the URL patterns for searches.
- * @param {string} urlPattern The URL pattern.
- * @returns {string} The URL pattern, without the ^ and $ meta-characters.
- */
-function fixUrlPattern(urlPattern) {
-
-  var fixedUrlPattern = urlPattern;
-  if (fixedUrlPattern.startsWith('^')) {
-    fixedUrlPattern = fixedUrlPattern.substring(1);
-  }
-
-  if (fixedUrlPattern.endsWith('$')) {
-    fixedUrlPattern = fixedUrlPattern.substring(0, fixedUrlPattern.length - 1);
-  }
-
-  if (! fixedUrlPattern.startsWith('(')) {
-    fixedUrlPattern = '(' + fixedUrlPattern + ')';
-  }
-
-  fixedUrlPattern = fixedUrlPattern.replace('&lt;', '<');
-  fixedUrlPattern = fixedUrlPattern.replace('&gt;', '>');
-  fixedUrlPattern = fixedUrlPattern.replace('&amp;', '&');
-  return fixedUrlPattern;
-}
-
-
 /**
  * Removes CData sections.
  * @param {string} text A raw text that might be a CData section.
@@ -103,9 +75,11 @@ function fixRelativeLinks(newLink, pageUrl) {
   } else if (newLink.indexOf('/') === 0) {
     res = new URL(pageUrl).origin + newLink;
   } else if (pageUrl.endsWith('/')) {
+    // Assumption: the URL points to a directory
     res = new URL(pageUrl + newLink).toString();
   } else {
-    res = new URL(pageUrl + '/' + newLink).toString();
+    // Assumption: the URL points to a file and not a directory
+    res = new URL(pageUrl + '/../' + newLink).toString();
   }
 
   return res;
@@ -150,4 +124,40 @@ function removeFromArray(array, item) {
   }
 
   return wasPresent;
+}
+
+
+/**
+ * Builds URL patterns for a given domain.
+ * @param {string} pageUrl The page's URL.
+ * @param {string} domain The domain.
+ * @param {string} pathPattern The path pattern.
+ * @param {string} hostId The host ID (for error reporting).
+ * @returns {array} An array of objects.
+ */
+function buildUrlPatterns(pageUrl, domain, pathPattern, hostId) {
+
+  var res = [];
+  var domainMatch = domain.match(/^\w[-\w\.]*\w$/);
+  if (! domainMatch || domainMatch.length === 0) {
+    console.log('Invalid domain for ' + hostId);
+
+  } else if (pathPattern.startsWith('/') || pathPattern.startsWith('^') || pathPattern.endsWith('$')) {
+    console.log('Invalid path pattern for ' + hostId);
+
+  } else {
+    // Deal with global links
+    const esc = '[^<>"]';
+    var basePattern = 'https?://' + domain.replace('.', '\.');
+    var extraPathPattern = pathPattern.replace(/(^|[^\\])\./, '$1' + esc).replace('&dot', '.');
+    res.push({ pattern: '"(' + basePattern + '/' + extraPathPattern + ')"', excludeHost: false});
+
+    // Consider relative and absolute links on a given domain
+    if (pageUrl.match( '^' + basePattern + '.*')) {
+      res.push({ pattern: 'src\s*=\s*"(/?[^:"]*' + extraPathPattern + ')"', excludeHost: true });
+      res.push({ pattern: 'href\s*=\s*"(/?[^:"]*' + extraPathPattern + ')"', excludeHost: true });
+    }
+  }
+
+  return res;
 }

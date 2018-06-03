@@ -9,27 +9,15 @@ describe('background => library.utilities', function() {
     expect(fixRelativeLinks('//toto.fr/test.jpg', 'http://origin.com/path/to/current/page')).to.eql('//toto.fr/test.jpg');
     expect(fixRelativeLinks('ftp://toto.fr/test.jpg', 'http://origin.com/path/to/current/page')).to.eql('ftp://toto.fr/test.jpg');
 
-    expect(fixRelativeLinks('test.jpg', 'http://origin.com/path/to/current/page')).to.eql('http://origin.com/path/to/current/page/test.jpg');
-    expect(fixRelativeLinks('test.jpg', 'http://origin.com')).to.eql('http://origin.com/test.jpg');
+    expect(fixRelativeLinks('test.jpg', 'http://origin.com/path/to/current/page/')).to.eql('http://origin.com/path/to/current/page/test.jpg');
+    expect(fixRelativeLinks('test.jpg', 'http://origin.com/path/to/current/page.php')).to.eql('http://origin.com/path/to/current/test.jpg');    expect(fixRelativeLinks('test.jpg', 'http://origin.com')).to.eql('http://origin.com/test.jpg');
     expect(fixRelativeLinks('test.jpg', 'http://origin.com/dir/')).to.eql('http://origin.com/dir/test.jpg');
-    expect(fixRelativeLinks('../../images/test.jpg', 'http://origin.com/path/to/current/page')).to.eql('http://origin.com/path/to/images/test.jpg');
+    expect(fixRelativeLinks('../../images/test.jpg', 'http://origin.com/path/to/current/page/')).to.eql('http://origin.com/path/to/images/test.jpg');
+    expect(fixRelativeLinks('../../images/test.jpg', 'http://origin.com/path/to/current/page.html')).to.eql('http://origin.com/path/images/test.jpg');
 
     expect(fixRelativeLinks('/test.jpg', 'http://origin.com/path/to/current/page')).to.eql('http://origin.com/test.jpg');
     expect(fixRelativeLinks('/test.jpg', 'http://origin.com/path/to/current/page/')).to.eql('http://origin.com/test.jpg');
     expect(fixRelativeLinks('/test.jpg', 'http://origin.com:8080/path/to/current/page')).to.eql('http://origin.com:8080/test.jpg');
-    done();
-  });
-
-
-  it('should fix URL patterns', function(done) {
-
-    expect(fixUrlPattern('http://origin.com/test.jpg')).to.eql('(http://origin.com/test.jpg)');
-    expect(fixUrlPattern('^http://origin.com/test.jpg')).to.eql('(http://origin.com/test.jpg)');
-    expect(fixUrlPattern('^http://origin.com/test.jpg$')).to.eql('(http://origin.com/test.jpg)');
-    expect(fixUrlPattern('http://origin.com/test.jpg$')).to.eql('(http://origin.com/test.jpg)');
-    expect(fixUrlPattern('(http://origin.com/test.jpg)')).to.eql('(http://origin.com/test.jpg)');
-    expect(fixUrlPattern('http://(www.)?origin.com/test.jpg')).to.eql('(http://(www.)?origin.com/test.jpg)');
-    expect(fixUrlPattern('http://origin.com/[^&lt;&gt;&amp;"]+.jpg')).to.eql('(http://origin.com/[^<>&"]+.jpg)');
     done();
   });
 
@@ -120,6 +108,67 @@ describe('background => library.utilities', function() {
 
     removeFromArray(arr, {id: 4});
     expect(arr.length).to.eql(2);
+    done();
+  });
+
+
+  it('should detect invalid domains when building URL patterns', function(done) {
+
+    var res = buildUrlPatterns('', 'http://my-domain.org', '.*\.jpg', 'host-id');
+    expect(res.length).to.eql(0);
+    done();
+  });
+
+
+  it('should detect invalid path patterns when building URL patterns', function(done) {
+
+    var res = buildUrlPatterns('', 'my-domain.org', '^.*\.jpg', 'host-id1');
+    expect(res.length).to.eql(0);
+
+    res = buildUrlPatterns('', 'my-domain.org', '/.*\.jpg', 'host-id2');
+    expect(res.length).to.eql(0);
+
+    res = buildUrlPatterns('', 'my-domain.org', '.*\.jpg$', 'host-id3');
+    expect(res.length).to.eql(0);
+    done();
+  });
+
+
+  it('should detect build URL patterns correctly', function(done) {
+
+    // When we ready a pattern from a file, a single back-slash is enough: "\.jpg"
+    // But when specifying a pattern from the code, double back-slashes are necessary: "\\.jpg"
+    var res = buildUrlPatterns('', 'my-domain.org', '.*\\.jpg', 'host-id');
+    expect(res.length).to.eql(1);
+    expect(res[0].pattern).to.eql('"(https?://my-domain\.org/[^<>"]*\\.jpg)"');
+    expect(res[0].excludeHost).to.eql(false);
+
+    res = buildUrlPatterns('http://my-other-domain.fr/some/dir/page.html', 'my-domain.org', '.*\\.jpg', 'host-id');
+    expect(res.length).to.eql(1);
+    expect(res[0].pattern).to.eql('"(https?://my-domain\.org/[^<>"]*\\.jpg)"');
+    expect(res[0].excludeHost).to.eql(false);
+
+    res = buildUrlPatterns('http://my-other-domain.fr/some/dir/page.html', 'my-domain.org', 'gallery/.*\\.jpg', 'host-id');
+    expect(res.length).to.eql(1);
+    expect(res[0].pattern).to.eql('"(https?://my-domain\.org/gallery/[^<>"]*\\.jpg)"');
+    expect(res[0].excludeHost).to.eql(false);
+
+    res = buildUrlPatterns('http://my-other-domain.fr/some/dir/page.html', 'my-domain.org', '&dot*\\.jpg', 'host-id');
+    expect(res.length).to.eql(1);
+    expect(res[0].pattern).to.eql('"(https?://my-domain\.org/.*\\.jpg)"');
+    expect(res[0].excludeHost).to.eql(false);
+
+    res = buildUrlPatterns('http://my-domain.org/some/dir/page.html', 'my-domain.org', '.*\\.jpg', 'host-id');
+    expect(res.length).to.eql(3);
+
+    expect(res[0].pattern).to.eql('"(https?://my-domain\.org/[^<>"]*\\.jpg)"');
+    expect(res[0].excludeHost).to.eql(false);
+
+    expect(res[1].pattern).to.eql('src\s*=\s*"(/?[^:"]*[^<>"]*\\.jpg)"');
+    expect(res[1].excludeHost).to.eql(true);
+
+    expect(res[2].pattern).to.eql('href\s*=\s*"(/?[^:"]*[^<>"]*\\.jpg)"');
+    expect(res[2].excludeHost).to.eql(true);
     done();
   });
 });

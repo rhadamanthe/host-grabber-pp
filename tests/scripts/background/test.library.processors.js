@@ -9,7 +9,7 @@ describe('background => library.processors', function() {
       <img src="http://titi.fr/gallery/view.php?img=t1.jpg" class="paf" />
       <img src="http://titi.fr/gallery/view.php?img=t2.jpg" class="paf" />
       <br />
-      <img src="http://mimi.de/gallery/t2.jpg" />
+      <img src="http://mimi.net/gallery/t2.jpg" />
       <br />
       <img src="http://titi.fr/gallery/view.php?img=t5.gif" />
       <br />
@@ -32,7 +32,7 @@ describe('background => library.processors', function() {
       // Verify we got them all
       expect(res.length).to.eql(6);
 
-      expect(res[0].matchingUrl).to.eql('http://mimi.de/gallery/t2.jpg');
+      expect(res[0].matchingUrl).to.eql('http://mimi.net/gallery/t2.jpg');
       expect(res[0].extMethod).to.eql(ExtMethods.EXPREG.id);
 
       expect(res[1].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t1.jpg');
@@ -53,6 +53,79 @@ describe('background => library.processors', function() {
 
       expect(res[5].matchingUrl).to.eql('http://bibi.com/path/to/this/image1.PNG');
       expect(res[5].extMethod).to.eql(ExtMethods.SELF.id);
+    });
+  });
+
+
+  it('should find what to process (with relative and absolute links)', function() {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html><body>
+      <img src="http://titi.fr/gallery/view.php?img=t1.jpg" class="paf" />
+      <img src="http://titi.fr/gallery/view.php?img=t2.jpg" class="paf" />
+      <br />
+      <img src="http://mimi.net/gallery/t2.jpg" />
+      <br />
+      <img src="https://titi.fr/gallery/view.php?img=t5.gif" />
+      <br />
+      <img src="http://google.com/images/view.php?img=http://titi.fr/gallery/view.php?img=t5.gif" class="g" />
+      <img src="../../gallery/view.php?img=t14.jpg" class="paf" /><!--relative link -->
+      <img src="../../gallery/view.php?img=t2.jpg" class="paf" /><!--relative link but duplicate -->
+
+      <img src="/gallery/view.php?img=t101.jpg" class="paf" /><!--absolute link -->
+      <img src="/gallery/view.php?img=t2.jpg" class="paf" /><!--absolute link but duplicate -->
+      <img src="../../gallery/view.php?img=29.png" class="paf" /><!--relative link -->
+      <br />
+      <img src="http://titi.fr/gallery/view.php?img=t4.jpg" class="paf" />
+      <br />
+      <img src="http://bibi.com/path/to/this/image1.PNG" />
+      <img src="http://bibi.com/path/to/this/image2.svg" />
+    </body></html>
+    `;
+
+    // Test resources are served by Karma
+    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml');
+    return dictionaryP.then( function(dictionary) {
+
+      // Extract links
+      var res = findWhatToProcess(sourceDocument, 'http://titi.fr/some-folder/at-second-level/some-web-page.html', dictionary);
+
+      // Verify we got them all
+      expect(res.length).to.eql(9);
+
+      expect(res[0].matchingUrl).to.eql('http://mimi.net/gallery/t2.jpg');
+      expect(res[0].extMethod).to.eql(ExtMethods.EXPREG.id);
+
+      expect(res[1].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t1.jpg');
+      expect(res[1].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[2].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t2.jpg');
+      expect(res[2].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[3].matchingUrl).to.eql('https://titi.fr/gallery/view.php?img=t5.gif');
+      expect(res[3].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[4].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t4.jpg');
+      expect(res[4].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[5].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t14.jpg');
+      expect(res[5].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[6].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t101.jpg');
+      expect(res[6].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[7].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=29.png');
+      expect(res[7].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[8].matchingUrl).to.eql('http://bibi.com/path/to/this/image1.PNG');
+      expect(res[8].extMethod).to.eql(ExtMethods.SELF.id);
     });
   });
 
@@ -104,7 +177,7 @@ describe('background => library.processors', function() {
     sourceDocument.documentElement.innerHTML = `<html><body>
       <img src="http://titi.fr/gallery/view.php?img=t1.jpg" class="paf" />
       <br />
-      <img src="http://mimi.com/test/photos/view?t2.jpg" />
+      <img src="http://mimi.net/test/photos/view?t2.jpg" />
       <br />
       <img src="http://titi.fr/gallery/view.php?img=t5.gif" />
       <br />
@@ -127,20 +200,20 @@ describe('background => library.processors', function() {
       // Verify we got them all
       expect(res.length).to.eql(1);
 
-      expect(res[0].matchingUrl).to.eql('http://mimi.com/test/photos/view?t2.jpg');
+      expect(res[0].matchingUrl).to.eql('http://mimi.net/test/photos/view?t2.jpg');
       expect(res[0].extMethod).to.eql(ExtMethods.EXPREG.id);
       expect(res[0].searchPattern).to.eql('expreg: ">\\s*<a href="([^"]+)">');
     });
   });
 
 
-  it('should find nothing to process when the URL pattern is missing', function(done) {
+  it('should find nothing to process when the path pattern is missing', function(done) {
 
     var sourceDocument = document.implementation.createHTMLDocument('');
     sourceDocument.documentElement.innerHTML = `<html><body>
       <img src="http://titi.fr/gallery/view.php?img=t1.jpg" class="paf" />
       <br />
-      <img src="http://mimi.de/gallery/t2.jpg" />
+      <img src="http://mimi.net/gallery/t2.jpg" />
       <br />
       <img src="http://titi.fr/gallery/view.php?img=t5.gif" />
       <br />
@@ -157,7 +230,46 @@ describe('background => library.processors', function() {
     var dictionary = document.implementation.createDocument('', 'root');
     dictionary.documentElement.innerHTML = `<root>
         <host id="titi">
-          <searchpattern>expreg: src="(.*\.jpg)"</searchpattern>
+          <domain>titi.fr</domain>
+          <search-pattern>expreg: src="(.*\.jpg)"</search-pattern>
+        </host>
+      </root>
+    `;
+
+    // Extract links
+    var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
+
+    // Verify we got them all
+    expect(res.length).to.eql(0);
+    done();
+  });
+
+
+  it('should find nothing to process when the domain is missing', function(done) {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html><body>
+      <img src="http://titi.fr/gallery/view.php?img=t1.jpg" class="paf" />
+      <br />
+      <img src="http://mimi.net/gallery/t2.jpg" />
+      <br />
+      <img src="http://titi.fr/gallery/view.php?img=t5.gif" />
+      <br />
+      <img src="http://google.com/images/view.php?img=http://titi.fr/gallery/view.php?img=t5.gif" class="g" />
+      <br />
+      <img src="http://titi.fr/gallery/view.php?img=t4.jpg" class="paf" />
+      <br />
+      <img src="http://bibi.com/path/to/this/image1.PNG" />
+      <img src="http://bibi.com/path/to/this/image2.svg" />
+    </body></html>
+    `;
+
+    // Test resources are served by Karma
+    var dictionary = document.implementation.createDocument('', 'root');
+    dictionary.documentElement.innerHTML = `<root>
+        <host id="titi">
+          <path-pattern>[^ "]+</path-pattern>
+          <search-pattern>expreg: src="(.*\.jpg)"</search-pattern>
         </host>
       </root>
     `;
@@ -177,7 +289,7 @@ describe('background => library.processors', function() {
     sourceDocument.documentElement.innerHTML = `<html><body>
       <img src="http://titi.fr/gallery/view.php?img=t1.jpg" class="paf" />
       <br />
-      <img src="http://mimi.de/gallery/t2.jpg" />
+      <img src="http://mimi.net/gallery/t2.jpg" />
       <br />
       <img src="http://titi.fr/gallery/view.php?img=t5.gif" />
       <br />
@@ -194,7 +306,8 @@ describe('background => library.processors', function() {
     var dictionary = document.implementation.createDocument('', 'root');
     dictionary.documentElement.innerHTML = `<root>
         <host id="titi">
-          <urlpattern>^http://(www\.)?titi\.fr/[^ "]+</urlpattern>
+          <domain>titi.fr</domain>
+          <path-pattern>[^ "]+</path-pattern>
         </host>
       </root>
     `;
@@ -214,7 +327,7 @@ describe('background => library.processors', function() {
     sourceDocument.documentElement.innerHTML = `<html><body>
       <img src="http://titi.fr/gallery/view.php?img=t1.jpg" class="paf" />
       <br />
-      <img src="http://mimi.de/gallery/t2.jpg" />
+      <img src="http://mimi.net/gallery/t2.jpg" />
       <br />
       <img src="http://titi.fr/gallery/view.php?img=t5.gif" />
       <br />
@@ -231,8 +344,9 @@ describe('background => library.processors', function() {
     var dictionary = document.implementation.createDocument('', 'root');
     dictionary.documentElement.innerHTML = `<root>
         <host id="titi">
-          <urlpattern>^http://(www\.)?titi\.fr/[^ "]+</urlpattern>
-          <searchpattern>expreg: src="(.*\.jpg)"</searchpattern>
+          <domain>titi.fr</domain>
+          <path-pattern>[^ "]+</path-pattern>
+          <search-pattern>expreg: src="(.*\.jpg)"</search-pattern>
         </host>
       </root>
     `;
@@ -241,7 +355,7 @@ describe('background => library.processors', function() {
     var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
 
     // Verify we got them all
-    expect(res.length).to.eql(4);
+    expect(res.length).to.eql(3);
 
     expect(res[0].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t1.jpg');
     expect(res[0].extMethod).to.eql(ExtMethods.EXPREG.id);
@@ -249,11 +363,8 @@ describe('background => library.processors', function() {
     expect(res[1].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t5.gif');
     expect(res[1].extMethod).to.eql(ExtMethods.EXPREG.id);
 
-    expect(res[2].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t7.gif');
+    expect(res[2].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t4.jpg');
     expect(res[2].extMethod).to.eql(ExtMethods.EXPREG.id);
-
-    expect(res[3].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t4.jpg');
-    expect(res[3].extMethod).to.eql(ExtMethods.EXPREG.id);
     done();
   });
 

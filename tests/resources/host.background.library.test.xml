@@ -2,37 +2,43 @@
 <root>
 
 <host id="mimi">
-	<urlpattern>^http://mimi\.[^/]+/[^"]*</urlpattern>
-	<searchpattern>expreg: (http://mimi\.[^"]*\.(jpg|gif|png))</searchpattern>
+	<domain>mimi.net</domain>
+	<path-pattern>[^/]+/[^"]*</path-pattern>
+	<search-pattern>expreg: (http://mimi\.[^"]*\.(jpg|gif|png))</search-pattern>
 </host>
 
 <host id="titi">
-	<urlpattern>^http://titi\.fr/[^"]*$</urlpattern>
-	<searchpattern>replace: 'view\.php\?img=', 'images/'</searchpattern>
+	<domain>titi.fr</domain>
+	<path-pattern>[^"]*</path-pattern>
+	<search-pattern>replace: 'view\.php\?img=', 'images/'</search-pattern>
 </host>
 
 <host id="bibi">
-	<urlpattern>^(http://bibi\.com/[^"]*\.(jpg|png|gif))$</urlpattern>
-	<searchpattern>self</searchpattern>
+	<domain>bibi.com</domain>
+	<path-pattern>[^"]*\.(jpg|png|gif)</path-pattern>
+	<search-pattern>self</search-pattern>
 </host>
 
 <host id="host1">
-	<urlpattern>^(http://host1\.com/[^"&lt;&gt;]+\.(jpg|png|gif))$</urlpattern>
+	<domain>host1.com</domain>
+	<path-pattern>.+\.(jpg|png|gif)</path-pattern>
 	<redirect-from>host1</redirect-from>
 	<redirect-to>host_1</redirect-to>
-	<searchpattern>self</searchpattern>
+	<search-pattern>self</search-pattern>
 </host>
 
 <host id="host2">
-	<urlpattern>^(http://host2\.com/[^"&lt;&gt;]+\.(jpg|png|gif))$</urlpattern>
+	<domain>host2.com</domain>
+	<path-pattern>.+\.(jpg|png|gif)</path-pattern>
 	<redirect-from>host_2</redirect-from>
-	<searchpattern>self</searchpattern>
+	<search-pattern>self</search-pattern>
 </host>
 
 <host id="host3">
-	<urlpattern>^(http://host3\.com/[^"&lt;&gt;]+\.(jpg|png|gif))$</urlpattern>
+	<domain>host3.com</domain>
+	<path-pattern>.+\.(jpg|png|gif)</path-pattern>
 	<redirect-to>host_3</redirect-to>
-	<searchpattern>self</searchpattern>
+	<search-pattern>self</search-pattern>
 </host>
 
 </root>
