@@ -9,9 +9,9 @@ function findClassNameFromStatus(dlLink) {
 
   var result = '';
   switch(dlLink.status) {
-  case /*DlStatus.FAILURE*/ 3: result = 'failure'; break;
-  case /*DlStatus.SUCCESS*/ 2: result = 'success'; break;
-  case /*DlStatus.WAITING*/ 1: result = 'waiting'; break;
+  case DlStatus.FAILURE: result = 'failure'; break;
+  case DlStatus.SUCCESS: result = 'success'; break;
+  case DlStatus.WAITING: result = 'waiting'; break;
   }
 
   return result;
@@ -26,17 +26,15 @@ function findClassNameFromProcessor(processor) {
 
   var ok = 0, ko = 0, waiting = 0;
   processor.downloadLinks.forEach( function(dlLink) {
-    if (dlLink.status === 3) {
-      ko ++;
-    } else if (dlLink.status === 2) {
-      ok ++;
-    }  else if (dlLink.status === 1) {
-      waiting ++;
+    switch(dlLink.status) {
+    case DlStatus.FAILURE:  ko ++; break;
+    case DlStatus.SUCCESS: result = ok ++; break;
+    case DlStatus.WAITING: result = waiting ++; break;
     }
   });
 
   var res = 'waiting';
-  if (processor.status === 8 ) { /* ProcessorStatus.NO_LINK_FOUND */
+  if (processor.status === ProcessorStatus.NO_LINK_FOUND) {
     res = 'failure';
   } else if (processor.downloadLinks.length > 0) {
     if (processor.downloadLinks.length === ko) {

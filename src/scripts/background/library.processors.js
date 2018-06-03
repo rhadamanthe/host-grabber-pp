@@ -1,37 +1,5 @@
 'use strict';
 
-
-/**
- * No ID with 0 here!
- */
-const ExtMethods = {
-  ID:      { id: 1, pattern: /^\s*id\s*:\s*(.+)$/ig },
-  CLASS:   { id: 2, pattern: /^\s*class\s*:\s*(.+)$/ig },
-  XPATH:   { id: 3, pattern: /^\s*xpath\s*:\s*(.+)$/ig },
-  REPLACE: { id: 4, pattern: /^\s*replace\s*:\s*\'(.+)\'\s*,\s*\'(.*)\'\s*$/ig },
-  EXPREG:  { id: 5, pattern: /^\s*expreg\s*:\s*(.+)\s*$/ig },
-  SELF:    { id: 6, pattern: /^\s*self\s*$/ig }
-};
-
-
-const ProcessorStatus = {
-  WAITING: 1,
-  RETRIEVING_LINKS: 2,
-  GOT_LINKS: 3,
-  DL_SUCCESS: 4,
-  DL_FAILURE: 5,
-  RETRIEVING_LINKS_FAILURE: 6,
-  RETRIEVING_LINKS_DONE: 7,
-  NO_LINK_FOUND: 8
-};
-
-const DlStatus = {
-  WAITING: 1,
-  SUCCESS: 2,
-  FAILURE: 3
-};
-
-
 /**
  * Finds what to process from the matches in the original web page, against dictionaries.
  * @param {object} sourceDocument The source page as a DOM document.
@@ -46,7 +14,7 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
   var alreadyVisistedUrls = [];
 
   // Fix the dictionaries parameter
-  if (typeof dictionaries !== 'array') {
+  if (! Array.isArray(dictionaries)) {
     dictionaries = [dictionaries];
   }
 
@@ -172,7 +140,7 @@ function handleProcessor(processor, extractor, queue, startDownloadFn, updatePro
     ExtMethods.REPLACE.pattern.lastIndex = 0;
     onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView);
 
-  } else if (! processor.xmlDoc && processor.status === ProcessorStatus.WAITING) {
+  } else {
     processor.status = ProcessorStatus.RETRIEVING_LINKS;
     loadRemoteDocument(processor.matchingUrl).then( function(xmlDoc) {
       processor.status = ProcessorStatus.RETRIEVING_LINKS_DONE;

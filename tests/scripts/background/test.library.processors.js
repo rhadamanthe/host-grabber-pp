@@ -98,7 +98,7 @@ describe('background => library.processors', function() {
   });
 
 
-  it('should find what to process (with CDATA)', function() {
+  it('should find what to process (with CDATA and array of dictionaries)', function() {
 
     var sourceDocument = document.implementation.createHTMLDocument('');
     sourceDocument.documentElement.innerHTML = `<html><body>
@@ -122,7 +122,7 @@ describe('background => library.processors', function() {
     return dictionaryP.then( function(dictionary) {
 
       // Extract links
-      var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
+      var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', [dictionary]);
 
       // Verify we got them all
       expect(res.length).to.eql(1);
@@ -299,6 +299,12 @@ describe('background => library.processors', function() {
 
     expect(findExtractionMethod('expReg: (http://mimi\.[^"]*\.(jpg|gif|png))')).to.eql(ExtMethods.EXPREG.id);
     expect(findExtractionMethod(' expreg : (http://mimi\.[^"]*\.(jpg|gif|png)) ')).to.eql(ExtMethods.EXPREG.id);
+
+    expect(findExtractionMethod('invalid')).to.eql(0);
+    for (var ext in ExtMethods) {
+      expect(ext.id).to.not.eql(0);
+    };
+
     done();
   });
 
@@ -661,6 +667,32 @@ describe('background => library.processors', function() {
       expect(p.downloadLinks[0].link).to.eql('test1');
       expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
       expect(queue.modified).to.eql(false);
+    });
+  });
+
+
+  it('should handle processors correctly (invalid strategy)', function() {
+
+    var p = newProcessor('test', 'this is invalid');
+    p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
+
+    var idleFn = function() {};
+    var queue = {
+      modified: false,
+      processNextItem: function() {
+        this.modified = true;
+      }
+    };
+
+    // Execute the test
+    expect(p.downloadLinks.length).to.eql(0);
+    handleProcessor(p, extractor(), queue, idleFn, idleFn);
+
+    // In this case, processing is asynchronous.
+    return sleep(1000).then(function() {
+      expect(p.status).to.eql(ProcessorStatus.NO_LINK_FOUND);
+      expect(p.downloadLinks.length).to.eql(0);
+      expect(queue.modified).to.eql(true);
     });
   });
 });
