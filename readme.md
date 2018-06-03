@@ -5,20 +5,15 @@
 [![Join the chat at https://gitter.im/host-grabber-pp/Lobby](https://badges.gitter.im/host-grabber-pp/Lobby.svg)](https://gitter.im/host-grabber-pp/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 &nbsp; [![Firefox](docs/assets/images/firefox_x24.png)]()
 
-A web extension that allows to find and download media files from web pages.  
+A web extension that allows to find and download media files from various hosts.  
 It was originally designed for Mozilla Firefox but might be adapted to other web browsers.
 
 It works like the former [Image Host Grabber](https://addons.mozilla.org/fr/firefox/addon/imagehost-grabber/)
 extension, but unlike it, it is not restricted to downloading images.
 
-> **This an alpha version**.
+> **This an beta version**.
 
-> Notice 1: links extraction is working quite correctly, but downloading is very
-> limited due to restrictions set by the Firefox API. I was thinking to rely on
-> [Download Them All](https://www.downthemall.net/), but the extension is not yet available
-> for the last Firefox versions.
-
-> Notice 2: the list of hosts has been seriously purged.  
+> Notice: the list of hosts has been seriously purged.  
 > And the current list is not always up-to-date.
 
 
@@ -26,21 +21,15 @@ extension, but unlike it, it is not restricted to downloading images.
 
 **Short-term**
 
-* Make the **options** page more beautiful.
-* Add a command to purge downloads.
-* Add a command to retry a failed download.
-* Add a redirection mechanism (e.g. for PixHost).
 * Add a menu to display the download links without downloading them (download simulation).
 * Add a panel to test URL and search patterns on the current tab.
 * Add a way to manage a dictionary locally (add, remove, enable, disable rules).
-* Update the list of hosts.
 
 **Long-term**
 
 * Add a separate menu to download direct images.
 * Allow to use several dictionaries in the preferences.
-* Enhance the downloading part. Join the efforts with DTA is an option.
-* Maybe adapt it for other web browsers.
+* Adapt it so that it also works with for Chrome / Chromium.
 
 
 ## Development

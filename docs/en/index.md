@@ -19,11 +19,13 @@ options that existed before.
 
 ## Screenshots
 
-> The project is still in **alpha** version.
+> The project is still in **beta** version.
 
-<img src="../assets/images/dl-view-1--v0.2.jpg" alt="The download view" />
+<img src="../assets/images/dl-view-1--v0.3.jpg" alt="The download view" />
 
 <img src="../assets/images/dl-view-2--v0.2.jpg" alt="The menu" />
+
+<img src="../assets/images/options-view--v0.3.jpg" alt="The options page" />
 
 
 ## Installation

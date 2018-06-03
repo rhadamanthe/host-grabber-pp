@@ -18,11 +18,13 @@ avec quelques différences:
 
 ## Captures d'Écran
 
-> Le projet est en version **alpha**.
+> Le projet est en version **beta**.
 
-<img src="../assets/images/dl-view-1--v0.2.jpg" alt="La vue des téléchargements" />
+<img src="../assets/images/dl-view-1--v0.3.jpg" alt="La vue des téléchargements" />
 
 <img src="../assets/images/dl-view-2--v0.2.jpg" alt="Le menu contextuel" />
+
+<img src="../assets/images/options-view--v0.3.jpg" alt="La page d'options" />
 
 
 ## Installation
