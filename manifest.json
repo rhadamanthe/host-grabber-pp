@@ -1,10 +1,12 @@
 {
-  "description": "A web extension that allows to find and download media files from web pages.",
   "manifest_version": 2,
   "name": "Host Grabber ++",
+  "description": "__MSG_extensionDescription__",
+  "version": "0.3",
+
   "author": "Rhadamanthe",
-  "version": "0.2",
   "homepage_url": "https://rhadamanthe.github.io/host-grabber-pp",
+  "default_locale": "en",
   "icons": {
     "48": "icons/logo_x48.png"
   },
@@ -23,7 +25,7 @@
 
   "browser_action": {
     "default_icon": "icons/logo_x48.png",
-    "default_title": "Extract",
+    "default_title": "__MSG_extensionBrowserAction_Extract__",
     "browser_style": true
   },
 

@@ -1,0 +1,141 @@
+{
+  "extensionDescription": {
+    "message": "Une extension web qui permet de découvrir et télécharger des fichiers multimédia sur divers hôtes.",
+    "description": "Description de l''extension"
+  },
+
+  "extensionBrowserAction_Extract": {
+    "message": "Extraire",
+    "description": "L'étiquette pour le menu contextuel 'extraire'"
+  },
+
+  "optionsPage_title": {
+    "message": "Options - HG ++",
+    "description": "Le titre de la page d'options'"
+  },
+
+  "optionsPage_dictionaryUrlProperty": {
+    "message": "URL du Dictionnaire :",
+    "description": "L'étiquette pour l'option 'URL du dictionnaire' (page d'options)"
+  },
+
+  "optionsPage_reloadDictionaryButton": {
+    "message": "Recharger le Dictionnaire",
+    "description": "L'étiquette pour l'action 'recharger le dictionnaire' (page d'options)"
+  },
+
+  "optionsPage_restoreDefaultUrlButton": {
+    "message": "Restaurer l'URL par Défaut",
+    "description": "L'étiquette pour l'action 'restaurer l'URL par défaut' (page d'options)"
+  },
+
+  "optionsPage_saveDictionaryUrlButton": {
+    "message": "Enregister l'URL du Dictionnaire",
+    "description": "L'étiquette pour l'action 'enregister l'URL du Dictionnaire' (page d'options)"
+  },
+
+  "optionsPage_downloadSettingsSection": {
+    "message": "Paramètres de Téléchargement",
+    "description": "L'étiquette pour la section 'aramètres de Téléchargement' (page d'options)"
+  },
+
+  "optionsPage_clearCompletedDownloadsOption": {
+    "message": "Enlever automatiquement les téléchargements complétés avec succès",
+    "description": "L'étiquette pour l'option 'enlever les téléchargements terminés' (page d'options)"
+  },
+
+  "optionsPage_maximumParallelDownloadsOption": {
+    "message": "Nombre maximum de téléchargements simultanés",
+    "description": "L'étiquette pour l'option du 'nombre maximum de téléchargements simultanés' (page d'options)"
+  },
+
+  "optionsPage_maximumParallelDownloadsWarning_1": {
+    "message": "Veuillez noter que les téléchargements sont effectués par Firefox directement.",
+    "description": "Une partie de l'avertissement associé à l'option 'nombre maximum de téléchargements simultanés' (page d'options)"
+  },
+
+  "optionsPage_maximumParallelDownloadsWarning_2": {
+    "message": "Le nombre de connexions simultanées vers un même serveur est nativement limité par Firefox (6 connexions au plus par défaut). Vous pouvez visiter",
+    "description": "Une partie de l'avertissement associé à l'option 'nombre maximum de téléchargements simultanés' (page d'options)"
+  },
+
+  "optionsPage_maximumParallelDownloadsWarning_3": {
+    "message": "cette page",
+    "description": "Une partie de l'avertissement associé à l'option 'nombre maximum de téléchargements simultanés' (page d'options)"
+  },
+
+  "optionsPage_maximumParallelDownloadsWarning_4": {
+    "message": "pour de plus amples informations (en anglais). Ce paramètre permet de limiter le nombre de total de téléchargements lancés en parallèle par cette extension. Les autres éléments seront téléchargés après que les précédents aient terminé.",
+    "description": "Une partie de l'avertissement associé à l'option 'nombre maximum de téléchargements simultanés' (page d'options)"
+  },
+
+  "dlPage_elementToExploreColumn": {
+    "message": "Éléments à Explorer / Télécharger",
+    "description": "L'étiquette pour la colonne 'élément à explorer' (page de téléchargement)"
+  },
+
+  "dlPage_statusColumn": {
+    "message": "État",
+    "description": "L'étiquette pour la colonne 'état' (page de téléchargement)"
+  },
+
+  "dlPage_clearCompletedDownloadsAction": {
+    "message": "Enlever les Téléchargements Terminés",
+    "description": "L'étiquette pour l'action 'enlever les téléchargements terminés' (page de téléchargement)"
+  },
+
+  "dlPage_clearCompletedDownloadsTooltip": {
+    "message": "Enlève les éléments dont l'exploration et le téléchargement ont été effectués avec succès",
+    "description": "L'étiquette pour l'info-bulle de l'action 'enlever les téléchargements terminés' (page de téléchargement)"
+  },
+
+  "dlPage_openOptionsPageAction": {
+    "message": "Options",
+    "description": "L'étiquette pour l'action 'ouvrir la page d'options' (page de téléchargement)"
+  },
+
+  "dlPage_openOptionsPageTooltip": {
+    "message": "Ouvre la page d'options",
+    "description": "L'étiquette pour l'info-bulle de l'action 'ouvrir la page d'options' (page de téléchargement)"
+  },
+
+  "dlPage_removeSelectionAction": {
+    "message": "Supprimer la Sélection",
+    "description": "L'étiquette pour l'action 'supprimer les items selectionnés' (page de téléchargement)"
+  },
+
+  "dlPage_removeSelectionTooltip": {
+    "message": "Supprime les éléments sélectionnés de la vue, quel que soit leur état",
+    "description": "L'étiquette pour l'info-bulle de l'action 'supprimer les items selectionnés' (page de téléchargement)"
+  },
+
+  "dlPage_retryDownloadsAction": {
+    "message": "Retélécharger la Sélection",
+    "description": "L'étiquette pour l'action 'retélécharger les éléments selectionnés' (page de téléchargement)"
+  },
+
+  "dlPage_retryDownloadsTooltip": {
+    "message": "Essaye de retélécharger les éléments sélectionnés",
+    "description": "L'étiquette pour l'info-bulle de l'action 'retélécharger les éléments selectionnés' (page de téléchargement)"
+  },
+
+  "waiting": {
+    "message": "En attente...",
+    "descroption": ""
+  },
+
+  "success": {
+    "message": "Succès",
+    "descroption": ""
+  },
+
+  "failure": {
+    "message": "Échec",
+    "descroption": ""
+  },
+
+  "mixed": {
+    "message": "Quelques échecs",
+    "descroption": ""
+  }
+}

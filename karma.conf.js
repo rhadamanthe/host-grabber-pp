@@ -26,6 +26,12 @@ module.exports = function(config) {
         watched:  false,
         served:   true,
         included: false
+      },
+      {
+        pattern: './_locales/**/*.json',
+        watched:  false,
+        served:   true,
+        included: false
       }
     ],
 

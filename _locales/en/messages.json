@@ -1,0 +1,141 @@
+{
+  "extensionDescription": {
+    "message": "A web extension that allows to find and download media files from web hosts.",
+    "description": "Description of the extension"
+  },
+
+  "extensionBrowserAction_Extract": {
+    "message": "Extract",
+    "description": "The label for the 'extract' contextual menu"
+  },
+
+  "optionsPage_title": {
+    "message": "Options - HG ++",
+    "description": "The title of the options page"
+  },
+
+  "optionsPage_dictionaryUrlProperty": {
+    "message": "Dictionary URL:",
+    "description": "The label for the dictionary URL option (options page)"
+  },
+
+  "optionsPage_reloadDictionaryButton": {
+    "message": "Reload Dictionary",
+    "description": "The label for the 'reload dictionary' action (options page)"
+  },
+
+  "optionsPage_restoreDefaultUrlButton": {
+    "message": "Restore Default URL",
+    "description": "The label for the 'restore default URL' action (options page)"
+  },
+
+  "optionsPage_saveDictionaryUrlButton": {
+    "message": "Save Dictionary URL",
+    "description": "The label for the 'save dictionary URL' action (options page)"
+  },
+
+  "optionsPage_downloadSettingsSection": {
+    "message": "Download Settings",
+    "description": "The label for the 'download settings' section (options page)"
+  },
+
+  "optionsPage_clearCompletedDownloadsOption": {
+    "message": "Automatically clear downloads that successfully completed",
+    "description": "The label for the 'clear completed downloads' option (options page)"
+  },
+
+  "optionsPage_maximumParallelDownloadsOption": {
+    "message": "Maximum number of parallel downloads",
+    "description": "The label for the 'maximum number of parallel downloads' option (options page)"
+  },
+
+  "optionsPage_maximumParallelDownloadsWarning_1": {
+    "message": "Notice that downloads are performed by Firefox.",
+    "description": "A part of the warning message for the 'maximum number of parallel downloads' option (options page)"
+  },
+
+  "optionsPage_maximumParallelDownloadsWarning_2": {
+    "message": "Parallel downloads to a same server are natively limited by Firefox (by default, at most 6 active connections). Please, visit",
+    "description": "A part of the warning message for the 'maximum number of parallel downloads' option (options page)"
+  },
+
+  "optionsPage_maximumParallelDownloadsWarning_3": {
+    "message": "this link",
+    "description": "A part of the warning message for the 'maximum number of parallel downloads' option (options page)"
+  },
+
+  "optionsPage_maximumParallelDownloadsWarning_4": {
+    "message": "for more details. This setting allows to limit the number of simultaneous downloads started by this extension. Other items will be downloaded after the previous ones complete.",
+    "description": "A part of the warning message for the 'maximum number of parallel downloads' option (options page)"
+  },
+
+  "dlPage_elementToExploreColumn": {
+    "message": "Elements to Explore / Download",
+    "description": "The label for the 'element to explore' column (download page)"
+  },
+
+  "dlPage_statusColumn": {
+    "message": "Status",
+    "description": "The label for the 'status' column (download page)"
+  },
+
+  "dlPage_clearCompletedDownloadsAction": {
+    "message": "Clear Complete Downloads",
+    "description": "The label for the 'clear completed downloads' action (download page)"
+  },
+
+  "dlPage_clearCompletedDownloadsTooltip": {
+    "message": "Clear all the items whose exploration and download successfully completed",
+    "description": "The label for the 'clear completed downloads' tooltip (download page)"
+  },
+
+  "dlPage_openOptionsPageAction": {
+    "message": "Options",
+    "description": "The label for the 'open options page' action (download page)"
+  },
+
+  "dlPage_openOptionsPageTooltip": {
+    "message": "Open the options page",
+    "description": "The label for the 'open options page' tooltip (download page)"
+  },
+
+  "dlPage_removeSelectionAction": {
+    "message": "Remove the Selection",
+    "description": "The label for the 'remove selected items' action (download page)"
+  },
+
+  "dlPage_removeSelectionTooltip": {
+    "message": "Remove the selected items from the view, no matter their state",
+    "description": "The label for the 'remove selected items' tooltip (download page)"
+  },
+
+  "dlPage_retryDownloadsAction": {
+    "message": "Retry Selected Downloads",
+    "description": "The label for the 'retry downloads' action (download page)"
+  },
+
+  "dlPage_retryDownloadsTooltip": {
+    "message": "Retry to download the selected items",
+    "description": "The label for the 'retry downloads' tooltip (download page)"
+  },
+
+  "waiting": {
+    "message": "Waiting...",
+    "descroption": ""
+  },
+
+  "success": {
+    "message": "Success",
+    "descroption": ""
+  },
+
+  "failure": {
+    "message": "Failure",
+    "descroption": ""
+  },
+
+  "mixed": {
+    "message": "Some failures",
+    "descroption": ""
+  }
+}

@@ -233,25 +233,22 @@ button {
 </head>
 
 <body>
-	<div class="col1 title">
-		Elements to Explore / Download
-	</div><div class="col22 title">
-		Status
-	</div><div class="col3 title">
-		-
-	</div>
+	<!-- Keep all the div stuck like this -->
+	<div class="col1 title" data-i18n="dlPage_elementToExploreColumn">
+	</div><div class="col22 title" data-i18n="dlPage_statusColumn">
+	</div><div class="col3 title"> - </div>
 
 	<div id="items"></div>
 	<div id="controls">
-		<button id="remove-completed" title="Clears all the items whose exploration and download successfully completed">Clear Complete Downloads</button>
-		<button id="options" title="Open the options page">Options</button>
+		<button id="remove-completed" data-i18n="dlPage_clearCompletedDownloadsAction" data-i18n-tooltip="dlPage_clearCompletedDownloadsTooltip"></button>
+		<button id="options" data-i18n="dlPage_openOptionsPageAction" data-i18n-tooltip="dlPage_openOptionsPageTooltip"></button>
 
-		<button class="right-button" id="remove-selection" title="Removes the selected downloads">Clear Selected Downloads</button>
-		<button class="right-button" id="retry-downloads" title="Retry to download the selected items">Retry Selected Downloads</button>
+		<button class="right-button" id="remove-selection" data-i18n="dlPage_removeSelectionAction" data-i18n-tooltip="dlPage_removeSelectionTooltip"></button>
+		<button class="right-button" id="retry-downloads" data-i18n="dlPage_retryDownloadsAction" data-i18n-tooltip="dlPage_retryDownloadsTooltip"></button>
 	</div>
 
-	<!-- script src="../scripts/lib/bind.min.js"></script  -->
 	<script src="../scripts/mixed/commons.js"></script>
+	<script src="../scripts/mixed/i18n.js"></script>
 	<script src="../scripts/content/library.list.js"></script>
 	<script src="../scripts/content/list.js"></script>
 </body>

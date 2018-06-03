@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-
 <html>
 <head>
 	<meta charset="utf-8" />
-	<title>Options - HG ++</title>
+	<title data-i18n="optionsPage_title"></title>
 	<style type="text/css">
 
 * {
@@ -109,41 +108,44 @@ p.warning {
 	<img src="/icons/logo_x144.png" alt="Host Grabber ++" id="logo" />
 	<div id="options">
 		<form>
-			<label for="dictionary-url">Dictionary URL:</label><br />
+			<label for="dictionary-url" data-i18n="optionsPage_dictionaryUrlProperty"></label><br />
 			<input name="dictionary-url" id="dictionary-url" type="text" />
 
 			<br />
-			<button type="button" id="reload-btn">Reload Dictionary</button>
-			<button type="button" id="restore-btn">Restore Default URL</button>
-			<button type="button" id="save-btn">Save Dictionary URL</button>
+			<button type="button" id="reload-btn" data-i18n="optionsPage_reloadDictionaryButton"></button>
+			<button type="button" id="restore-btn" data-i18n="optionsPage_restoreDefaultUrlButton"></button>
+			<button type="button" id="save-btn" data-i18n="optionsPage_saveDictionaryUrlButton"></button>
 
 			<br />
 			<fieldset>
-				<legend>Download Settings</legend>
+				<legend data-i18n="optionsPage_downloadSettingsSection"></legend>
 
 				<p class="block">
 				<input type="checkbox" name="dl-clear-completed" id="dl-clear-completed" />
-				<label for="dl-clear-completed">Automatically clear downloads that successfully completed</label>
+				<label for="dl-clear-completed" data-i18n="optionsPage_clearCompletedDownloadsOption"></label>
 				</p>
 
 				<br />
 				<p class="block">
-				<label for="dl-max-parallel">Maximum number of parallel downloads</label>
+				<label for="dl-max-parallel" data-i18n="optionsPage_maximumParallelDownloadsOption"></label>
 				<input type="number" name="dl-max-parallel" id="dl-max-parallel" />
 				</p>
 
 				<br />
 				<p class="block warning">
-				Notice that downloads are performed by Firefox.<br />Parallel downloads to a same server are
-				natively limited by Firefox (by default, at most 6 active connections). Please, visit
-				<a href="https://support.mozilla.org/fr/questions/992338">this link</a> for more details.
-				This setting allows to limit the number of downloads started by this extension. Other items will
-				then start after previous ones complete.
+				<span data-i18n="optionsPage_maximumParallelDownloadsWarning_1"></span><br />
+				<span data-i18n="optionsPage_maximumParallelDownloadsWarning_2"></span>
+				
+				<a href="https://support.mozilla.org/fr/questions/992338" 
+				   data-i18n="optionsPage_maximumParallelDownloadsWarning_3">
+				</a>
+				<span data-i18n="optionsPage_maximumParallelDownloadsWarning_4"></span>
 				</p>
 			</fieldset>
 		</form>
 	</div>
 
+	<script src="../scripts/mixed/i18n.js"></script>
 	<script src="../scripts/content/options.js"></script>
 </body>
 

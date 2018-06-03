@@ -145,7 +145,9 @@ function updateProcessor(processor) {
 
     // Update the processor's status
     var pStatus = document.getElementById(processor.id + '-status');
-    pStatus.className = findClassNameFromProcessor(processor) + ' col2';
+    var class_ = findClassNameFromProcessor(processor);
+    pStatus.className = class_ + ' col2';
+    pStatus.textContent = findAndVerifyValue(class_);
 
     // Update the view
     p.downloadLinks.forEach( function(dlLink) {
@@ -153,7 +155,10 @@ function updateProcessor(processor) {
       // Status and download links
       var item = document.getElementById(dlLink.id + '-link');
       if (!! item) {
-        document.getElementById(dlLink.id + '-status').className = findClassNameFromStatus(dlLink) + ' col2';
+        item = document.getElementById(dlLink.id + '-status');
+        var class_ = findClassNameFromStatus(dlLink);
+        item.className = class_ + ' col2';
+        item.textContent = findAndVerifyValue(class_);
       } else {
         displayNewLink(processor.id, dlLink);
       }
@@ -210,7 +215,7 @@ function displayNewProcessors(processors) {
     var p = document.createElement('p');
     p.className = class_ + ' col2';
     p.id = processor.id + '-status';
-    p.textContent = '[ ' + class_ + ' ]';
+    p.textContent = '[ ' + findAndVerifyValue(class_) + ' ]';
     collapsible.appendChild(p);
 
     p = document.createElement('p');
@@ -267,7 +272,7 @@ function displayNewLink(processorId, dlLink) {
   p = document.createElement('p');
   p.className = class_ + ' col2';
   p.id = dlLink.id + '-status';
-  p.textContent = '[ ' + class_ + ' ]';
+  p.textContent = '[ ' + findAndVerifyValue( class_ ) + ' ]';
   innerContentDiv.appendChild(p);
 
   // Update the view with download information
