@@ -1,6 +1,5 @@
 // Restore stuff
 document.addEventListener('DOMContentLoaded', restoreOptions);
-const defaultUrl = 'https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml';
 
 /**
  * Loads the preferences.
@@ -9,15 +8,15 @@ const defaultUrl = 'https://raw.githubusercontent.com/rhadamanthe/host-grabber-p
 function restoreOptions() {
 
   browser.storage.local.get('dictionaryUrl').then((res) => {
-    document.querySelector('#dictionary-url').value = res.dictionaryUrl || defaultUrl;
+    document.querySelector('#dictionary-url').value = res.dictionaryUrl || defaultDictionaryUrl;
   });
 
   browser.storage.local.get('dlClearCompleted').then((res) => {
-    document.querySelector('#dl-clear-completed').checked = res.dlClearCompleted || false;
+    document.querySelector('#dl-clear-completed').checked = res.dlClearCompleted || defaultDlClearCompleted;
   });
 
   browser.storage.local.get('dlMaxParallel').then((res) => {
-    document.querySelector('#dl-max-parallel').value = res.dlMaxParallel || 3;
+    document.querySelector('#dl-max-parallel').value = res.dlMaxParallel || defaultDlMaxParallel;
   });
 }
 

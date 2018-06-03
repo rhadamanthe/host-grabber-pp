@@ -133,3 +133,21 @@ function uuid() {
 
   return uuid;
 }
+
+
+/**
+ * Removes an item from an array.
+ * @param {array} array An array.
+ * @param {object} item An item.
+ * @returns {boolean} True if the elements was removed from the array, false it was not found.
+ */
+function removeFromArray(array, item) {
+
+  var index = array.indexOf(item);
+  var wasPresent = index > -1;
+  if (wasPresent) {
+    array.splice(index, 1);
+  }
+
+  return wasPresent;
+}

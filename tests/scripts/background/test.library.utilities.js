@@ -108,4 +108,18 @@ describe('background => library.utilities', function() {
     });
   });
 
+
+  it('should remove items from an array', function(done) {
+
+    var arr = [{id: 1}, {id: 2}, {id: 1}];
+    expect(arr.length).to.eql(3);
+
+    removeFromArray(arr, arr[0]);
+    expect(arr.length).to.eql(2);
+    expect(arr).to.eql([{id: 2}, {id: 1}]);
+
+    removeFromArray(arr, {id: 4});
+    expect(arr.length).to.eql(2);
+    done();
+  });
 });

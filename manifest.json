@@ -36,6 +36,7 @@
 	  "src/scripts/background/library.processors.js",
 	  "src/scripts/background/library.queue.js",
 	  "src/scripts/mixed/commons.js",
+	  "src/scripts/background/dl-manager.js",
 	  "src/scripts/background/background.hg.js"
     ]
   },

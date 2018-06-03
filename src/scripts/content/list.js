@@ -16,7 +16,7 @@ loadProcessors();
 
 var removeCompletedDlAutomatically = false;
 browser.storage.local.get('dlClearCompleted').then((res) => {
-  removeCompletedDlAutomatically = res.dlClearCompleted || false;
+  removeCompletedDlAutomatically = res.dlClearCompleted || defaultDlClearCompleted;
 });
 
 
@@ -33,7 +33,6 @@ browser.storage.onChanged.addListener(function(changes, area) {
     return;
   }
 
-  // Case: clear the completed downloads automatically
   if (changes.hasOwnProperty( 'dlClearCompleted' )) {
     removeCompletedDlAutomatically = changes.dlClearCompleted.newValue;
     if (removeCompletedDlAutomatically) {

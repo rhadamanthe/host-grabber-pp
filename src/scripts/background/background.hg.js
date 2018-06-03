@@ -8,6 +8,9 @@ var queue = newQueue(handleProcessorFn);
 // Initialize the dictionary
 var dictionary = null;
 
+// Initialize the download manager
+var dlManager = newDlManager(queue);
+
 
 /* Default actions */
 
@@ -82,7 +85,7 @@ browser.runtime.onInstalled.addListener(reloadDictionary);
 function reloadDictionary() {
 
   browser.storage.local.get('dictionaryUrl').then((res) => {
-    var url = res.dictionaryUrl || 'https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml';
+    var url = res.dictionaryUrl || defaultDictionaryUrl;
     console.log('Loading dictionary from ' + url + '...');
     loadRemoteDocument(url, true, 'application/xml').then( function(downloadedDictionary) {
       dictionary = downloadedDictionary;
@@ -211,47 +214,13 @@ function updateProcessorInDownloadView(processor) {
 
 
 /**
- * Starts a real download and updates the link object's status on completion.
- * @param {object} linkObject An object that holds a download link and status.
- * @param {object} processor The processor that holds the link object.
- * @returns {undefined}
- */
-function startDownload(linkObject, processor) {
-
-  var options = {
-    conflictAction: 'uniquify',
-    url: linkObject.link,
-    saveAs: false
-  };
-
-  var downloading = browser.downloads.download(options).then( function(downloadItemId) {
-    // Update the status
-    linkObject.status = DlStatus.SUCCESS;
-    linkObject.downloadItemId = downloadItemId;
-    updateProcessorInDownloadView(processor);
-
-    // Process the next item
-    queue.processNextItem();
-
-  }, function(error) {
-    // Update the status
-    linkObject.status = DlStatus.FAILURE;
-    updateProcessorInDownloadView(processor);
-
-    // Process the next item
-    queue.processNextItem();
-  });
-}
-
-
-/**
  * Handles the execution of a processor.
  * @param {object} processor A processor.
  * @returns {undefined}
  */
 function handleProcessorFn(processor) {
   // We use this function as a proxy so that we can...
-  // Get download links
-  // Update the view
-  handleProcessor(processor, extractor(), queue, startDownload, updateProcessorInDownloadView);
+  // - Get download links.
+  // - Update the view.
+  handleProcessor(processor, extractor(), queue, dlManager.startDownload, updateProcessorInDownloadView);
 }
