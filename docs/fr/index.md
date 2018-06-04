@@ -20,7 +20,6 @@ avec quelques différences:
 
 > Le projet est en version **beta**.
 
-<br />
 <img src="../assets/images/dl-view-1--v0.3.jpg" alt="La vue des téléchargements" class="screenshot" />
 
 <img src="../assets/images/dl-view-2--v0.2.jpg" alt="Le menu contextuel" class="screenshot" />
@@ -91,7 +90,7 @@ browser.runtime.sendMessage(
   'hg.pp@rhadamanthe.github',
   {
     req: 'explore-page',
-    page: 'L'URL de la page à explorer.'
+    page: 'URL de la page à explorer.'
   }
 );
 ```

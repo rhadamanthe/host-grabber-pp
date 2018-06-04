@@ -21,7 +21,6 @@ options that existed before.
 
 > The project is still in **beta** version.
 
-<br />
 <img src="../assets/images/dl-view-1--v0.3.jpg" alt="The download view" class="screenshot" />
 
 <img src="../assets/images/dl-view-2--v0.2.jpg" alt="The menu" class="screenshot" />
