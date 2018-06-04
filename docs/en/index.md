@@ -21,11 +21,12 @@ options that existed before.
 
 > The project is still in **beta** version.
 
-<img src="../assets/images/dl-view-1--v0.3.jpg" alt="The download view" />
+<br />
+<img src="../assets/images/dl-view-1--v0.3.jpg" alt="The download view" class="screenshot" />
 
-<img src="../assets/images/dl-view-2--v0.2.jpg" alt="The menu" />
+<img src="../assets/images/dl-view-2--v0.2.jpg" alt="The menu" class="screenshot" />
 
-<img src="../assets/images/options-view--v0.3.jpg" alt="The options page" />
+<img src="../assets/images/options-view--v0.3.jpg" alt="The options page" class="screenshot" />
 
 
 ## Installation
@@ -86,7 +87,7 @@ Here is a sample code showing how to invoke HG ++ from your own extension.
 Notice that IG ++ does not return any response, it only explores the URL,
 opens its downloads view and the retrieve the media files it found.
 
-```xml
+```javascript
 browser.runtime.sendMessage(
   'hg.pp@rhadamanthe.github',
   {

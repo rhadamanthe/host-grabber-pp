@@ -20,11 +20,12 @@ avec quelques différences:
 
 > Le projet est en version **beta**.
 
-<img src="../assets/images/dl-view-1--v0.3.jpg" alt="La vue des téléchargements" />
+<br />
+<img src="../assets/images/dl-view-1--v0.3.jpg" alt="La vue des téléchargements" class="screenshot" />
 
-<img src="../assets/images/dl-view-2--v0.2.jpg" alt="Le menu contextuel" />
+<img src="../assets/images/dl-view-2--v0.2.jpg" alt="Le menu contextuel" class="screenshot" />
 
-<img src="../assets/images/options-view--v0.3.jpg" alt="La page d'options" />
+<img src="../assets/images/options-view--v0.3.jpg" alt="La page d'options" class="screenshot" />
 
 
 ## Installation
@@ -85,7 +86,7 @@ Voici un exemple de code pour utiliser cette API.
 Notez que HG ++ ne retourne aucune réponse. Il explore l'URL, ouvre sa
 vue des téléchargements et récupère les liens découverts.
 
-```xml
+```javascript
 browser.runtime.sendMessage(
   'hg.pp@rhadamanthe.github',
   {
