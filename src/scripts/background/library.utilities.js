@@ -69,19 +69,7 @@ function removeCDataMarkups(text) {
  */
 function fixRelativeLinks(newLink, pageUrl) {
 
-  var res;
-  if (newLink.indexOf('://') > 0 || newLink.indexOf('//') === 0 ) {
-    res = newLink;
-  } else if (newLink.indexOf('/') === 0) {
-    res = new URL(pageUrl).origin + newLink;
-  } else if (pageUrl.endsWith('/')) {
-    // Assumption: the URL points to a directory
-    res = new URL(pageUrl + newLink).toString();
-  } else {
-    // Assumption: the URL points to a file and not a directory
-    res = new URL(pageUrl + '/../' + newLink).toString();
-  }
-
+  var res = new URL(newLink, pageUrl).toString();
   return res;
 }
 
@@ -148,14 +136,23 @@ function buildUrlPatterns(pageUrl, domain, pathPattern, hostId) {
   } else {
     // Deal with global links
     const esc = '[^<>"]';
-    var basePattern = 'https?://' + domain.replace('.', '\.');
-    var extraPathPattern = pathPattern.replace(/(^|[^\\])\./, '$1' + esc).replace('&dot', '.');
+
+    // The base pattern covers HTTP, HTTPS, www. and sub-domains URLs
+    var basePattern = 'https?://([-\\w]+\\.)*' + domain.replace('.', '\\.');
+    var extraPathPattern = pathPattern
+        .replace(/(^|[^\\])\./, '$1' + esc)
+        .replace('&dot', '.')
+        .replace('&lt;', '<')
+        .replace('&gt;', '>')
+        .replace('&amp;', '&');
+
     res.push({ pattern: '"(' + basePattern + '/' + extraPathPattern + ')"', excludeHost: false});
 
     // Consider relative and absolute links on a given domain
-    if (pageUrl.match( '^' + basePattern + '.*')) {
+    if (pageUrl.match( '^' + basePattern + '($|/).*')) {
       res.push({ pattern: 'src\s*=\s*"(/?[^:"]*' + extraPathPattern + ')"', excludeHost: true });
       res.push({ pattern: 'href\s*=\s*"(/?[^:"]*' + extraPathPattern + ')"', excludeHost: true });
+      res.push({ pattern: 'data-src\s*=\s*"(/?[^:"]*' + extraPathPattern + ')"', excludeHost: true });
     }
   }
 

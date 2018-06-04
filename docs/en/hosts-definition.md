@@ -23,13 +23,15 @@ The XML file contains a hierarchical structure that looks like...
 <root>
 
 	<host id="host 1">
-		<urlpattern>...</urlpattern>
-		<searchpattern>...</searchpattern>
+		<domain>...</domain>
+		<path-pattern>...</path-pattern>
+		<search-pattern>...</search-pattern>
 	</host>
 	
 	<host id="host 2">
-		<urlpattern>...</urlpattern>
-		<searchpattern>...</searchpattern>
+		<domain>...</domain>
+		<path-pattern>...</path-pattern>
+		<search-pattern>...</search-pattern>
 	</host>
 
 </root>
@@ -44,13 +46,15 @@ It is even possible for a host to be associated with several items. As an exampl
 <root>
 
 	<host id="instagram-pics">
-		<urlpattern>...</urlpattern>
-		<searchpattern>...</searchpattern>
+		<domain>...</domain>
+		<path-pattern>...</path-pattern>
+		<search-pattern>...</search-pattern>
 	</host>
 	
 	<host id="instagram-vids">
-		<urlpattern>...</urlpattern>
-		<searchpattern>...</searchpattern>
+		<domain>...</domain>
+		<path-pattern>...</path-pattern>
+		<search-pattern>...</search-pattern>
 	</host>
 
 </root>
@@ -60,12 +64,26 @@ Just give the items a different ID.
 The ID is useful when there is an error to fix or an upgrade to perform.
 
 
-## URL Pattern
+## Domain
 
-The URL pattern is a [regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions)
-that **helps to find what to explore**.  
+The domain is the one of the links we want to discover and explore.  
+As an example, if you want to explore links that point to `http://toto.net``, the domain
+name is `toto.net`.
+
+```xml
+<domain>toto.net</domain>
+```
+
+When you define a domain, HG ++ will consider all the links with *http*, *https*,
+*www.* prefixes, as well as sub-domains. The value of a domain is a text. Not a regular expression. 
+
+
+## Path Pattern
+
+The path pattern is a [regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions)
+that **helps to find what to explore** on a given domain.  
 Basically, when you visit a web page and activates Host Grabber, it analyzes the source code.
-All the text parts that match the URL pattern will be kept for further analysis.
+All the text parts that match the domain and path pattern will be kept for further analysis.
 
 As an example, if you are visiting a forum with images, the URL pattern will help to find
 the links that lead to the web sites that host these images.
@@ -74,8 +92,19 @@ It is not in this guide's objectives to explain what a regular expression is.
 However, here is an example of URL pattern to find pages hosted by *my-image-host*.
 
 ```xml
-<urlpattern>^https?://my-image-host\.com/[^"&lt;&gt;]+</urlpattern>
+<path-pattern>.+\.jpg</path-pattern>
 ```
+
+There are some rules to know when setting this property
+
+* It cannot start with `/`.
+* It cannot start with `^`.
+* It cannot end with `$`.
+* The `.` symbol will be replaced by `[^<>"]`.
+* To get the `.` symbol, one should write `&dot`.
+* The HTML entity for `<` must be written `&lt;`.
+* The HTML entity for `>` must be written `&gt;`.
+* The HTML entity for `&` must be written `&amp;`.
 
 
 ## Redirections
@@ -87,16 +116,17 @@ domain and had to adopt **pixhost.to**. Host Grabber ++ provides a mechanism
 to redirect references from the « .org » to the « .to ».
 
 Here is an example...  
-When it finds a link that points to pixhost.to, it will inspect the right page
-but on pixhost.org. This redirection is performed before the search pattern is applied.
+When it finds a link that points to pixhost.org, it will inspect the right page
+but on pixhost.to. This redirection is performed before the search pattern is applied.
 Which means it works with all the strategies described below.
 
 ```xml
 <host id="pixhost-org">
-	<urlpattern>https?://pixhost\.org/show/[^&lt;&gt;"]+</urlpattern>
+	<domain>pixhost.org</domain
+	<path-pattern>show/.+</path-pattern>
 	<redirect-from>pixhost.org/</redirect-from>
 	<redirect-to>pixhost.to/</redirect-to>
-	<searchpattern>ID: image</searchpattern>
+	<search-pattern>ID: image</search-pattern>
 </host>
 ```
 
@@ -127,8 +157,9 @@ It considers the URL pattern allows to find what to download.
 **Example:** embedded images in pages.
 
 ```xml
-<urlpattern>^https?://.*\.(jpg|png|gif)</urlpattern>
-<searchpattern>SELF</searchpattern>
+<domain>toto.com</domain>
+<path-pattern>.*\.(jpg|png|gif)</path-pattern>
+<search-pattern>SELF</search-pattern>
 ```
 
 The URL pattern here allows to find all the JPG, PNG and GIF images referenced in the page.  
@@ -144,8 +175,9 @@ It assumes we can find a download link from the matches we found with the URL pa
 **Example:** image gallery with thumbnails.
 
 ```xml
-<urlpattern>^https?://.*\.(jpg|png|gif)</urlpattern>
-<searchpattern>replace: 'tn_', ''</searchpattern>
+<domain>toto.com</domain>
+<path-pattern>.*\.(jpg|png|gif)</path-pattern>
+<search-pattern>replace: 'tn_', ''</search-pattern>
 ```
 
 The URL patterns identifies images, that may be thumbnails.  
@@ -154,8 +186,9 @@ And the search pattern replaces parts of the URL to lead to the real image.
 Notice you can use regular expressions for the search.
 
 ```xml
-<urlpattern>^https?://.*\.(jpg|png|gif)</urlpattern>
-<searchpattern>replace: 'images/thumbs/([^/]+)/tn_(.*)', 'images/originals/$1/$2'</searchpattern>
+<domain>toto.com</domain>
+<path-pattern>.*\.(jpg|png|gif)</path-pattern>
+<search-pattern>replace: 'images/thumbs/([^/]+)/tn_(.*)', 'images/originals/$1/$2'</search-pattern>
 ```
 
 With such a search pattern, a thumbnail located at `http://toto.com/images/thumbs/november-2017/tn_01.jpg`
@@ -177,8 +210,9 @@ a HTML ID is supposed to be unique within a page.
 **Example:** many web image hosts.
 
 ```xml
-<urlpattern>^https?://my-image-host\.com/view\.php\?.*\.(jpg|png|gif)</urlpattern>
-<searchpattern>ID: image</searchpattern>
+<domain>image-host.com</domain>
+<path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
+<search-pattern>ID: image</search-pattern>
 ```
 
 Assuming this URL pattern finds a set of links that look like `http://image-host.com/view.php?01.jpg`,
@@ -200,8 +234,9 @@ All the elements with the specified class will be downloaded.
 **Example:** many web image hosts.
 
 ```xml
-<urlpattern>^https?://my-image-host\.com/view\.php\?.*\.(jpg|png|gif)</urlpattern>
-<searchpattern>Class: image</searchpattern>
+<domain>image-host.com</domain>
+<path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
+<search-pattern>Class: image</search-pattern>
 ```
 
 Assuming this URL pattern finds a set of links that look like `http://image-host.com/view.php?01.jpg`,
@@ -222,8 +257,9 @@ links are found by searching a HTML element or attribute with a [XPath expressio
 **Example:** many web image hosts.
 
 ```xml
-<urlpattern>^https?://my-image-host\.com/view\.php\?.*\.(jpg|png|gif)</urlpattern>
-<searchpattern>XPath: //div[@class=image-container]/img/@src</searchpattern>
+<domain>image-host.com</domain>
+<path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
+<search-pattern>XPath: //div[@class=image-container]/img/@src</search-pattern>
 ```
 
 Assuming this URL pattern finds a set of links that look like `http://image-host.com/view.php?01.jpg`,
@@ -246,8 +282,9 @@ links are found by searching with a regular expression.
 **Example:** many web image hosts.
 
 ```xml
-<urlpattern>^https?://my-image-host\.com/view\.php\?.*\.(jpg|png|gif)</urlpattern>
-<searchpattern><![CDATA[expreg: <meta property="og:image"\s+content="([^"]+)"]]></searchpattern>
+<domain>image-host.com</domain>
+<path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
+<search-pattern><![CDATA[expreg: <meta property="og:image"\s+content="([^"]+)"]]></search-pattern>
 ```
 
 Assuming this URL pattern finds a set of links that look like `http://image-host.com/view.php?01.jpg`,
@@ -257,8 +294,9 @@ If there is no capture, then the entire match is kept. Here is an example to ill
 bracket in the regular expression).
 
 ```xml
-<urlpattern>^https?://my-image-host\.com/view\.php\?.*\.(jpg|png|gif)</urlpattern>
-<searchpattern><![CDATA[expreg: http://.*/big/.*\.jpg]]></searchpattern>
+<domain>image-host.com</domain>
+<path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
+<search-pattern><![CDATA[expreg: http://.*/big/.*\.jpg]]></search-pattern>
 ```
 
 Here, it will only keep JPG images located in the **big** directory.

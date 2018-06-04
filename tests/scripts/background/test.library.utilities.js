@@ -6,12 +6,13 @@ describe('background => library.utilities', function() {
 
     expect(fixRelativeLinks('http://toto.fr/test.jpg', 'http://origin.com/path/to/current/page')).to.eql('http://toto.fr/test.jpg');
     expect(fixRelativeLinks('https://toto.fr/test.jpg', 'http://origin.com/path/to/current/page')).to.eql('https://toto.fr/test.jpg');
-    expect(fixRelativeLinks('//toto.fr/test.jpg', 'http://origin.com/path/to/current/page')).to.eql('//toto.fr/test.jpg');
+    expect(fixRelativeLinks('//toto.fr/test.jpg', 'http://origin.com/path/to/current/page')).to.eql('http://toto.fr/test.jpg');
     expect(fixRelativeLinks('ftp://toto.fr/test.jpg', 'http://origin.com/path/to/current/page')).to.eql('ftp://toto.fr/test.jpg');
 
     expect(fixRelativeLinks('test.jpg', 'http://origin.com/path/to/current/page/')).to.eql('http://origin.com/path/to/current/page/test.jpg');
     expect(fixRelativeLinks('test.jpg', 'http://origin.com/path/to/current/page.php')).to.eql('http://origin.com/path/to/current/test.jpg');    expect(fixRelativeLinks('test.jpg', 'http://origin.com')).to.eql('http://origin.com/test.jpg');
     expect(fixRelativeLinks('test.jpg', 'http://origin.com/dir/')).to.eql('http://origin.com/dir/test.jpg');
+    expect(fixRelativeLinks('test.jpg', 'http://origin.com/path/page?value=toto.jpg')).to.eql('http://origin.com/path/test.jpg');
     expect(fixRelativeLinks('../../images/test.jpg', 'http://origin.com/path/to/current/page/')).to.eql('http://origin.com/path/to/images/test.jpg');
     expect(fixRelativeLinks('../../images/test.jpg', 'http://origin.com/path/to/current/page.html')).to.eql('http://origin.com/path/images/test.jpg');
 
@@ -114,7 +115,7 @@ describe('background => library.utilities', function() {
 
   it('should detect invalid domains when building URL patterns', function(done) {
 
-    var res = buildUrlPatterns('', 'http://my-domain.org', '.*\.jpg', 'host-id');
+    var res = buildUrlPatterns('', 'http://my-domain.org', '.*\\.jpg', 'host-id');
     expect(res.length).to.eql(0);
     done();
   });
@@ -122,13 +123,13 @@ describe('background => library.utilities', function() {
 
   it('should detect invalid path patterns when building URL patterns', function(done) {
 
-    var res = buildUrlPatterns('', 'my-domain.org', '^.*\.jpg', 'host-id1');
+    var res = buildUrlPatterns('', 'my-domain.org', '^.*\\.jpg', 'host-id1');
     expect(res.length).to.eql(0);
 
-    res = buildUrlPatterns('', 'my-domain.org', '/.*\.jpg', 'host-id2');
+    res = buildUrlPatterns('', 'my-domain.org', '/.*\\.jpg', 'host-id2');
     expect(res.length).to.eql(0);
 
-    res = buildUrlPatterns('', 'my-domain.org', '.*\.jpg$', 'host-id3');
+    res = buildUrlPatterns('', 'my-domain.org', '.*\\.jpg$', 'host-id3');
     expect(res.length).to.eql(0);
     done();
   });
@@ -138,30 +139,40 @@ describe('background => library.utilities', function() {
 
     // When we ready a pattern from a file, a single back-slash is enough: "\.jpg"
     // But when specifying a pattern from the code, double back-slashes are necessary: "\\.jpg"
-    var res = buildUrlPatterns('', 'my-domain.org', '.*\\.jpg', 'host-id');
+    var res = buildUrlPatterns('', 'my-domain.org', '.*\\.jpg', 'host-id1');
     expect(res.length).to.eql(1);
-    expect(res[0].pattern).to.eql('"(https?://my-domain\.org/[^<>"]*\\.jpg)"');
+    expect(res[0].pattern).to.eql('"(https?://([-\\w]+\\.)*my-domain\\.org/[^<>"]*\\.jpg)"');
     expect(res[0].excludeHost).to.eql(false);
 
-    res = buildUrlPatterns('http://my-other-domain.fr/some/dir/page.html', 'my-domain.org', '.*\\.jpg', 'host-id');
+    // With an URL this time
+    res = buildUrlPatterns('http://my-other-domain.fr/some/dir/page.html', 'my-domain.org', '.*\\.jpg', 'host-id2');
     expect(res.length).to.eql(1);
-    expect(res[0].pattern).to.eql('"(https?://my-domain\.org/[^<>"]*\\.jpg)"');
+    expect(res[0].pattern).to.eql('"(https?://([-\\w]+\\.)*my-domain\\.org/[^<>"]*\\.jpg)"');
     expect(res[0].excludeHost).to.eql(false);
 
-    res = buildUrlPatterns('http://my-other-domain.fr/some/dir/page.html', 'my-domain.org', 'gallery/.*\\.jpg', 'host-id');
+    // Pattern with a sub-directory
+    res = buildUrlPatterns('http://my-other-domain.fr/some/dir/page.html', 'my-domain.org', 'gallery/.*\\.jpg', 'host-id3');
     expect(res.length).to.eql(1);
-    expect(res[0].pattern).to.eql('"(https?://my-domain\.org/gallery/[^<>"]*\\.jpg)"');
+    expect(res[0].pattern).to.eql('"(https?://([-\\w]+\\.)*my-domain\\.org/gallery/[^<>"]*\\.jpg)"');
     expect(res[0].excludeHost).to.eql(false);
 
-    res = buildUrlPatterns('http://my-other-domain.fr/some/dir/page.html', 'my-domain.org', '&dot*\\.jpg', 'host-id');
+    // Introducing &dot in the pattern
+    res = buildUrlPatterns('http://my-other-domain.fr/some/dir/page.html', 'my-domain.org', '&dot*\\.jpg', 'host-id4');
     expect(res.length).to.eql(1);
-    expect(res[0].pattern).to.eql('"(https?://my-domain\.org/.*\\.jpg)"');
+    expect(res[0].pattern).to.eql('"(https?://([-\\w]+\\.)*my-domain\\.org/.*\\.jpg)"');
     expect(res[0].excludeHost).to.eql(false);
 
-    res = buildUrlPatterns('http://my-domain.org/some/dir/page.html', 'my-domain.org', '.*\\.jpg', 'host-id');
-    expect(res.length).to.eql(3);
+    // Introducing &amp;, &lt; and &gt; in the pattern
+    res = buildUrlPatterns('http://my-other-domain.fr/some/dir/page.html', 'my-domain.org', 'dir1/dir2/[&lt;&gt;"&amp;]+\\.(png|jpg)', 'host-id5');
+    expect(res.length).to.eql(1);
+    expect(res[0].pattern).to.eql('"(https?://([-\\w]+\\.)*my-domain\\.org/dir1/dir2/[<>"&]+\\.(png|jpg))"');
+    expect(res[0].excludeHost).to.eql(false);
 
-    expect(res[0].pattern).to.eql('"(https?://my-domain\.org/[^<>"]*\\.jpg)"');
+    // The URL matches the domain (HTTPS)
+    res = buildUrlPatterns('https://my-domain.org/some/dir/page.html', 'my-domain.org', '.*\\.jpg', 'host-id6');
+    expect(res.length).to.eql(4);
+
+    expect(res[0].pattern).to.eql('"(https?://([-\\w]+\\.)*my-domain\\.org/[^<>"]*\\.jpg)"');
     expect(res[0].excludeHost).to.eql(false);
 
     expect(res[1].pattern).to.eql('src\s*=\s*"(/?[^:"]*[^<>"]*\\.jpg)"');
@@ -169,6 +180,25 @@ describe('background => library.utilities', function() {
 
     expect(res[2].pattern).to.eql('href\s*=\s*"(/?[^:"]*[^<>"]*\\.jpg)"');
     expect(res[2].excludeHost).to.eql(true);
+
+    expect(res[3].pattern).to.eql('data-src\s*=\s*"(/?[^:"]*[^<>"]*\\.jpg)"');
+    expect(res[3].excludeHost).to.eql(true);
+
+    // The URL matches the domain and we insert 'www' in the URL
+    res = buildUrlPatterns('http://www.my-domain.org/some/dir/page.html', 'my-domain.org', '.*\\.jpg', 'host-id6');
+    expect(res.length).to.eql(4);
+
+    expect(res[0].pattern).to.eql('"(https?://([-\\w]+\\.)*my-domain\\.org/[^<>"]*\\.jpg)"');
+    expect(res[0].excludeHost).to.eql(false);
+
+    expect(res[1].pattern).to.eql('src\s*=\s*"(/?[^:"]*[^<>"]*\\.jpg)"');
+    expect(res[1].excludeHost).to.eql(true);
+
+    expect(res[2].pattern).to.eql('href\s*=\s*"(/?[^:"]*[^<>"]*\\.jpg)"');
+    expect(res[2].excludeHost).to.eql(true);
+
+    expect(res[3].pattern).to.eql('data-src\s*=\s*"(/?[^:"]*[^<>"]*\\.jpg)"');
+    expect(res[3].excludeHost).to.eql(true);
     done();
   });
 });

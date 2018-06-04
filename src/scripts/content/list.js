@@ -276,11 +276,6 @@ function displayNewLink(processorId, dlLink) {
 
   // Update the view with download information
   updateDownloadLinkInView(dlLink);
-
-  // Scroll down if necessary
-  if (! removeCompletedDlAutomatically) {
-    window.scrollTo(0, document.body.scrollHeight);
-  }
 }
 
 
@@ -342,7 +337,8 @@ function removeProcessor(processorId) {
   // Remove from the view
   var item = document.getElementById(processorId);
   if (!! item) {
-    item.parentNode.removeChild(item);
+    var toDelete = item.parentNode.parentNode;
+    toDelete.parentNode.removeChild(toDelete);
   }
 
   // Remove from the model

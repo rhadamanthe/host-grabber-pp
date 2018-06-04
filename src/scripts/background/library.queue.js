@@ -34,11 +34,16 @@ function newQueue(handleProcessorFn) {
    * @returns {undefined}
    */
   function reschedule(processorId) {
+
     var processor = queue.processingHistory.get(processorId);
     if (!! processor) {
       resetProcessor(processor);
-      queue.processingQueue.push(processor);
-      handleProcessorFn(processor);
+      var index = queue.processingQueue.indexOf(processor);
+      if (index === -1) {
+        queue.processingQueue.push(processor);
+      }
+
+      queue.processNextItem();
     }
   }
 

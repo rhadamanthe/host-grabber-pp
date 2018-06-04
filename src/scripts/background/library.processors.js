@@ -13,12 +13,18 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
   var processors = [];
   var alreadyVisistedUrls = [];
 
+  // Handle cases where the path patterns leads to a non-document
+  if (! sourceDocument) {
+    return processors;
+  }
+
   // Fix the dictionaries parameter
   if (! Array.isArray(dictionaries)) {
     dictionaries = [dictionaries];
   }
 
   // Iterate over the dictionaries
+  var source = sourceDocument.documentElement.innerHTML;
   for (var index = 0; index < dictionaries.length; index ++) {
 
     var dictionary = dictionaries[index];
@@ -51,7 +57,6 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
       }
 
       // Build the patterns to identify
-      var source = sourceDocument.documentElement.innerHTML;
       var fixedSearchPattern = removeCDataMarkups(searchPatterns[0].innerHTML.trim());
       var urlPatternWrappers = buildUrlPatterns(
           url,
@@ -192,9 +197,13 @@ function onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorI
   // If we have links, let things go on
   if (!! links && links.length > 0) {
     links.forEach( function(link, index) {
+
+      // A found link might be relative.
+      // So, make it absolute.
+      var fixedLink = fixRelativeLinks(link, processor.matchingUrl);
       processor.downloadLinks.push({
         id: processor.id + '-' + index,
-        link: link,
+        link: fixedLink,
         status: DlStatus.WAITING
       });
     });
@@ -212,6 +221,7 @@ function onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorI
   // Otherwise, process the next item in the queue
   else {
     processor.status = ProcessorStatus.NO_LINK_FOUND;
+    updateProcessorInDownloadView(processor);
     queue.processNextItem();
   }
 }

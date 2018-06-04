@@ -57,6 +57,17 @@ describe('background => library.processors', function() {
   });
 
 
+  it('should find nothing to process when the source document is null', function() {
+
+    // Test resources are served by Karma
+    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml');
+    return dictionaryP.then( function(dictionary) {
+      var res = findWhatToProcess(null, 'http://titi.fr/page.html', dictionary);
+      expect(res.length).to.eql(0);
+    });
+  });
+
+
   it('should find what to process (with relative and absolute links)', function() {
 
     var sourceDocument = document.implementation.createHTMLDocument('');
@@ -126,6 +137,85 @@ describe('background => library.processors', function() {
 
       expect(res[8].matchingUrl).to.eql('http://bibi.com/path/to/this/image1.PNG');
       expect(res[8].extMethod).to.eql(ExtMethods.SELF.id);
+    });
+  });
+
+
+  it('should find what to process (with relative and absolute links + sub-domain)', function() {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html><body>
+      <img src="http://titi.fr/gallery/view.php?img=t1.jpg" class="paf" />
+      <img src="http://titi.fr/gallery/view.php?img=t2.jpg" class="paf" />
+      <br />
+      <img src="http://mimi.net/gallery/t2.jpg" />
+      <br />
+      <img src="https://titi.fr/gallery/view.php?img=t5.gif" />
+      <br />
+      <img src="http://google.com/images/view.php?img=http://titi.fr/gallery/view.php?img=t5.gif" class="g" />
+      <img src="../../gallery/view.php?img=t14.jpg" class="paf" /><!--relative link -->
+      <img src="../../gallery/view.php?img=t2.jpg" class="paf" />
+      <!--relative link and not duplicate because of the sub-domain -->
+
+      <img src="/gallery/view.php?img=t101.jpg" class="paf" /><!--absolute link -->
+      <img src="/gallery/view.php?img=t2.jpg" class="paf" />
+      <!--absolute link but duplicate of the relative link -->
+      <img src="../../gallery/view.php?img=29.png" class="paf" /><!--relative link -->
+      <br />
+      <img src="http://titi.fr/gallery/view.php?img=t4.jpg" class="paf" />
+      <br />
+      <img src="http://bibi.com/path/to/this/image1.PNG" />
+      <img src="http://bibi.com/path/to/this/image2.svg" />
+    </body></html>
+    `;
+
+    // Test resources are served by Karma
+    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml');
+    return dictionaryP.then( function(dictionary) {
+
+      // Extract links
+      var res = findWhatToProcess(sourceDocument, 'http://sub-p1.titi.fr/some-folder/at-second-level/some-web-page.html', dictionary);
+
+      // Verify we got them all
+      expect(res.length).to.eql(10);
+
+      expect(res[0].matchingUrl).to.eql('http://mimi.net/gallery/t2.jpg');
+      expect(res[0].extMethod).to.eql(ExtMethods.EXPREG.id);
+
+      expect(res[1].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t1.jpg');
+      expect(res[1].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[2].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t2.jpg');
+      expect(res[2].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[3].matchingUrl).to.eql('https://titi.fr/gallery/view.php?img=t5.gif');
+      expect(res[3].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[4].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t4.jpg');
+      expect(res[4].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[5].matchingUrl).to.eql('http://sub-p1.titi.fr/gallery/view.php?img=t14.jpg');
+      expect(res[5].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[6].matchingUrl).to.eql('http://sub-p1.titi.fr/gallery/view.php?img=t2.jpg');
+      expect(res[6].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[7].matchingUrl).to.eql('http://sub-p1.titi.fr/gallery/view.php?img=t101.jpg');
+      expect(res[7].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[8].matchingUrl).to.eql('http://sub-p1.titi.fr/gallery/view.php?img=29.png');
+      expect(res[8].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[9].matchingUrl).to.eql('http://bibi.com/path/to/this/image1.PNG');
+      expect(res[9].extMethod).to.eql(ExtMethods.SELF.id);
     });
   });
 
@@ -231,7 +321,7 @@ describe('background => library.processors', function() {
     dictionary.documentElement.innerHTML = `<root>
         <host id="titi">
           <domain>titi.fr</domain>
-          <search-pattern>expreg: src="(.*\.jpg)"</search-pattern>
+          <search-pattern>expreg: src="(.*\\.jpg)"</search-pattern>
         </host>
       </root>
     `;
@@ -269,7 +359,7 @@ describe('background => library.processors', function() {
     dictionary.documentElement.innerHTML = `<root>
         <host id="titi">
           <path-pattern>[^ "]+</path-pattern>
-          <search-pattern>expreg: src="(.*\.jpg)"</search-pattern>
+          <search-pattern>expreg: src="(.*\\.jpg)"</search-pattern>
         </host>
       </root>
     `;
@@ -346,7 +436,7 @@ describe('background => library.processors', function() {
         <host id="titi">
           <domain>titi.fr</domain>
           <path-pattern>[^ "]+</path-pattern>
-          <search-pattern>expreg: src="(.*\.jpg)"</search-pattern>
+          <search-pattern>expreg: src="(.*\\.jpg)"</search-pattern>
         </host>
       </root>
     `;
@@ -473,7 +563,7 @@ describe('background => library.processors', function() {
 
   it('should handle processors correctly (SELF)', function(done) {
 
-    var p = newProcessor('test', 'self');
+    var p = newProcessor('http://tutu.com/some-image.jpg', 'self');
     var idleFn = function() {};
     var queue = {
       modified: false,
@@ -486,7 +576,7 @@ describe('background => library.processors', function() {
       invoked: false,
       self: function(url) {
         this.invoked = true;
-        expect(url).to.eql('test');
+        expect(url).to.eql('http://tutu.com/some-image.jpg');
         return [url];
       }
     };
@@ -497,7 +587,7 @@ describe('background => library.processors', function() {
     expect(extractor.invoked).to.be(true);
     expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
     expect(p.downloadLinks.length).to.eql(1);
-    expect(p.downloadLinks[0].link).to.eql('test');
+    expect(p.downloadLinks[0].link).to.eql('http://tutu.com/some-image.jpg');
     expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
     expect(queue.modified).to.eql(false);
     done();
@@ -506,7 +596,7 @@ describe('background => library.processors', function() {
 
   it('should handle processors correctly (REPLACE)', function(done) {
 
-    var p = newProcessor('test', 'replace: \'.*\', \'\'');
+    var p = newProcessor('http://tutu.com/some-page.html', 'replace: \'html\', \'jpg\'');
     var idleFn = function() {};
     var queue = {
       modified: false,
@@ -519,8 +609,8 @@ describe('background => library.processors', function() {
       invoked: false,
       replace: function(url, xmlSearchPattern) {
         this.invoked = true;
-        expect(url).to.eql('test');
-        return [url];
+        expect(url).to.eql('http://tutu.com/some-page.html');
+        return ['http://tutu.com/some-page.jpg'];
       }
     };
 
@@ -530,7 +620,7 @@ describe('background => library.processors', function() {
     expect(extractor.invoked).to.be(true);
     expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
     expect(p.downloadLinks.length).to.eql(1);
-    expect(p.downloadLinks[0].link).to.eql('test');
+    expect(p.downloadLinks[0].link).to.eql('http://tutu.com/some-page.jpg');
     expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
     expect(queue.modified).to.eql(false);
     done();
@@ -566,7 +656,7 @@ describe('background => library.processors', function() {
       invoked: false,
       xpath: function(doc, xpathExpr) {
         this.invoked = true;
-        return ['test1', 'test2'];
+        return ['http://toto.fr/test1', 'test2'];
       }
     };
 
@@ -580,10 +670,10 @@ describe('background => library.processors', function() {
       expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
       expect(p.downloadLinks.length).to.eql(2);
 
-      expect(p.downloadLinks[0].link).to.eql('test1');
+      expect(p.downloadLinks[0].link).to.eql('http://toto.fr/test1');
       expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
 
-      expect(p.downloadLinks[1].link).to.eql('test2');
+      expect(p.downloadLinks[1].link).to.eql('http://localhost:9876/base/tests/resources/test2');
       expect(p.downloadLinks[1].status).to.eql(DlStatus.WAITING);
       expect(queue.modified).to.eql(false);
     });
@@ -683,7 +773,7 @@ describe('background => library.processors', function() {
       invoked: false,
       xpath: function(doc, xpathExpr) {
         this.invoked = true;
-        return ['test3'];
+        return ['https://toto.net/v/test3'];
       }
     };
 
@@ -697,7 +787,7 @@ describe('background => library.processors', function() {
       expect(p.downloadLinks.length).to.eql(1);
       expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
 
-      expect(p.downloadLinks[0].link).to.eql('test3');
+      expect(p.downloadLinks[0].link).to.eql('https://toto.net/v/test3');
       expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
       expect(queue.modified).to.eql(false);
     });
@@ -737,7 +827,7 @@ describe('background => library.processors', function() {
       expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
       expect(p.downloadLinks.length).to.eql(1);
 
-      expect(p.downloadLinks[0].link).to.eql('test1');
+      expect(p.downloadLinks[0].link).to.eql('http://localhost:9876/base/tests/resources/test1');
       expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
       expect(queue.modified).to.eql(false);
     });
@@ -775,7 +865,7 @@ describe('background => library.processors', function() {
       expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
       expect(p.downloadLinks.length).to.eql(1);
 
-      expect(p.downloadLinks[0].link).to.eql('test1');
+      expect(p.downloadLinks[0].link).to.eql('http://localhost:9876/base/tests/resources/test1');
       expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
       expect(queue.modified).to.eql(false);
     });

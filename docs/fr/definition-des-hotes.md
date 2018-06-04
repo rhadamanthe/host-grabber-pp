@@ -23,13 +23,15 @@ Le fichier XML contient une structure hiérarchique qui ressemble à...
 <root>
 
 	<host id="host 1">
-		<urlpattern>...</urlpattern>
-		<searchpattern>...</searchpattern>
+		<domain>...</domain>
+		<path-pattern>...</path-pattern>
+		<search-pattern>...</search-pattern>
 	</host>
 	
 	<host id="host 2">
-		<urlpattern>...</urlpattern>
-		<searchpattern>...</searchpattern>
+		<domain>...</domain>
+		<path-pattern>...</path-pattern>
+		<search-pattern>...</search-pattern>
 	</host>
 
 </root>
@@ -44,13 +46,15 @@ Il est même possible de définir plusieurs items pour un même hôte. Par exemp
 <root>
 
 	<host id="instagram-pics">
-		<urlpattern>...</urlpattern>
-		<searchpattern>...</searchpattern>
+		<domain>...</domain>
+		<path-pattern>...</path-pattern>
+		<search-pattern>...</search-pattern>
 	</host>
 	
 	<host id="instagram-vids">
-		<urlpattern>...</urlpattern>
-		<searchpattern>...</searchpattern>
+		<domain>...</domain>
+		<path-pattern>...</path-pattern>
+		<search-pattern>...</search-pattern>
 	</host>
 
 </root>
@@ -60,23 +64,49 @@ Il est recommandé de leur donner des ID différents.
 Cet identifiant sert en cas d'erreur à corriger ou en cas d'évolution.
 
 
-## Modèle d'URL
+## Domaine
 
-Le modèle d'URL (*URL pattern*) est une [expression régulière](http://www.expreg.com)
-qui **permet d'identifier quoi explorer**.  
+Le domaine concerne celui des liens à découvrir et explorer.  
+Par exemple, si l'on souhaite trouver tous les liens qui pointent vers `http://toto.net``,
+alors le nom de domain est `toto.net`.
+
+```xml
+<domain>toto.net</domain>
+```
+
+Lorsque vous définissez un domaine, HG ++ considérera tous les préfixes *http*, *https*,
+*www.*, ainsi que les sous-domaines. La valeur d'un domaine est un simple texte. Ce n'est pas une
+expression régulière.
+
+
+## Modèle de Chemin
+
+Le modèle de chemin (*path pattern*) est une [expression régulière](http://www.expreg.com)
+qui **permet d'identifier quoi explorer** sur un domaine donné.  
 Quand vous visitez une page web et que vous activez Host Grabber, celui-ci analyse le code source
-de la page. Toutes les parties de texte qui correspondent au modèle d'URL vont être mises de côté
-pour une analyse détaillée.
+de la page. Toutes les parties de texte qui correspondent au domaine et au modèle de chemin vont être
+mises de côté pour une analyse détaillée.
 
-Par exemple, si vous visitez un forum avec des images, le modèle d'URL permet de trouver les liens
+Ainsi, si vous visitez un forum avec des images, le modèle d'URL permet de trouver les liens
 qui mènent aux sites qui hébergent ces images.
 
 Ce guide n'a pas pour ambition d'expliquer ce qu'est une expression régulière.  
 Cependant, voici un exemple pour trouver les pages hébergées par *mon-hebergeur*.
 
 ```xml
-<urlpattern>^https?://mon-hebergeur\.com/[^"&lt;&gt;]+</urlpattern>
+<path-pattern>.+\.jpg</path-pattern>
 ```
+
+Il y a quelques règles à connaître pour la définition de cette propriété.
+
+* Elle ne peut pas commencer par `/`.
+* Elle ne peut pas commencer par `^`.
+* Elle ne peut pas finir par `$`.
+* Le symbole `.` sera remplacé par `[^<>"]`.
+* Pour obtenir le symbole `.`, il faut écrire `&dot`.
+* L'entité HTML `<` doit être écrite sous la forme `&lt;`.
+* L'entité HTML `>` doit être écrite sous la forme `&gt;`.
+* L'entité HTML `&` doit être écrite sous la forme `&amp;`.
 
 
 ## Redirection
@@ -88,16 +118,17 @@ de domaine et a dû basculer sur **pixhost.to**. Host Grabber ++ propose un méc
 rediriger les références du « .org » vers le « .to ».
 
 Voici un exemple...  
-Quand un lien est trouvé et qui pointe vers pixhost.to, l'extension ira sur la bonne
-page mais sur le domaine pixhost.org. Cette redirection est effectuée avant l'application du
+Quand un lien est trouvé et qui pointe vers pixhost.org, l'extension ira sur la bonne
+page mais sur le domaine pixhost.to. Cette redirection est effectuée avant l'application du
 modèle de recherche. Cela fonctionne donc avec toutes les stratégies décrites plus bas.
 
 ```xml
 <host id="pixhost-org">
-	<urlpattern>https?://pixhost\.org/show/[^&lt;&gt;"]+</urlpattern>
+	<domain>pixhost.org</domain
+	<path-pattern>show/.+</path-pattern>
 	<redirect-from>pixhost.org/</redirect-from>
 	<redirect-to>pixhost.to/</redirect-to>
-	<searchpattern>ID: image</searchpattern>
+	<search-pattern>ID: image</search-pattern>
 </host>
 ```
 
@@ -128,8 +159,9 @@ Ici, le modèle d'URL détermine quoi télécharger.
 **Exemple :** liens directs vers des images.
 
 ```xml
-<urlpattern>^https?://.*\.(jpg|png|gif)</urlpattern>
-<searchpattern>SELF</searchpattern>
+<domain>toto.com</domain>
+<path-pattern>.*\.(jpg|png|gif)</path-pattern>
+<search-pattern>SELF</search-pattern>
 ```
 
 Le modèle d'URL permet ici de trouver tous les fichiers JPG, PNG et GIF dans la page.  
@@ -145,8 +177,9 @@ Elle repose sur l'idée que le lien de téléchargement peut être déduit du mo
 **Exemple :** galerie d'images avec miniatures.
 
 ```xml
-<urlpattern>^https?://.*\.(jpg|png|gif)</urlpattern>
-<searchpattern>replace: 'tn_', ''</searchpattern>
+<domain>toto.com</domain>
+<path-pattern>.*\.(jpg|png|gif)</path-pattern>
+<search-pattern>replace: 'tn_', ''</search-pattern>
 ```
 
 Ce modèle d'URL identifie des images qui pourraient être des miniatures.  
@@ -155,8 +188,9 @@ And le modèle de recherche permet de remplacer certains segments de l'URL.
 Notez que l'on peut aussi utiliser une expression régulière pour la recherche.
 
 ```xml
-<urlpattern>^https?://.*\.(jpg|png|gif)</urlpattern>
-<searchpattern>replace: 'images/mini/([^/]+)/tn_(.*)', 'images/originales/$1/$2'</searchpattern>
+<domain>toto.com</domain>
+<path-pattern>.*\.(jpg|png|gif)</path-pattern>
+<search-pattern>replace: 'images/mini/([^/]+)/tn_(.*)', 'images/originales/$1/$2'</search-pattern>
 ```
 
 Avec ce modèle de recherche, une miniature située à l'adresse `http://toto.com/images/mini/novembre-2017/tn_01.jpg`
@@ -178,11 +212,12 @@ Pour rappel, un ID est unique au sein d'une page web. Deux éléments ne peuvent
 **Exemple :** plusieurs hébergeurs d'images.
 
 ```xml
-<urlpattern>^https?://mon-hebergeur\.com/view\.php\?.*\.(jpg|png|gif)</urlpattern>
-<searchpattern>ID: image</searchpattern>
+<domain>mon-hebergeur.com</domain>
+<path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
+<search-pattern>ID: image</search-pattern>
 ```
 
-En supposant que ce modèle d'URL mène à des liens du genre `http://image-host.com/view.php?01.jpg`,
+En supposant que ce modèle d'URL mène à des liens du genre `http://mon-hebergeur.com/view.php?01.jpg`,
 Host Grabber les suivraient tous, téléchargerait les pages cibles et les analyserait. Chaque page ayant un
 élément HTML avec l'ID spécifié donnerait lieu à un téléchargement.
 
@@ -200,11 +235,12 @@ les liens de téléchargement sont trouvés en cherchant un élément HTML dont 
 **Exemple :** plusieurs hébergeurs d'images.
 
 ```xml
-<urlpattern>^https?://mon-hebergeur\.com/view\.php\?.*\.(jpg|png|gif)</urlpattern>
-<searchpattern>Class: image</searchpattern>
+<domain>mon-hebergeur.com</domain>
+<path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
+<search-pattern>Class: image</search-pattern>
 ```
 
-En supposant que ce modèle d'URL mène à des liens du genre `http://image-host.com/view.php?01.jpg`,
+En supposant que ce modèle d'URL mène à des liens du genre `http://mon-hebergeur.com/view.php?01.jpg`,
 Host Grabber les suivraient tous, téléchargerait les pages cibles et les analyserait. Chaque page ayant des
 éléments HTML avec la classe spécifiée donnerait lieu à des téléchargements.
 
@@ -222,11 +258,12 @@ les liens de téléchargement sont trouvés en cherchant un élément ou un attr
 **Exemple :** plusieurs hébergeurs d'images.
 
 ```xml
-<urlpattern>^https?://mon-hebergeur\.com/view\.php\?.*\.(jpg|png|gif)</urlpattern>
-<searchpattern>XPath: //div[@class=image-container]/img/@src</searchpattern>
+<domain>mon-hebergeur.com</domain>
+<path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
+<search-pattern>XPath: //div[@class=image-container]/img/@src</search-pattern>
 ```
 
-En supposant que ce modèle d'URL mène à des liens du genre `http://image-host.com/view.php?01.jpg`,
+En supposant que ce modèle d'URL mène à des liens du genre `http://mon-hebergeur.com/view.php?01.jpg`,
 Host Grabber les suivraient tous, téléchargerait les pages cibles et les analyserait. Les liens de téléchargement
 seraient trouvés en cherchant une balise **img**, située sous une balise **div** ayant **image-container** comme classe.
 
@@ -246,19 +283,21 @@ les liens de téléchargement sont trouvés grâce à une expression régulière
 **Exemple :** plusieurs hébergeurs d'images.
 
 ```xml
-<urlpattern>^https?://mon-hebergeur\.com/view\.php\?.*\.(jpg|png|gif)</urlpattern>
-<searchpattern><![CDATA[expreg: <meta property="og:image"\s+content="([^"]+)"]]></searchpattern>
+<domain>mon-hebergeur.com</domain>
+<path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
+<search-pattern><![CDATA[expreg: <meta property="og:image"\s+content="([^"]+)"]]></search-pattern>
 ```
 
-En supposant que ce modèle d'URL mène à des liens du genre `http://image-host.com/view.php?01.jpg`,
+En supposant que ce modèle d'URL mène à des liens du genre `http://mon-hebergeur.com/view.php?01.jpg`,
 Host Grabber les suivraient tous, téléchargerait les pages cibles et les analyserait. Les liens de téléchargement
 seraient trouvés grâce à une expression régulière. Si un groupe de capture est présent, son contenu est résolu
 en tant que lien de téléchargement. Autrement, c'est la correspondance toute entière qui est prise. Voici un exemple
 pour illustrer ce cas (aucune parenthèse dans l'expression régulière).
 
 ```xml
-<urlpattern>^https?://mon-hebergeur\.com/view\.php\?.*\.(jpg|png|gif)</urlpattern>
-<searchpattern><![CDATA[expreg: http://.*/grandes/.*\.jpg]]></searchpattern>
+<domain>mon-hebergeur.com</domain>
+<path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
+<search-pattern><![CDATA[expreg: http://.*/grandes/.*\.jpg]]></search-pattern>
 ```
 
 Ici, seules les images localisées dans le répertoire **grandes** seront téléchargées.
