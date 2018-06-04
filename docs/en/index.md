@@ -88,7 +88,7 @@ opens its downloads view and the retrieve the media files it found.
 
 ```javascript
 browser.runtime.sendMessage(
-  'hg.pp@rhadamanthe.github',
+  '{1a70f086-e7b8-43da-8171-e3e5c532ad4f}',
   {
     req: 'explore-page',
     page: 'The URL of the page to explore.'
