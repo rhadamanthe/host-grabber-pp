@@ -84,7 +84,7 @@ media files from it.
 
 Here is a sample code showing how to invoke HG ++ from your own extension.  
 Notice that IG ++ does not return any response, it only explores the URL,
-opens its downloads view and the retrieve the media files it found.
+opens its downloads view and retrieves the media files it found.
 
 ```javascript
 browser.runtime.sendMessage(

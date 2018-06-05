@@ -11,7 +11,7 @@ It was originally designed for Mozilla Firefox but might be adapted to other web
 It works like the former [Image Host Grabber](https://addons.mozilla.org/fr/firefox/addon/imagehost-grabber/)
 extension, but unlike it, it is not restricted to downloading images.
 
-> **This an beta version**.
+> **This module is in beta version**.
 
 > Notice: the list of hosts has been seriously purged.  
 > And the current list is not always up-to-date.
