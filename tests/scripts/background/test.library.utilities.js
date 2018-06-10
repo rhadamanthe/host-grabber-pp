@@ -139,9 +139,36 @@ describe('background => library.utilities', function() {
 
     // When we ready a pattern from a file, a single back-slash is enough: "\.jpg"
     // But when specifying a pattern from the code, double back-slashes are necessary: "\\.jpg"
+
+    // Verify first how the '.' meta-character is handled
     var res = buildUrlPatterns('', 'my-domain.org', '.*\\.jpg', 'host-id1');
     expect(res.length).to.eql(1);
     expect(res[0].pattern).to.eql('"(https?://([-\\w]+\\.)*my-domain\\.org/[^<>"]*\\.jpg)"');
+    expect(res[0].excludeHost).to.eql(false);
+
+    res = buildUrlPatterns('', 'my-domain.org', '.+\\.jpg', 'host-id1');
+    expect(res.length).to.eql(1);
+    expect(res[0].pattern).to.eql('"(https?://([-\\w]+\\.)*my-domain\\.org/[^<>"]+\\.jpg)"');
+    expect(res[0].excludeHost).to.eql(false);
+
+    res = buildUrlPatterns('', 'my-domain.org', '.{23}\\.jpg', 'host-id1');
+    expect(res.length).to.eql(1);
+    expect(res[0].pattern).to.eql('"(https?://([-\\w]+\\.)*my-domain\\.org/[^<>"]{23}\\.jpg)"');
+    expect(res[0].excludeHost).to.eql(false);
+
+    res = buildUrlPatterns('', 'my-domain.org', '.{23,}\\.jpg', 'host-id1');
+    expect(res.length).to.eql(1);
+    expect(res[0].pattern).to.eql('"(https?://([-\\w]+\\.)*my-domain\\.org/[^<>"]{23,}\\.jpg)"');
+    expect(res[0].excludeHost).to.eql(false);
+
+    res = buildUrlPatterns('', 'my-domain.org', '.{23,27}\\.jpg', 'host-id1');
+    expect(res.length).to.eql(1);
+    expect(res[0].pattern).to.eql('"(https?://([-\\w]+\\.)*my-domain\\.org/[^<>"]{23,27}\\.jpg)"');
+    expect(res[0].excludeHost).to.eql(false);
+
+    res = buildUrlPatterns('', 'my-domain.org', '[^"/.]+\\.jpg', 'host-id1');
+    expect(res.length).to.eql(1);
+    expect(res[0].pattern).to.eql('"(https?://([-\\w]+\\.)*my-domain\\.org/[^"/.]+\\.jpg)"');
     expect(res[0].excludeHost).to.eql(false);
 
     // With an URL this time

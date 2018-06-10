@@ -140,7 +140,9 @@ function buildUrlPatterns(pageUrl, domain, pathPattern, hostId) {
     // The base pattern covers HTTP, HTTPS, www. and sub-domains URLs
     var basePattern = 'https?://([-\\w]+\\.)*' + domain.replace('.', '\\.');
     var extraPathPattern = pathPattern
-        .replace(/(^|[^\\])\./, '$1' + esc)
+        .replace(/\.\+/, esc + '+')
+        .replace(/\.\*/, esc + '*')
+        .replace(/\.(\{\d+(,\d*)?\})/, esc + '$1')
         .replace('&dot', '.')
         .replace('&lt;', '<')
         .replace('&gt;', '>')
