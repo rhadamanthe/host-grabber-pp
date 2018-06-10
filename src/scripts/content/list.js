@@ -103,15 +103,6 @@ function loadProcessors() {
 
 
 /**
- * Shows the options page.
- * @returns {undefined}
- */
-function showOptionsPage() {
-  showTab('Options - HG ++', '/src/html/options.html');
-}
-
-
-/**
  * Updates a processor from the background script.
  * @param {object} processor A processor.
  * @returns {undefined}

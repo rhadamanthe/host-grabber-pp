@@ -19,6 +19,15 @@ function showTab(tabTitle, tabUrl) {
 
 
 /**
+ * Shows the options page.
+ * @returns {undefined}
+ */
+function showOptionsPage() {
+  showTab('Options - HG ++', '/src/html/options.html');
+}
+
+
+/**
  * Opens an URL in a new tab.
  * @param {string} tabUrl The URL to open in a new tab.
  * @returns {undefined}

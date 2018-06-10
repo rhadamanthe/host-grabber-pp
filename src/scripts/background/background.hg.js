@@ -37,6 +37,21 @@ browser.contextMenus.create({
   onclick: showDownloadsList
 });
 
+browser.contextMenus.create({
+  id: 'separator-1',
+  parentId: 'hg-menu',
+  type: 'separator',
+  contexts: ['all']
+});
+
+browser.contextMenus.create({
+  id: 'hg-menu-options',
+  parentId: 'hg-menu',
+  title: 'Options',
+  contexts: ['all'],
+  onclick: showOptionsPage
+});
+
 
 // Commands
 browser.commands.onCommand.addListener((command) => {
