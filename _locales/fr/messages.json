@@ -36,17 +36,27 @@
 
   "optionsPage_downloadSettingsSection": {
     "message": "Paramètres de Téléchargement",
-    "description": "L'étiquette pour la section 'aramètres de Téléchargement' (page d'options)"
+    "description": "L'étiquette pour la section 'paramètres de Téléchargement' (page d'options)"
   },
 
   "optionsPage_clearCompletedDownloadsOption": {
     "message": "Enlever automatiquement les téléchargements complétés avec succès",
-    "description": "L'étiquette pour l'option 'enlever les téléchargements terminés' (page d'options)"
+    "description": "L'étiquette pour cette option (page d'options)"
+  },
+  
+  "optionsPage_showViewWhenDlStarts": {
+    "message": "Ouvrir la vue des téléchargements quand elle est fermée et qu'un téléchargement démarre",
+    "description": "L'étiquette pour cette option (page d'options)"
+  },
+  
+  "optionsPage_alwaysShowViewWhenDlStarts": {
+    "message": "Toujours ouvrir la vue des téléchargements quand un téléchargement démarre",
+    "description": "L'étiquette pour cette option (page d'options)"
   },
 
   "optionsPage_maximumParallelDownloadsOption": {
     "message": "Nombre maximum de téléchargements simultanés",
-    "description": "L'étiquette pour l'option du 'nombre maximum de téléchargements simultanés' (page d'options)"
+    "description": "L'étiquette pour cette option (page d'options)"
   },
 
   "optionsPage_maximumParallelDownloadsWarning_1": {

@@ -1,8 +1,11 @@
 // Default values for preferences
 
 const defaultDictionaryUrl = 'https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml';
-const defaultDlClearCompleted = false;
 const defaultDlMaxParallel = 3;
+const defaultDlClearCompleted = false;
+const defaultDlShowViewWhenDlStarts = true;
+const defaultDlAlwaysShowViewWhenDlStarts = true;
+const defaultDlMoveDownloadViewWhenDlStarts = true;
 
 
 // Constants

@@ -80,7 +80,7 @@ browser.runtime.onMessage.addListener(request => {
 
 browser.runtime.onMessageExternal.addListener(request => {
   if (request.req === 'explore-page' && typeof request.page === 'string') {
-
+    downloadContentFromURL(request.page);
   }
 });
 
@@ -132,6 +132,7 @@ function notifyDictionaryReload(status) {
 
 /**
  * Shows the download list.
+ * @param {boolean} checkPreferences True to check preferences before showing the list, false to directly show the list.
  * @returns {undefined}
  */
 function showDownloadsList() {

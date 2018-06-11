@@ -41,12 +41,22 @@
 
   "optionsPage_clearCompletedDownloadsOption": {
     "message": "Automatically clear downloads that successfully completed",
-    "description": "The label for the 'clear completed downloads' option (options page)"
+    "description": "The label for this option (options page)"
+  },
+  
+  "optionsPage_showViewWhenDlStarts": {
+    "message": "Open the download view when it is closed and that a download starts",
+    "description": "The label for this option (options page)"
+  },
+  
+  "optionsPage_alwaysShowViewWhenDlStarts": {
+    "message": "Always open the download view when a download starts",
+    "description": "The label for this option (options page)"
   },
 
   "optionsPage_maximumParallelDownloadsOption": {
     "message": "Maximum number of parallel downloads",
-    "description": "The label for the 'maximum number of parallel downloads' option (options page)"
+    "description": "The label for this option (options page)"
   },
 
   "optionsPage_maximumParallelDownloadsWarning_1": {
