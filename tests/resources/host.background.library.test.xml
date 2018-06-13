@@ -22,22 +22,19 @@
 <host id="host1">
 	<domain>host1.com</domain>
 	<path-pattern>.+\.(jpg|png|gif)</path-pattern>
-	<redirect-from>host1</redirect-from>
-	<redirect-to>host_1</redirect-to>
+	<interceptor>replace: 'host1', 'host_1'</interceptor>
 	<search-pattern>self</search-pattern>
 </host>
 
 <host id="host2">
 	<domain>host2.com</domain>
 	<path-pattern>.+\.(jpg|png|gif)</path-pattern>
-	<redirect-from>host_2</redirect-from>
 	<search-pattern>self</search-pattern>
 </host>
 
 <host id="host3">
 	<domain>host3.com</domain>
 	<path-pattern>.+\.(jpg|png|gif)</path-pattern>
-	<redirect-to>host_3</redirect-to>
 	<search-pattern>self</search-pattern>
 </host>
 

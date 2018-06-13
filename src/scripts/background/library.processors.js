@@ -28,41 +28,22 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
   for (var index = 0; index < dictionaries.length; index ++) {
 
     var dictionary = dictionaries[index];
-    var tags = dictionary.documentElement.getElementsByTagName('host');
-    for (var i = 0; i < tags.length; i++) {
+    var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+    dictionaryWrapper.items.forEach( function(item) {
 
-      // Verify the dictionary item
-      var tmpRedirect = tags[i].getElementsByTagName('redirect-from');
-      var optionalRedirectFrom = tmpRedirect.length === 0 ? '' : tmpRedirect[0].innerHTML.trim();
-
-      tmpRedirect = tags[i].getElementsByTagName('redirect-to');
-      var optionalRedirectTo = tmpRedirect.length === 0 ? '' : tmpRedirect[0].innerHTML.trim();
-
-      var domains = tags[i].getElementsByTagName('domain');
-      if(domains.length < 1 ) {
-        console.log('Expected a domain for ' + tags[i].id);
-        continue;
+      if (item.errors.length > 0) {
+        //console.log('Errors were found for item ' + item.id);
+        //item.errors.forEach( function(error) {
+        //  console.log('[' + item.id + '] ' + error);
+        //});
+        return;
       }
 
-      var pathPatterns = tags[i].getElementsByTagName('path-pattern');
-      if(pathPatterns.length < 1 ) {
-        console.log('Expected a path pattern for ' + tags[i].id);
-        continue;
-      }
-
-      var searchPatterns = tags[i].getElementsByTagName('search-pattern');
-      if(searchPatterns.length < 1 ) {
-        console.log('Expected a search pattern for ' + tags[i].id);
-        continue;
-      }
-
-      // Build the patterns to identify
-      var fixedSearchPattern = removeCDataMarkups(searchPatterns[0].innerHTML.trim());
       var urlPatternWrappers = buildUrlPatterns(
           url,
-          domains[0].innerHTML.trim(),
-          pathPatterns[0].innerHTML.trim(),
-          tags[i].id
+          item.domain,
+          item.pathPattern,
+          item.id
       );
 
       // Find all the URLs that match the given pattern
@@ -78,9 +59,10 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
 
           // Resolve relative links as absolute ones
           var fixedLink = fixRelativeLinks(match[1], url);
-          if (!! optionalRedirectFrom && !! optionalRedirectTo) {
-            fixedLink = fixedLink.replace(optionalRedirectFrom, optionalRedirectTo);
-          }
+          item.interceptors1.forEach( function(interceptor) {
+            var interceptorRegex = new RegExp(interceptor.replace, 'ig');
+            fixedLink = fixedLink.replace(interceptorRegex, interceptor.by);
+          });
 
           // Avoid duplicates
           if (alreadyVisistedUrls.indexOf(fixedLink) !== -1 ) {
@@ -88,10 +70,10 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
           }
 
           alreadyVisistedUrls.push(fixedLink);
-          processors.push( newProcessor(fixedLink, fixedSearchPattern));
+          processors.push( newProcessor(fixedLink, item.searchPattern, item.interceptors2));
         }
       });
-    }
+    });
   }
 
   return processors;
@@ -102,15 +84,17 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
  * Builds a new processor.
  * @param {string} matchingUrl The URL of the link that was found.
  * @param {string} searchPattern The search pattern associated.
+ * @param {array} interceptors An array of interceptors to update found URLs.
  * @returns {object} A new processor.
  */
-function newProcessor(matchingUrl, searchPattern) {
+function newProcessor(matchingUrl, searchPattern, interceptors) {
   return {
     id: uuid(),
     matchingUrl: matchingUrl,
     searchPattern: searchPattern,
     extMethod: findExtractionMethod(searchPattern),
     status: ProcessorStatus.WAITING,
+    interceptors: interceptors || [],
     downloadLinks: []
   };
 }
@@ -124,26 +108,6 @@ function newProcessor(matchingUrl, searchPattern) {
 function resetProcessor(processor) {
   processor.downloadLinks = [];
   processor.status = ProcessorStatus.WAITING;
-}
-
-
-/**
- * Finds the extraction method for a given search pattern.
- * @param {string} searchPattern The search pattern.
- * @returns {integer} The ID of an extraction method.
- */
-function findExtractionMethod(searchPattern) {
-
-  var theExtMethod = 0;
-  for (var extMethod in ExtMethods) {
-    var p = ExtMethods[extMethod].pattern;
-    if (searchPattern.match(p)) {
-      theExtMethod = ExtMethods[extMethod].id;
-      break;
-    }
-  }
-
-  return theExtMethod;
 }
 
 
@@ -201,6 +165,14 @@ function onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorI
       // A found link might be relative.
       // So, make it absolute.
       var fixedLink = fixRelativeLinks(link, processor.matchingUrl);
+
+      // Do we need to intercept the link?
+      processor.interceptors.forEach( function(interceptor) {
+        var interceptorRegex = new RegExp(interceptor.replace, 'ig');
+        fixedLink = fixedLink.replace(interceptorRegex, interceptor.by);
+      });
+
+      // Add the download link
       processor.downloadLinks.push({
         id: processor.id + '-' + index,
         link: fixedLink,

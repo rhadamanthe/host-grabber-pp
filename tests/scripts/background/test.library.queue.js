@@ -129,10 +129,15 @@ describe('background => library.queue', function() {
     expect(queue.processingHistory.size).to.eql(1);
     expect(processed).to.eql(1);
 
+    queue.reschedule(processor.id);
+    expect(queue.processingQueue.length).to.eql(1);
+    expect(queue.processingHistory.size).to.eql(1);
+    expect(processed).to.eql(2);
+
     queue.remove(processor.id);
     expect(queue.processingQueue.length).to.eql(0);
     expect(queue.processingHistory.size).to.eql(0);
-    expect(processed).to.eql(1);
+    expect(processed).to.eql(2);
     done();
   });
 });

@@ -107,33 +107,6 @@ There are some rules to know when setting this property
 * The HTML entity for `&` must be written `&amp;`.
 
 
-## Redirections
-
-Web sites might change their domain address.  
-This is very rare. And still it is what happened to PixHost. It used
-to be reachable to **pixhost.org**. At the beginning of 2018, it losts its
-domain and had to adopt **pixhost.to**. Host Grabber ++ provides a mechanism 
-to redirect references from the « .org » to the « .to ».
-
-Here is an example...  
-When it finds a link that points to pixhost.org, it will inspect the right page
-but on pixhost.to. This redirection is performed before the search pattern is applied.
-Which means it works with all the strategies described below.
-
-```xml
-<host id="pixhost-org">
-	<domain>pixhost.org</domain
-	<path-pattern>show/.+</path-pattern>
-	<redirect-from>pixhost.org/</redirect-from>
-	<redirect-to>pixhost.to/</redirect-to>
-	<search-pattern>ID: image</search-pattern>
-</host>
-```
-
-Replacement is done textually.  
-Regular expressions are not available with **redirect-from** and **redirect-to**.
-
-
 ## Search Patterns
 
 The URL pattern allows to find what to explore.  
@@ -304,6 +277,61 @@ Here, it will only keep JPG images located in the **big** directory.
 > You might have notice a CDATA section in these last examples.  
 > There are used to prevent invalid characters in XML.
 
+
+## Interceptors
+
+HG ++ explores web pages to discover download links. But sometimes, the
+URL we find are not exactly those we want. Sometimes also, web sites might
+change their domain address. This is very rare. And still it is what happened
+to PixHost. It used to be reachable to **pixhost.org**. At the beginning of 2018,
+it lost its domain and had to adopt **pixhost.to**.
+
+Anyway, Host Grabber ++ provides a redirection mechanism.
+It can be used, as an example, to redirect from an ancient domain to a new one. Or to target
+something we know but could not find.
+
+Here is an example...  
+When it finds a link that points to pixhost.org, it will inspect the right page
+but on pixhost.to.
+
+```xml
+<host id="pixhost-org">
+	<domain>pixhost.org</domain
+	<path-pattern>show/.+</path-pattern>
+	<interceptor>replace: '\.org/', '.to/'</interceptor>
+	<search-pattern>ID: image</search-pattern>
+</host>
+```
+
+The interceptor replaces a part of the URL by another one.  
+The syntax is the same than [the replace directive in search patterns](#replace).
+
+An interceptor may appear in several locations.
+
+* After a **path-pattern** mark-up: replacement will be done on the found links, those that must be explored.
+* After a **search-pattern** mark-up: replacement will be done on the links found after exploration.
+
+You can define several interceptors if necessary.
+
+```xml
+<host id="pixhost-org">
+	<domain>pixhost.org</domain
+	<path-pattern>show/.+</path-pattern>
+	
+	<!-- Explore another page that the one found in the current tab. -->
+	<interceptor>replace: '\.org/', '.to/'</interceptor>
+	<interceptor>replace: 'show/', 'view/'</interceptor>
+	<search-pattern>ID: image</search-pattern>
+	
+	<!-- We found links to thumbnails in the document. Redirect to bigger images. -->
+	<interceptor>replace: '_tn\.jpg', '_big.jpg'</interceptor>
+</host>
+```
+
+Because exploration could be end-less, we fixed a limit to the recursive approach. There might be pages
+or web sites for which combining search patterns and interceptors may not be enough. But this provides
+enough flexibility for most of the situations.
+ 
 
 ## Relative Links
 

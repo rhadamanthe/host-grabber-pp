@@ -23,6 +23,9 @@ const ExtMethods = {
 };
 
 
+const domainPattern = /^\w[-\w\.]*\w$/;
+
+
 const ProcessorStatus = {
   WAITING: 1,
   RETRIEVING_LINKS: 2,

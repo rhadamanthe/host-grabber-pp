@@ -318,12 +318,11 @@ describe('background => library.processors', function() {
 
     // Test resources are served by Karma
     var dictionary = document.implementation.createDocument('', 'root');
-    dictionary.documentElement.innerHTML = `<root>
+    dictionary.documentElement.innerHTML = `
         <host id="titi">
           <domain>titi.fr</domain>
           <search-pattern>expreg: src="(.*\\.jpg)"</search-pattern>
         </host>
-      </root>
     `;
 
     // Extract links
@@ -356,12 +355,11 @@ describe('background => library.processors', function() {
 
     // Test resources are served by Karma
     var dictionary = document.implementation.createDocument('', 'root');
-    dictionary.documentElement.innerHTML = `<root>
+    dictionary.documentElement.innerHTML = `
         <host id="titi">
           <path-pattern>[^ "]+</path-pattern>
           <search-pattern>expreg: src="(.*\\.jpg)"</search-pattern>
         </host>
-      </root>
     `;
 
     // Extract links
@@ -394,12 +392,11 @@ describe('background => library.processors', function() {
 
     // Test resources are served by Karma
     var dictionary = document.implementation.createDocument('', 'root');
-    dictionary.documentElement.innerHTML = `<root>
+    dictionary.documentElement.innerHTML = `
         <host id="titi">
           <domain>titi.fr</domain>
           <path-pattern>[^ "]+</path-pattern>
         </host>
-      </root>
     `;
 
     // Extract links
@@ -432,13 +429,12 @@ describe('background => library.processors', function() {
 
     // Test resources are served by Karma
     var dictionary = document.implementation.createDocument('', 'root');
-    dictionary.documentElement.innerHTML = `<root>
+    dictionary.documentElement.innerHTML = `
         <host id="titi">
           <domain>titi.fr</domain>
           <path-pattern>[^ "]+</path-pattern>
           <search-pattern>expreg: src="(.*\\.jpg)"</search-pattern>
         </host>
-      </root>
     `;
 
     // Extract links
@@ -459,6 +455,55 @@ describe('background => library.processors', function() {
   });
 
 
+  it('should find something to process with an interceptor after path-pattern', function(done) {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html><body>
+      <img src="http://titi.fr/gallery/t1.jpg" class="paf" />
+      <br />
+      <img src="http://mimi.net/gallery/t2.jpg" />
+      <br />
+      <img src="http://titi.fr/gallery/something1_tn.jpg" class="paf" />
+      <img src="http://titi.fr/gallery/view.php?img=t4.jpg" class="paf" />
+      <img src="http://titi.fr/gallery/somethi_tn_ng2_tn.jpg" class="paf" />
+      <br />
+      <img src="http://bibi.com/path/to/this/image1.PNG" />
+      <img src="http://bibi.com/path/to/this/image2.svg" />
+    </body></html>
+    `;
+
+    // Test resources are served by Karma
+    var dictionary = document.implementation.createDocument('', 'root');
+    dictionary.documentElement.innerHTML = `
+        <host id="titi">
+          <domain>titi.fr</domain>
+          <path-pattern>[^ "]+\\.jpg</path-pattern>
+          <interceptor>replace: '_tn\\.', '.'</interceptor>
+          <search-pattern>self</search-pattern>
+        </host>
+    `;
+
+    // Extract links
+    var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
+
+    // Verify we got them all
+    expect(res.length).to.eql(4);
+
+    expect(res[0].matchingUrl).to.eql('http://titi.fr/gallery/t1.jpg');
+    expect(res[0].extMethod).to.eql(ExtMethods.SELF.id);
+
+    expect(res[1].matchingUrl).to.eql('http://titi.fr/gallery/something1.jpg');
+    expect(res[1].extMethod).to.eql(ExtMethods.SELF.id);
+
+    expect(res[2].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t4.jpg');
+    expect(res[2].extMethod).to.eql(ExtMethods.SELF.id);
+
+    expect(res[3].matchingUrl).to.eql('http://titi.fr/gallery/somethi_tn_ng2.jpg');
+    expect(res[3].extMethod).to.eql(ExtMethods.SELF.id);
+    done();
+  });
+
+
   it('should create new processors correctly', function(done) {
 
     var np = newProcessor('the url', 'the search pattern');
@@ -468,43 +513,17 @@ describe('background => library.processors', function() {
     expect(np.status).to.eql(ProcessorStatus.WAITING);
     expect(np.downloadLinks).to.eql([]);
     expect(!! np.id).to.be(true);
+    expect(np.interceptors).to.eql([]);
 
-    np = newProcessor('the url', 'Self');
+    np = newProcessor('the url', 'Self', [{replace: 'ok', by: 'that'}]);
     expect(np.matchingUrl).to.eql('the url');
     expect(np.searchPattern).to.eql('Self');
     expect(np.extMethod).to.eql(ExtMethods.SELF.id);
     expect(np.status).to.eql(ProcessorStatus.WAITING);
     expect(np.downloadLinks).to.eql([]);
     expect(!! np.id).to.be(true);
-
-    done();
-  });
-
-
-  it('should find the extraction method correctly', function(done) {
-
-    expect(findExtractionMethod('self')).to.eql(ExtMethods.SELF.id);
-    expect(findExtractionMethod(' Self ')).to.eql(ExtMethods.SELF.id);
-
-    expect(findExtractionMethod('replace: \'view\.php\?img=\', \'images/\'')).to.eql(ExtMethods.REPLACE.id);
-    expect(findExtractionMethod(' REPlace : \'view\.php\?img=\', \'images/\' ')).to.eql(ExtMethods.REPLACE.id);
-
-    expect(findExtractionMethod('ID: toto')).to.eql(ExtMethods.ID.id);
-    expect(findExtractionMethod(' id : toto ')).to.eql(ExtMethods.ID.id);
-
-    expect(findExtractionMethod('Class: toto')).to.eql(ExtMethods.CLASS.id);
-    expect(findExtractionMethod(' class : toto ')).to.eql(ExtMethods.CLASS.id);
-
-    expect(findExtractionMethod('XPath: //*[class=\'toto\']')).to.eql(ExtMethods.XPATH.id);
-    expect(findExtractionMethod(' xpath : //*[class=\'toto\'] ')).to.eql(ExtMethods.XPATH.id);
-
-    expect(findExtractionMethod('expReg: (http://mimi\.[^"]*\.(jpg|gif|png))')).to.eql(ExtMethods.EXPREG.id);
-    expect(findExtractionMethod(' expreg : (http://mimi\.[^"]*\.(jpg|gif|png)) ')).to.eql(ExtMethods.EXPREG.id);
-
-    expect(findExtractionMethod('invalid')).to.eql(0);
-    for (var ext in ExtMethods) {
-      expect(ext.id).to.not.eql(0);
-    };
+    expect(np.interceptors.length).to.eql(1);
+    expect(np.interceptors[0]).to.eql({replace: 'ok', by: 'that'});
 
     done();
   });
@@ -623,6 +642,60 @@ describe('background => library.processors', function() {
     expect(p.downloadLinks[0].link).to.eql('http://tutu.com/some-page.jpg');
     expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
     expect(queue.modified).to.eql(false);
+    done();
+  });
+
+
+  it('should handle processors correctly (SELF with interceptor)', function(done) {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html><body>
+      <img src="http://titi.fr/gallery/t1.jpg" class="paf" />
+      <br />
+      <img src="http://mimi.net/gallery/t2.jpg" />
+      <br />
+      <img src="http://titi.fr/gallery/something1_tn.jpg" class="paf" />
+      <img src="http://titi.fr/gallery/view.php?img=t4.jpg" class="paf" />
+      <img src="http://titi.fr/gallery/somethi_tn_ng2_tn.jpg" class="paf" />
+      <br />
+      <img src="http://bibi.com/path/to/this/image1.PNG" />
+      <img src="http://bibi.com/path/to/this/image2.svg" />
+    </body></html>
+    `;
+
+    // Test resources are served by Karma
+    var dictionary = document.implementation.createDocument('', 'root');
+    dictionary.documentElement.innerHTML = `
+        <host id="titi">
+          <domain>titi.fr</domain>
+          <path-pattern>[^ "]+\\.jpg</path-pattern>
+          <search-pattern>self</search-pattern>
+          <interceptor>replace: '(_tn)?\\.jpg', '_1200.png'</interceptor>
+        </host>
+    `;
+
+    // Extract links
+    var processors = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
+    expect(processors.length).to.eql(4);
+
+    var idleFn = function() {};
+    var extractorFn = extractor();
+    var queue = {
+      processNextItem: function() {}
+    };
+
+    var foundLinks = [];
+    processors.forEach( function(processor) {
+      handleProcessor(processor, extractorFn, queue, idleFn, idleFn);
+      processor.downloadLinks.forEach( function(link) {
+        foundLinks.push(link);
+      });
+    });
+
+    expect(foundLinks[0].link).to.eql('http://titi.fr/gallery/t1_1200.png');
+    expect(foundLinks[1].link).to.eql('http://titi.fr/gallery/something1_1200.png');
+    expect(foundLinks[2].link).to.eql('http://titi.fr/gallery/view.php?img=t4_1200.png');
+    expect(foundLinks[3].link).to.eql('http://titi.fr/gallery/somethi_tn_ng2_1200.png');
     done();
   });
 

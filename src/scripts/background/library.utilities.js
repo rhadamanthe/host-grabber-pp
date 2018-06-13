@@ -126,7 +126,7 @@ function removeFromArray(array, item) {
 function buildUrlPatterns(pageUrl, domain, pathPattern, hostId) {
 
   var res = [];
-  var domainMatch = domain.match(/^\w[-\w\.]*\w$/);
+  var domainMatch = domain.match(domainPattern);
   if (! domainMatch || domainMatch.length === 0) {
     console.log('Invalid domain for ' + hostId);
 

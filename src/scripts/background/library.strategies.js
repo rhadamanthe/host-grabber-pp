@@ -1,6 +1,5 @@
 'use strict';
 
-
 /**
  * Creates a default extractor.
  * @returns {object} The extractor object.

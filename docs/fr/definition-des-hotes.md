@@ -109,33 +109,6 @@ Il y a quelques règles à connaître pour la définition de cette propriété.
 * L'entité HTML `&` doit être écrite sous la forme `&amp;`.
 
 
-## Redirection
-
-Il peut arriver que certains hébergeurs changent de nom de domaine.  
-C'est assez rare, mais c'est pourtant ce qui est arrivé à PixHost. Jusqu'à
-fin 2017, ce site utilisait le domaine **pixhost.org**. Depuis 2018, il a perdu ce nom
-de domaine et a dû basculer sur **pixhost.to**. Host Grabber ++ propose un mécanisme pour
-rediriger les références du « .org » vers le « .to ».
-
-Voici un exemple...  
-Quand un lien est trouvé et qui pointe vers pixhost.org, l'extension ira sur la bonne
-page mais sur le domaine pixhost.to. Cette redirection est effectuée avant l'application du
-modèle de recherche. Cela fonctionne donc avec toutes les stratégies décrites plus bas.
-
-```xml
-<host id="pixhost-org">
-	<domain>pixhost.org</domain
-	<path-pattern>show/.+</path-pattern>
-	<redirect-from>pixhost.org/</redirect-from>
-	<redirect-to>pixhost.to/</redirect-to>
-	<search-pattern>ID: image</search-pattern>
-</host>
-```
-
-Le remplacement est textuel.  
-Pas d'expression régulière dans les éléments **redirect-from** et **redirect-to**.
-
-
 ## Modèle de Recherche
 
 Le modèle d'URL permet de trouver quoi explorer.    
@@ -304,6 +277,61 @@ Ici, seules les images localisées dans le répertoire **grandes** seront télé
 
 > Vous avez dû remarquer l'utilisation de sections CDATA dans ces derniers exemples.  
 > Elles sont utilisées pour prévenir des erreurs au niveau XML.
+
+
+## Intercepteurs
+
+HG ++ explore des pages web afin de découvrir des liens de téléchargement. Parfois,
+ces liens ne sont exactement ceux que l'on souhaiterait. Il peut aussi arriver que
+certains hébergeurs changent de nom de domaine. C'est assez rare, mais c'est pourtant
+ce qui est arrivé à PixHost. Jusqu'à fin 2017, ce site utilisait le domaine **pixhost.org**.
+Depuis 2018, il a perdu ce nom de domaine et a dû basculer sur **pixhost.to**.
+
+Host Grabber ++ propose un mécanisme de redirection qui peut être utilisé dans les dictionnaires.
+On peut s'en servir pour, par exemple, rediriger depuis un ancien domaine vers un plus récent.
+Ou bien encore pour cibler un élément que l'exploration n'a pas pu atteindre directement.
+
+Voici un exemple...  
+Quand un lien est trouvé et qui pointe vers pixhost.org, l'extension ira sur la bonne
+page mais sur le domaine pixhost.to.
+
+```xml
+<host id="pixhost-org">
+	<domain>pixhost.org</domain
+	<path-pattern>show/.+</path-pattern>
+	<interceptor>replace: '\.org/', '.to/'</interceptor>
+	<search-pattern>ID: image</search-pattern>
+</host>
+```
+
+L'intercepteur remplace une partie de l'URL par autre chose.  
+La syntaxe est la même que pour [la directive de remplacement dans les modèles de recherche](#replace).
+
+Un intercepteur peut apparaître en plusieurs emplacements.
+
+* Après une balise **path-pattern** : le remplacement se fera sur les liens trouvés dans l'onglet d'origine et qui sont à explorer.
+* Après une balise **search-pattern** : le remplacement se fera sur les liens trouvés durant l'exploration.
+
+Il est aussi possible de définir plusieurs intercepteurs.
+
+```xml
+<host id="pixhost-org">
+	<domain>pixhost.org</domain
+	<path-pattern>show/.+</path-pattern>
+	
+	<!-- Explorer une autre page que celle découverte dans l'onglet courant. -->
+	<interceptor>replace: '\.org/', '.to/'</interceptor>
+	<interceptor>replace: 'show/', 'view/'</interceptor>
+	<search-pattern>ID: image</search-pattern>
+	
+	<!-- L'explotation a découvert des miniatures. Redirection vers des images plus grandes. -->
+	<interceptor>replace: '_tn\.jpg', '_big.jpg'</interceptor>
+</host>
+```
+
+Parce que l'exploration pourrait être sans fin, des limites ont été posées. Il est possible que certaines
+pages ou sites web ne soient pas exploitables avec une combinaison d'intercepteurs et de modèle de recherche.
+Toutefois, cette solution offre suffisamment de flexibilité pour les cas complexes les plus fréquents.
 
 
 ## Liens Relatifs
