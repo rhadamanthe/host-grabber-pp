@@ -2,13 +2,13 @@
 ---
 
 $header-heading-color: #fff !default;
-$header-bg-color: #5050EE !default;
+$header-bg-color: #2A2A57 !default;
 $header-bg-color-secondary: #155799 !default;
 
 // Text
-$section-headings-color: #5050EE !default;
+$section-headings-color: #2A2A57 !default;
 $body-text-color: #606c71 !default;
-$body-link-color: #5050EE !default;
+$body-link-color: #2A2A57 !default;
 $blockquote-text-color: #819198 !default;
 
 // Code
@@ -43,6 +43,12 @@ $hr-border-color: #eff0f1 !default;
 .project-name a:visited,
 .project-name a:hover {
 	color: #ffffff;
+}
+
+a,
+a:visited,
+a:hover {
+	color: #5050EE
 }
 
 .project-name a:hover {
