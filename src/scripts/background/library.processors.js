@@ -39,12 +39,26 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
         return;
       }
 
-      var urlPatternWrappers = buildUrlPatterns(
-          url,
-          item.domain,
-          item.pathPattern,
-          item.id
-      );
+      // Explore the current page?
+      var urlPatternWrappers = [];
+      var domainPattern = buildDomainPattern(item.domain);
+      if (item.pathPattern === exploreCurrentPage
+          && pageUrlMatches(url, domainPattern)) {
+
+        var p = newProcessor(url, item.searchPattern);
+        p.xmlDoc = sourceDocument;
+        processors.push(p);
+      }
+
+      // Otherwise, find links to explore
+      else {
+        urlPatternWrappers = buildUrlPatterns(
+            url,
+            item.domain,
+            item.pathPattern,
+            item.id
+        );
+      }
 
       // Find all the URLs that match the given pattern
       urlPatternWrappers.forEach( function(urlPatternWrapper) {
@@ -130,6 +144,10 @@ function handleProcessor(processor, extractor, queue, startDownloadFn, updatePro
     var match = ExtMethods.REPLACE.pattern.exec(processor.searchPattern);
     var links = extractor.replace(processor.matchingUrl, match[1].trim(), match[2].trim());
     ExtMethods.REPLACE.pattern.lastIndex = 0;
+    onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView);
+
+  } else if (!! processor.xmlDoc) {
+    var links = processDocument(processor, processor.xmlDoc, extractor);
     onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView);
 
   } else {

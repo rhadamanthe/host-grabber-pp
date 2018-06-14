@@ -24,7 +24,7 @@ const ExtMethods = {
 
 
 const domainPattern = /^\w[-\w\.]*\w$/;
-
+const exploreCurrentPage = '_$CURRENT$_';
 
 const ProcessorStatus = {
   WAITING: 1,

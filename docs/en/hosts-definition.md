@@ -174,6 +174,8 @@ to the captured groups (the segments in-between brackets).
 ID is a greedy-strategy.  
 It considers the link found by the URL pattern must be downloaded and analyzed.
 
+> Except if the [path pattern points to the current tab](#current-page). 
+
 As an example, if the URL pattern identified a link to *my-image-host*, then Host Grabber
 follows the link and downloads the page. It then analyzes it to extract the information. Here,
 the link is found by searching an image whose HTML ID is the one given in the search pattern. As a reminder,
@@ -197,6 +199,8 @@ with the specified ID with result in an item to download.
 
 Class is a greedy-strategy.  
 It considers the link found by the URL pattern must be downloaded and analyzed.
+
+> Except if the [path pattern points to the current tab](#current-page).
 
 As an example, if the URL pattern identified a link to *my-image-host*, then Host Grabber
 follows the link and downloads the page. It then analyzes it to extract the information. Here,
@@ -222,6 +226,8 @@ with the specified class with result in items to download.
 XPath is a greedy-strategy.  
 It considers the link found by the URL pattern must be downloaded and analyzed.
 
+> Except if the [path pattern points to the current tab](#current-page).
+
 As an example, if the URL pattern identified a link to *my-image-host*, then Host Grabber
 follows the link and downloads the page. It then analyzes it to extract the information. Here,
 links are found by searching a HTML element or attribute with a [XPath expression](https://wikipedia.org/wiki/XPath).
@@ -246,6 +252,8 @@ Notice that the **Class** and **ID** strategies are shortcuts to the **XPath** s
 
 Expreg is a greedy-strategy.  
 It considers the link found by the URL pattern must be downloaded and analyzed.
+
+> Except if the [path pattern points to the current tab](#current-page).
 
 As an example, if the URL pattern identified a link to *my-image-host*, then Host Grabber
 follows the link and downloads the page. It then analyzes it to extract the information. Here,
@@ -276,6 +284,24 @@ Here, it will only keep JPG images located in the **big** directory.
 
 > You might have notice a CDATA section in these last examples.  
 > There are used to prevent invalid characters in XML.
+
+
+### Current Page
+
+If the path pattern has the special value `_$CURRENT$_` and that the current web page matches
+the domain, then search patterns are applied on the current page. It means there is no additional
+link to explore, we explore the current page.
+
+In this example...
+
+```xml
+<domain>toto.com</domain>
+<path-pattern>_$CURRENT$_</path-pattern>
+<search-pattern>CLASS: img</search-pattern>
+```
+
+... if we are visiting a page from the *toto.com* domain, we will search for all the images
+whose CSS class is *img*. It works with all the search pattern strategies.
 
 
 ## Interceptors

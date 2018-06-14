@@ -700,6 +700,92 @@ describe('background => library.processors', function() {
   });
 
 
+  it('should handle processors correctly on the current page (NOT the right URL)', function(done) {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html><body>
+      <img src="http://host44.fr/gallery/t1.jpg" class="img" />
+      <br />
+      <img src="http://mimi.net/gallery/t2.jpg" />
+      <br />
+      <img src="http://host44.fr/gallery/t2.jpg" class="img" />
+      <img src="http://host44.fr/gallery/t1.jpg" class="img" />
+      <img src="http://host44.fr/gallery/dir/t45.jpg" class="img" />
+      <br />
+      <img src="http://bibi.com/path/to/this/image1.PNG" />
+      <img src="http://bibi.com/path/to/this/image2.svg" class="img" />
+    </body></html>
+    `;
+
+    // Test resources are served by Karma
+    var dictionary = document.implementation.createDocument('', 'root');
+    dictionary.documentElement.innerHTML = `
+        <host id="host44">
+          <domain>host44.fr</domain>
+          <path-pattern>_$CURRENT$_</path-pattern>
+          <search-pattern>CLASS: img</search-pattern>
+        </host>
+    `;
+
+    // Extract links
+    var processors = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
+    expect(processors.length).to.eql(0);
+    done();
+  });
+
+
+  it('should handle processors correctly on the current page (WITH the right URL)', function(done) {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html><body>
+      <img src="http://host44.fr/gallery/t1.jpg" class="img" />
+      <br />
+      <img src="http://mimi.net/gallery/t2.jpg" />
+      <br />
+      <img src="http://host44.fr/gallery/t2.jpg" class="img" />
+      <img src="https://host44.fr/gallery/t1.jpg" class="img" />
+      <img src="http://www.host44.fr/gallery/dir/t45.jpg" class="img" />
+      <br />
+      <img src="http://bibi.com/path/to/this/image1.PNG" />
+      <img src="http://bibi.com/path/to/this/image2.svg" class="img" />
+    </body></html>
+    `;
+
+    // Test resources are served by Karma
+    var dictionary = document.implementation.createDocument('', 'root');
+    dictionary.documentElement.innerHTML = `
+        <host id="host44">
+          <domain>host44.fr</domain>
+          <path-pattern>_$CURRENT$_</path-pattern>
+          <search-pattern>CLASS: img</search-pattern>
+        </host>
+    `;
+
+    // Extract links
+    var processors = findWhatToProcess(sourceDocument, 'https://host44.fr/here/it/is.php', dictionary);
+    expect(processors.length).to.eql(1);
+
+    var idleFn = function() {};
+    var extractorFn = extractor();
+    var queue = {
+      processNextItem: function() {}
+    };
+
+    var p = processors[0];
+    handleProcessor(p, extractorFn, queue, idleFn, idleFn);
+
+    expect(p.downloadLinks.length).to.eql(5);
+    expect(p.downloadLinks[0].link).to.eql('http://host44.fr/gallery/t1.jpg');
+    expect(p.downloadLinks[1].link).to.eql('http://host44.fr/gallery/t2.jpg');
+    expect(p.downloadLinks[2].link).to.eql('https://host44.fr/gallery/t1.jpg');
+    expect(p.downloadLinks[3].link).to.eql('http://www.host44.fr/gallery/dir/t45.jpg');
+
+    // Yes, this one is expected too. The "class" attribute makes no difference.
+    expect(p.downloadLinks[4].link).to.eql('http://bibi.com/path/to/this/image2.svg');
+    done();
+  });
+
+
   /**
    * A utility promise that waits for a given time.
    * @param {integer} ms The number of milliseconds to wait.

@@ -138,7 +138,7 @@ function buildUrlPatterns(pageUrl, domain, pathPattern, hostId) {
     const esc = '[^<>"]';
 
     // The base pattern covers HTTP, HTTPS, www. and sub-domains URLs
-    var basePattern = 'https?://([-\\w]+\\.)*' + domain.replace('.', '\\.');
+    var basePattern = buildDomainPattern(domain);
     var extraPathPattern = pathPattern
         .replace(/\.\+/, esc + '+')
         .replace(/\.\*/, esc + '*')
@@ -151,7 +151,7 @@ function buildUrlPatterns(pageUrl, domain, pathPattern, hostId) {
     res.push({ pattern: '"(' + basePattern + '/' + extraPathPattern + ')"', excludeHost: false});
 
     // Consider relative and absolute links on a given domain
-    if (pageUrl.match( '^' + basePattern + '($|/).*')) {
+    if (pageUrlMatches(pageUrl, basePattern)) {
       res.push({ pattern: 'src\s*=\s*"(/?[^:"]*' + extraPathPattern + ')"', excludeHost: true });
       res.push({ pattern: 'href\s*=\s*"(/?[^:"]*' + extraPathPattern + ')"', excludeHost: true });
       res.push({ pattern: 'data-src\s*=\s*"(/?[^:"]*' + extraPathPattern + ')"', excludeHost: true });
@@ -159,4 +159,29 @@ function buildUrlPatterns(pageUrl, domain, pathPattern, hostId) {
   }
 
   return res;
+}
+
+
+/**
+ * Builds a regular expression pattern from a domain definition.
+ * <p>
+ * This includes HTTP, HTTPS, www. and sub-domains.
+ * </p>
+ *
+ * @param {string} domain A domain definition, as stated in a dictionary.
+ * @returns {string} A pattern for a regular expression.
+ */
+function buildDomainPattern(domain) {
+  return 'https?://([-\\w]+\\.)*' + domain.replace('.', '\\.');
+}
+
+
+/**
+ * Verifies a page URL matches a domain pattern.
+ * @param {string} pageUrl A page URL.
+ * @param {string} domainPattern A domain pattern.
+ * @returns {boolean} True if this page belongs to the domain, false otherwise.
+ */
+function pageUrlMatches(pageUrl, domainPattern) {
+  return pageUrl.match( '^' + domainPattern + '($|/).*');
 }

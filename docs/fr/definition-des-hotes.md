@@ -176,6 +176,8 @@ groupes de capture (les segments entre parenthèses dans l'expression régulièr
 ID est une stratégie gourmande.  
 Elle implique de télécharger les pages pointées par les liens trouvés lors de l'exploration.
 
+> A moins que le [modèle de chemin ne pointe vers la page actuelle](#page-actuelle).
+
 Par exemple, si le modèle d'URL a permis d'identifier un lien vers *mon-hebergeur*, alors Host Grabber
 va le suivre, télécharger la page et l'analyser pour en extraire les médias à téléchager. Dans ce cas précis,
 les liens de téléchargement sont trouvés en cherchant un élément HTML dont l'ID est spécifié dans le modèle de recherche.
@@ -200,6 +202,8 @@ Host Grabber les suivraient tous, téléchargerait les pages cibles et les analy
 Class est une stratégie gourmande.  
 Elle implique de télécharger les pages pointées par les liens trouvés lors de l'exploration.
 
+> A moins que le [modèle de chemin ne pointe vers la page actuelle](#page-actuelle).
+
 Par exemple, si le modèle d'URL a permis d'identifier un lien vers *mon-hebergeur*, alors Host Grabber
 va le suivre, télécharger la page et l'analyser pour en extraire les médias à téléchager. Dans ce cas précis,
 les liens de téléchargement sont trouvés en cherchant un élément HTML dont la classe est spécifiée dans le modèle de recherche.
@@ -222,6 +226,8 @@ Host Grabber les suivraient tous, téléchargerait les pages cibles et les analy
 
 ID est une stratégie gourmande.  
 Elle implique de télécharger les pages pointées par les liens trouvés lors de l'exploration.
+
+> A moins que le [modèle de chemin ne pointe vers la page actuelle](#page-actuelle).
 
 Par exemple, si le modèle d'URL a permis d'identifier un lien vers *mon-hebergeur*, alors Host Grabber
 va le suivre, télécharger la page et l'analyser pour en extraire les médias à téléchager. Dans ce cas précis,
@@ -247,6 +253,8 @@ Notez que les stratégies **Class** et **ID** sont des raccourcis pour la strat�
 
 Expreg est une stratégie gourmande.  
 Elle implique de télécharger les pages pointées par les liens trouvés lors de l'exploration.
+
+> A moins que le [modèle de chemin ne pointe vers la page actuelle](#page-actuelle).
 
 Par exemple, si le modèle d'URL a permis d'identifier un lien vers *mon-hebergeur*, alors Host Grabber
 va le suivre, télécharger la page et l'analyser pour en extraire les médias à téléchager. Dans ce cas précis,
@@ -277,6 +285,24 @@ Ici, seules les images localisées dans le répertoire **grandes** seront télé
 
 > Vous avez dû remarquer l'utilisation de sections CDATA dans ces derniers exemples.  
 > Elles sont utilisées pour prévenir des erreurs au niveau XML.
+
+
+### Page Actuelle
+
+Si le modèle de chemin a pour valeur `_$CURRENT$_`, et que la page actuellement visitée appartient
+au domaine défini, alors c'est la page actuelle qui sera explorée directement. Autrement dit, on n'extrait
+pas de lien à explorer de la page, et on applique le modèle de recherche directement.
+
+Ainsi, dans cet exemple...
+
+```xml
+<domain>toto.com</domain>
+<path-pattern>_$CURRENT$_</path-pattern>
+<search-pattern>CLASS: img</search-pattern>
+```
+
+... si l'on visite une page du site *toto.com*, alors on va chercher toutes les images
+dont la classe CSS est *img*. Ce mécanisme fonctionne avec toutes les stratégies des modèles de recherche.
 
 
 ## Intercepteurs

@@ -38,4 +38,10 @@
 	<search-pattern>self</search-pattern>
 </host>
 
+<host id="host44">
+	<domain>host44.fr</domain>
+	<path-pattern>_$CURRENT$_</path-pattern>
+	<search-pattern>CLASS: img</search-pattern>
+</host>
+
 </root>
