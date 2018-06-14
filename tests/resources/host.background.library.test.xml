@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<root>
+<root id="test" version="test" spec="1.0">
 
 <host id="mimi">
 	<domain>mimi.net</domain>

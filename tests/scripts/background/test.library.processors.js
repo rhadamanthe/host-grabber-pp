@@ -2,6 +2,20 @@
 
 describe('background => library.processors', function() {
 
+  /**
+   * Creates an attribute.
+   * @param {object} element A DOM element.
+   * @param {string} attributeName The attribute name.
+   * @param {string} attributeValue The attribute value.
+   * @return {undefined}
+   */
+  function createAttribute(element, attributeName, attributeValue) {
+    var att = element.ownerDocument.createAttribute(attributeName);
+    att.value = attributeValue;
+    element.setAttributeNode(att);
+  }
+
+
   it('should find what to process', function() {
 
     var sourceDocument = document.implementation.createHTMLDocument('');
@@ -318,6 +332,9 @@ describe('background => library.processors', function() {
 
     // Test resources are served by Karma
     var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
     dictionary.documentElement.innerHTML = `
         <host id="titi">
           <domain>titi.fr</domain>
@@ -355,6 +372,9 @@ describe('background => library.processors', function() {
 
     // Test resources are served by Karma
     var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
     dictionary.documentElement.innerHTML = `
         <host id="titi">
           <path-pattern>[^ "]+</path-pattern>
@@ -392,6 +412,9 @@ describe('background => library.processors', function() {
 
     // Test resources are served by Karma
     var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
     dictionary.documentElement.innerHTML = `
         <host id="titi">
           <domain>titi.fr</domain>
@@ -429,6 +452,9 @@ describe('background => library.processors', function() {
 
     // Test resources are served by Karma
     var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
     dictionary.documentElement.innerHTML = `
         <host id="titi">
           <domain>titi.fr</domain>
@@ -474,6 +500,9 @@ describe('background => library.processors', function() {
 
     // Test resources are served by Karma
     var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
     dictionary.documentElement.innerHTML = `
         <host id="titi">
           <domain>titi.fr</domain>
@@ -665,6 +694,9 @@ describe('background => library.processors', function() {
 
     // Test resources are served by Karma
     var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
     dictionary.documentElement.innerHTML = `
         <host id="titi">
           <domain>titi.fr</domain>
@@ -719,6 +751,9 @@ describe('background => library.processors', function() {
 
     // Test resources are served by Karma
     var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
     dictionary.documentElement.innerHTML = `
         <host id="host44">
           <domain>host44.fr</domain>
@@ -753,6 +788,9 @@ describe('background => library.processors', function() {
 
     // Test resources are served by Karma
     var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
     dictionary.documentElement.innerHTML = `
         <host id="host44">
           <domain>host44.fr</domain>

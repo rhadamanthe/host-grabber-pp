@@ -2,6 +2,20 @@
 
 describe('background => library.dictionary', function() {
 
+  /**
+   * Creates an attribute.
+   * @param {object} element A DOM element.
+   * @param {string} attributeName The attribute name.
+   * @param {string} attributeValue The attribute value.
+   * @return {undefined}
+   */
+  function createAttribute(element, attributeName, attributeValue) {
+    var att = element.ownerDocument.createAttribute(attributeName);
+    att.value = attributeValue;
+    element.setAttributeNode(att);
+  }
+
+
   it('should find the extraction method correctly', function(done) {
 
     expect(findExtractionMethod('self')).to.eql(ExtMethods.SELF.id);
@@ -35,8 +49,11 @@ describe('background => library.dictionary', function() {
 
   it('should validate this basic dictionary item', function(done) {
 
-    var sourceDocument = document.implementation.createDocument('', 'root');
-    sourceDocument.documentElement.innerHTML = `
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
         <host id="titi">
           <domain>titi.fr</domain>
           <path-pattern>.+\\.jpg</path-pattern>
@@ -44,7 +61,7 @@ describe('background => library.dictionary', function() {
         </host>
     `;
 
-    var obj = parseAndVerifyDictionary(sourceDocument);
+    var obj = parseAndVerifyDictionary(dictionary);
     expect(obj.errors.length).to.eql(0);
     expect(obj.items.length).to.eql(1);
     expect(obj.items[0].domain).to.eql('titi.fr');
@@ -59,8 +76,11 @@ describe('background => library.dictionary', function() {
 
   it('should validate a dictionary item with 4 interceptors', function(done) {
 
-    var sourceDocument = document.implementation.createDocument('', 'root');
-    sourceDocument.documentElement.innerHTML = `
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
         <host id="titi">
           <domain>titi.fr</domain>
           <path-pattern>.+\\.jpg</path-pattern>
@@ -72,7 +92,7 @@ describe('background => library.dictionary', function() {
         </host>
     `;
 
-    var obj = parseAndVerifyDictionary(sourceDocument);
+    var obj = parseAndVerifyDictionary(dictionary);
     expect(obj.errors.length).to.eql(0);
     expect(obj.items.length).to.eql(1);
     expect(obj.items[0].domain).to.eql('titi.fr');
@@ -93,8 +113,11 @@ describe('background => library.dictionary', function() {
 
   it('should validate a dictionary item with 1 interceptor (config 1)', function(done) {
 
-    var sourceDocument = document.implementation.createDocument('', 'root');
-    sourceDocument.documentElement.innerHTML = `
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
         <host id="titi">
           <domain>titi.fr</domain>
           <path-pattern>.+\\.jpg</path-pattern>
@@ -103,7 +126,7 @@ describe('background => library.dictionary', function() {
         </host>
     `;
 
-    var obj = parseAndVerifyDictionary(sourceDocument);
+    var obj = parseAndVerifyDictionary(dictionary);
     expect(obj.errors.length).to.eql(0);
     expect(obj.items.length).to.eql(1);
     expect(obj.items[0].domain).to.eql('titi.fr');
@@ -120,8 +143,11 @@ describe('background => library.dictionary', function() {
 
   it('should validate a dictionary item with 1 interceptor (config 2)', function(done) {
 
-    var sourceDocument = document.implementation.createDocument('', 'root');
-    sourceDocument.documentElement.innerHTML = `
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
         <host id="titi">
           <domain>titi.fr</domain>
           <path-pattern>.+\\.jpg</path-pattern>
@@ -130,7 +156,7 @@ describe('background => library.dictionary', function() {
         </host>
     `;
 
-    var obj = parseAndVerifyDictionary(sourceDocument);
+    var obj = parseAndVerifyDictionary(dictionary);
     expect(obj.errors.length).to.eql(0);
     expect(obj.items.length).to.eql(1);
     expect(obj.items[0].domain).to.eql('titi.fr');
@@ -147,8 +173,11 @@ describe('background => library.dictionary', function() {
 
   it('should validate a dictionary item with 2 interceptors', function(done) {
 
-    var sourceDocument = document.implementation.createDocument('', 'root');
-    sourceDocument.documentElement.innerHTML = `
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
         <host id="titi">
           <domain>titi.fr</domain>
           <path-pattern>.+\\.jpg</path-pattern>
@@ -158,7 +187,7 @@ describe('background => library.dictionary', function() {
         </host>
     `;
 
-    var obj = parseAndVerifyDictionary(sourceDocument);
+    var obj = parseAndVerifyDictionary(dictionary);
     expect(obj.errors.length).to.eql(0);
     expect(obj.items.length).to.eql(1);
     expect(obj.items[0].domain).to.eql('titi.fr');
@@ -177,10 +206,13 @@ describe('background => library.dictionary', function() {
 
   it('should detect an empty dictionary item', function(done) {
 
-    var sourceDocument = document.implementation.createDocument('', 'root');
-    sourceDocument.documentElement.innerHTML = '<host id="titi"></host>';
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = '<host id="titi"></host>';
 
-    var obj = parseAndVerifyDictionary(sourceDocument);
+    var obj = parseAndVerifyDictionary(dictionary);
     expect(obj.errors.length).to.eql(3);
     expect(obj.items.length).to.eql(1);
     expect(obj.errors[0]).to.eql('[titi] A domain was expected.');
@@ -190,10 +222,27 @@ describe('background => library.dictionary', function() {
   });
 
 
+  it('should detect a dictionary with missing properties', function(done) {
+
+    var dictionary = document.implementation.createDocument('', 'root');
+
+    var obj = parseAndVerifyDictionary(dictionary);
+    expect(obj.errors.length).to.eql(3);
+    expect(obj.items.length).to.eql(0);
+    expect(obj.errors[0]).to.eql('The dictionary element must have a \'version\' attribute.');
+    expect(obj.errors[1]).to.eql('The dictionary element must have a \'spec\' attribute.');
+    expect(obj.errors[2]).to.eql('The dictionary element must have an \'ID\' attribute.');
+    done();
+  });
+
+
   it('should detect a dictionary item with an invalid domain', function(done) {
 
-    var sourceDocument = document.implementation.createDocument('', 'root');
-    sourceDocument.documentElement.innerHTML = `
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
       <host id="titi">
         <domain>http://titi.fr</domain>
         <path-pattern>/.+\\.jpg$</path-pattern>
@@ -201,7 +250,7 @@ describe('background => library.dictionary', function() {
       </host>
   `;
 
-    var obj = parseAndVerifyDictionary(sourceDocument);
+    var obj = parseAndVerifyDictionary(dictionary);
     expect(obj.errors[0]).to.eql('[titi] Invalid domain: http://titi.fr');
 
     expect(obj.items.length).to.eql(1);
@@ -217,8 +266,11 @@ describe('background => library.dictionary', function() {
 
   it('should detect a dictionary item with invalid properties', function(done) {
 
-    var sourceDocument = document.implementation.createDocument('', 'root');
-    sourceDocument.documentElement.innerHTML = `
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
       <host id="titi">
         <domain>titi.fr</domain>
         <path-pattern>/.+\\.jpg$</path-pattern>
@@ -233,7 +285,7 @@ describe('background => library.dictionary', function() {
       </host>
   `;
 
-    var obj = parseAndVerifyDictionary(sourceDocument);
+    var obj = parseAndVerifyDictionary(dictionary);
     expect(obj.errors.length).to.not.eql(0);
     expect(obj.items[0].errors[0]).to.eql('A path pattern cannot start with \'/\'.');
     expect(obj.items[0].errors[1]).to.eql('A path pattern cannot end with \'$\'.');
@@ -264,8 +316,11 @@ describe('background => library.dictionary', function() {
 
   it('should detect a dictionary item without an ID', function(done) {
 
-    var sourceDocument = document.implementation.createDocument('', 'root');
-    sourceDocument.documentElement.innerHTML = `
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
       <host>
         <domain>titi.fr</domain>
         <path-pattern>.+\\.jpg</path-pattern>
@@ -273,7 +328,7 @@ describe('background => library.dictionary', function() {
       </host>
   `;
 
-    var obj = parseAndVerifyDictionary(sourceDocument);
+    var obj = parseAndVerifyDictionary(dictionary);
     expect(obj.errors.length).to.eql(1);
     expect(obj.errors[0]).to.eql('A host without an ID was found.');
     expect(obj.items.length).to.eql(0);
@@ -283,8 +338,11 @@ describe('background => library.dictionary', function() {
 
   it('should detect a dictionary with duplicate IDs', function(done) {
 
-    var sourceDocument = document.implementation.createDocument('', 'root');
-    sourceDocument.documentElement.innerHTML = `
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
       <host id="titi">
         <domain>titi.fr</domain>
         <path-pattern>.+\\.jpg</path-pattern>
@@ -297,7 +355,7 @@ describe('background => library.dictionary', function() {
       </host>
   `;
 
-    var obj = parseAndVerifyDictionary(sourceDocument);
+    var obj = parseAndVerifyDictionary(dictionary);
     expect(obj.errors.length).to.eql(1);
     expect(obj.errors[0]).to.eql('A same ID is used by several hosts in the dictionary: titi');
     expect(obj.items.length).to.eql(1);
@@ -307,8 +365,11 @@ describe('background => library.dictionary', function() {
 
   it('should detect a dictionary item with an unknown element', function(done) {
 
-    var sourceDocument = document.implementation.createDocument('', 'root');
-    sourceDocument.documentElement.innerHTML = `
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
       <host id="titi">
         <kikou></kikou>
         <domain>titi.fr</domain>
@@ -317,7 +378,7 @@ describe('background => library.dictionary', function() {
       </host>
   `;
 
-    var obj = parseAndVerifyDictionary(sourceDocument);
+    var obj = parseAndVerifyDictionary(dictionary);
     expect(obj.errors.length).to.eql(1);
     expect(obj.errors[0]).to.eql('[titi] An unknown tag was found: kikou');
     expect(obj.items.length).to.eql(1);
@@ -333,8 +394,11 @@ describe('background => library.dictionary', function() {
 
   it('should detect a dictionary item with a domain at an invalid position', function(done) {
 
-    var sourceDocument = document.implementation.createDocument('', 'root');
-    sourceDocument.documentElement.innerHTML = `
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
       <host id="titi">
         <path-pattern>.+\\.jpg</path-pattern>
         <domain>titi.fr</domain>
@@ -342,7 +406,7 @@ describe('background => library.dictionary', function() {
       </host>
   `;
 
-    var obj = parseAndVerifyDictionary(sourceDocument);
+    var obj = parseAndVerifyDictionary(dictionary);
     expect(obj.errors.length).to.not.eql(0);
     expect(obj.errors[0]).to.eql('[titi] A path pattern was found at an invalid position.');
     expect(obj.errors[1]).to.eql('[titi] A domain was found at an invalid position.');
@@ -358,8 +422,11 @@ describe('background => library.dictionary', function() {
 
   it('should detect an unknown element in the dictionary', function(done) {
 
-    var sourceDocument = document.implementation.createDocument('', 'root');
-    sourceDocument.documentElement.innerHTML = `
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
       <hoste id="titi">
         <path-pattern>.+\\.jpg</path-pattern>
         <domain>titi.fr</domain>
@@ -367,7 +434,7 @@ describe('background => library.dictionary', function() {
       </hoste>
   `;
 
-    var obj = parseAndVerifyDictionary(sourceDocument);
+    var obj = parseAndVerifyDictionary(dictionary);
     expect(obj.errors.length).to.eql(1);
     expect(obj.errors[0]).to.eql('An unknown tag was found in the dictionary: hoste');
     expect(obj.items.length).to.eql(0);
@@ -377,8 +444,11 @@ describe('background => library.dictionary', function() {
 
   it('should detect a dictionary item with an interceptor at an invalid position', function(done) {
 
-    var sourceDocument = document.implementation.createDocument('', 'root');
-    sourceDocument.documentElement.innerHTML = `
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
       <host id="titi">
         <domain>titi.fr</domain>
         <interceptor>replace: 'o', 'p'</interceptor>
@@ -388,7 +458,7 @@ describe('background => library.dictionary', function() {
       </host>
   `;
 
-    var obj = parseAndVerifyDictionary(sourceDocument);
+    var obj = parseAndVerifyDictionary(dictionary);
     expect(obj.errors.length).to.eql(1);
     expect(obj.errors[0]).to.eql('[titi] An interceptor was found at an invalid position.');
     expect(obj.items.length).to.eql(1);

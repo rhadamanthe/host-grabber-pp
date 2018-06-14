@@ -10,6 +10,20 @@ function parseAndVerifyDictionary(dictionaryDocument) {
   result.errors = [];
   result.items = [];
 
+  // Verify the root element
+  if (!dictionaryDocument.documentElement.getAttribute('version')) {
+    result.errors.push('The dictionary element must have a \'version\' attribute.');
+  }
+
+  if (!dictionaryDocument.documentElement.getAttribute('spec')) {
+    result.errors.push('The dictionary element must have a \'spec\' attribute.');
+  }
+
+  if (!dictionaryDocument.documentElement.getAttribute('id')) {
+    result.errors.push('The dictionary element must have an \'ID\' attribute.');
+  }
+
+  // Verify hosts
   var foundIds = [];
   for (var i = 0; i<dictionaryDocument.documentElement.children.length; i++) {
     var elt = dictionaryDocument.documentElement.children[i];

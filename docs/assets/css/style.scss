@@ -41,7 +41,10 @@ $hr-border-color: #eff0f1 !default;
 
 .project-name a,
 .project-name a:visited,
-.project-name a:hover {
+.project-name a:hover,
+a.btn,
+a.btn:visited,
+a.btn:hover {
 	color: #ffffff;
 }
 
@@ -49,12 +52,6 @@ a,
 a:visited,
 a:hover {
 	color: #5050EE;
-}
-
-a.btn,
-a.btn:visited,
-a.btn:hover {
-	color: #2A2A57;
 }
 
 .project-name a:hover {
