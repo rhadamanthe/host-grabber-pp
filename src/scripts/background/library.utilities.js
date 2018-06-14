@@ -41,25 +41,6 @@ function loadRemoteDocument(url, asDoc = true, mimeType) {
   });
 }
 
-/**
- * Removes CData sections.
- * @param {string} text A raw text that might be a CData section.
- * @returns {string} The fixed text.
- */
-function removeCDataMarkups(text) {
-
-  var fixedText = text;
-  if( fixedText.toLowerCase().startsWith('<![cdata[')) {
-    fixedText = fixedText.substring(9);
-  }
-
-  if( fixedText.endsWith(']]>')) {
-    fixedText = fixedText.substring(0, fixedText.length - 3);
-  }
-
-  return fixedText;
-}
-
 
 /**
  * Fixes links so that relative ones are resolved as absolute links.

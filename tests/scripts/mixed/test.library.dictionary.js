@@ -16,6 +16,16 @@ describe('background => library.dictionary', function() {
   }
 
 
+  it('should remove CDATA mark-ups', function(done) {
+
+    expect(removeCDataMarkups('this is a some content')).to.eql('this is a some content');
+    expect(removeCDataMarkups('<![cdata[this is a some content')).to.eql('this is a some content');
+    expect(removeCDataMarkups('<![cdata[this is a some content]]>')).to.eql('this is a some content');
+    expect(removeCDataMarkups('this is a some content]]>')).to.eql('this is a some content');
+    done();
+  });
+
+
   it('should find the extraction method correctly', function(done) {
 
     expect(findExtractionMethod('self')).to.eql(ExtMethods.SELF.id);

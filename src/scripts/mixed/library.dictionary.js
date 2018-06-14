@@ -1,3 +1,9 @@
+// This file is made so that it can be executed alone.
+// No dependency to any other script.
+
+const domainPattern = /^\w[-\w\.]*\w$/;
+const exploreCurrentPage = '_$CURRENT$_';
+
 
 /**
  * Parses and verifies the dictionary.
@@ -25,22 +31,21 @@ function parseAndVerifyDictionary(dictionaryDocument) {
 
   // Verify hosts
   var foundIds = [];
-  for (var i = 0; i<dictionaryDocument.documentElement.children.length; i++) {
-    var elt = dictionaryDocument.documentElement.children[i];
+  getElementChildren(dictionaryDocument.documentElement).forEach( function(elt) {
     if (elt.tagName !== 'host') {
       result.errors.push('An unknown tag was found in the dictionary: ' + elt.tagName);
-      continue;
+      return;
     }
 
     if (!elt.getAttribute('id')) {
       result.errors.push('A host without an ID was found.');
-      continue;
+      return;
     }
 
     var id = elt.getAttribute('id');
     if (foundIds.indexOf(id) !== -1) {
       result.errors.push('A same ID is used by several hosts in the dictionary: ' + id);
-      continue;
+      return;
     }
 
     foundIds.push(id);
@@ -49,7 +54,7 @@ function parseAndVerifyDictionary(dictionaryDocument) {
     obj.errors.forEach( function(error) {
       result.errors.push('[' + obj.id + '] ' + error);
     });
-  }
+  });
 
   return result;
 }
@@ -72,13 +77,12 @@ function parseAndVerifyDictionaryItem(domElement) {
   // Parse children nodes
   var current = '';
   var loopCount = 0;
-  for (var i = 0; i<domElement.children.length; i++) {
-    var elt = domElement.children[i];
+  getElementChildren(domElement).forEach( function(elt) {
     var tempErrors = [];
 
     // Domain
     if (elt.tagName === 'domain') {
-      var domain = elt.innerHTML.trim();
+      var domain = elt.textContent.trim();
       if (loopCount !== 0) {
         tempErrors.push('A domain was found at an invalid position.');
       }
@@ -95,7 +99,7 @@ function parseAndVerifyDictionaryItem(domElement) {
 
     // Interceptor
     else if (elt.tagName === 'interceptor') {
-      var interceptor = elt.innerHTML.trim();
+      var interceptor = elt.textContent.trim();
       if (current !== 'interceptor1' && current !== 'interceptor2' && current !== 'search-pattern' && current !== 'path-pattern') {
         tempErrors.push('An interceptor was found at an invalid position.');
       }
@@ -121,7 +125,7 @@ function parseAndVerifyDictionaryItem(domElement) {
 
     // Path pattern
     else if (elt.tagName === 'path-pattern') {
-      var pathPattern = elt.innerHTML.trim();
+      var pathPattern = elt.textContent.trim();
       if (current !== 'domain') {
         tempErrors.push('A path pattern was found at an invalid position.');
       }
@@ -146,7 +150,7 @@ function parseAndVerifyDictionaryItem(domElement) {
 
     // Search pattern
     else if (elt.tagName === 'search-pattern') {
-      var searchPattern = elt.innerHTML.trim();
+      var searchPattern = elt.textContent.trim();
       var fixedSearchPattern = removeCDataMarkups(searchPattern);
 
       if (current !== 'path-pattern' && current !== 'interceptor1') {
@@ -176,7 +180,7 @@ function parseAndVerifyDictionaryItem(domElement) {
 
     // End of the loop
     loopCount ++;
-  }
+  });
 
   // Validate the object
   if (!result.domain) {
@@ -192,6 +196,50 @@ function parseAndVerifyDictionaryItem(domElement) {
   }
 
   return result;
+}
+
+
+/**
+ * A function that find children elements from a DOM node.
+ * <p>
+ * This function relies on the standard and portable 'childNodes' property.
+ * </p>
+ *
+ * @param {object} element A DOM element.
+ * @returns {array} An array of DOM elements.
+ */
+function getElementChildren(element) {
+
+  var children = [];
+  var childNodes = element.childNodes;
+  for (var i=0; i<childNodes.length; i++) {
+    var child = childNodes.item(i);
+    if (child.nodeType === 1) {
+      children.push(child);
+    }
+  }
+
+  return children;
+}
+
+
+/**
+ * Removes CData sections.
+ * @param {string} text A raw text that might be a CData section.
+ * @returns {string} The fixed text.
+ */
+function removeCDataMarkups(text) {
+
+  var fixedText = text;
+  if( fixedText.toLowerCase().startsWith('<![cdata[')) {
+    fixedText = fixedText.substring(9);
+  }
+
+  if( fixedText.endsWith(']]>')) {
+    fixedText = fixedText.substring(0, fixedText.length - 3);
+  }
+
+  return fixedText;
 }
 
 
@@ -215,3 +263,16 @@ function findExtractionMethod(searchPattern) {
 
   return theExtMethod;
 }
+
+
+/**
+ * No ID with 0 here!
+ */
+const ExtMethods = {
+  ID:      { id: 1, pattern: /^\s*id\s*:\s*(.+)$/ig },
+  CLASS:   { id: 2, pattern: /^\s*class\s*:\s*(.+)$/ig },
+  XPATH:   { id: 3, pattern: /^\s*xpath\s*:\s*(.+)$/ig },
+  REPLACE: { id: 4, pattern: /^\s*replace\s*:\s*\'(.+)\'\s*,\s*\'(.*)\'\s*$/ig },
+  EXPREG:  { id: 5, pattern: /^\s*expreg\s*:\s*(.+)\s*$/ig },
+  SELF:    { id: 6, pattern: /^\s*self\s*$/ig }
+};

@@ -23,16 +23,6 @@ describe('background => library.utilities', function() {
   });
 
 
-  it('should remove CDATA mark-ups', function(done) {
-
-    expect(removeCDataMarkups('this is a some content')).to.eql('this is a some content');
-    expect(removeCDataMarkups('<![cdata[this is a some content')).to.eql('this is a some content');
-    expect(removeCDataMarkups('<![cdata[this is a some content]]>')).to.eql('this is a some content');
-    expect(removeCDataMarkups('this is a some content]]>')).to.eql('this is a some content');
-    done();
-  });
-
-
   it('should generate a UUID', function(done) {
 
     expect(!! uuid()).to.be(true);
