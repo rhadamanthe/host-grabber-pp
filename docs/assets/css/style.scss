@@ -48,7 +48,13 @@ $hr-border-color: #eff0f1 !default;
 a,
 a:visited,
 a:hover {
-	color: #5050EE
+	color: #5050EE;
+}
+
+a.btn,
+a.btn:visited,
+a.btn:hover {
+	color: #2A2A57;
 }
 
 .project-name a:hover {
