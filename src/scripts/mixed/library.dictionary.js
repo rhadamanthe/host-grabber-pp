@@ -276,3 +276,9 @@ const ExtMethods = {
   EXPREG:  { id: 5, pattern: /^\s*expreg\s*:\s*(.+)\s*$/ig },
   SELF:    { id: 6, pattern: /^\s*self\s*$/ig }
 };
+
+
+// Make this file usable with NodeJS
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports.parseAndVerifyDictionary = parseAndVerifyDictionary;
+}

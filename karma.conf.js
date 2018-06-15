@@ -18,7 +18,7 @@ module.exports = function(config) {
       'src/**/library.*.js',
 
       // Tests
-      'tests/**/*.js',
+      'tests/scripts/**/*.js',
 
       // Fixture
       {

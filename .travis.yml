@@ -12,3 +12,4 @@ script:
   - npm install
   - npm run lint
   - npm test
+  - cd tests/node.js && node validate-dictionary.js
