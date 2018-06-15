@@ -41,7 +41,7 @@ function extractor() {
    * Finds the matches in the web page with a XPath expression
    * @param {object} sourceDocument The source page as a DOM document.
    * @param {string} expr A XPath expression.
-   * @returns {Array} a non-null array of URLs.
+ * @returns {array} A non-null array of URLs.
    */
   function xpath(sourceDocument, expr) {
 

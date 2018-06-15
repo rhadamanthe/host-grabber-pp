@@ -101,6 +101,10 @@ function reloadDictionary() {
 
   browser.storage.local.get('dictionaryUrl').then((res) => {
     var url = res.dictionaryUrl || defaultDictionaryUrl;
+
+    // By-pass the cache...
+    url += ((/\?/).test(url) ? '&' : '?') + (new Date()).getTime();
+
     console.log('Loading dictionary from ' + url + '...');
     loadRemoteDocument(url, true, 'application/xml').then( function(downloadedDictionary) {
       dictionary = downloadedDictionary;

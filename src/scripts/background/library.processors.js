@@ -45,9 +45,9 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
       if (item.pathPattern === exploreCurrentPage
           && pageUrlMatches(url, domainPattern)) {
 
-        var p = newProcessor(url, item.searchPattern);
+        var p = newProcessor(url, item.searchPattern, item.interceptors2);
         p.xmlDoc = sourceDocument;
-        processors.push(p);
+        pushProcessor(processors, p, alreadyVisistedUrls);
       }
 
       // Otherwise, find links to explore
@@ -79,18 +79,31 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
           });
 
           // Avoid duplicates
-          if (alreadyVisistedUrls.indexOf(fixedLink) !== -1 ) {
-            continue;
-          }
-
-          alreadyVisistedUrls.push(fixedLink);
-          processors.push( newProcessor(fixedLink, item.searchPattern, item.interceptors2));
+          var p = newProcessor(fixedLink, item.searchPattern, item.interceptors2);
+          pushProcessor(processors, p, alreadyVisistedUrls);
         }
       });
     });
   }
 
   return processors;
+}
+
+
+/**
+ * Stores a processor.
+ * @param {array} processors The array of processors.
+ * @param {object} processor A processor object.
+ * @param {array} alreadyVisistedUrls An array of already visited URLs.
+ * @returns {undefined}
+ */
+function pushProcessor(processors, processor, alreadyVisistedUrls) {
+
+  // Avoid duplicates
+  if (alreadyVisistedUrls.indexOf(processor.matchingUrl) === -1 ) {
+    alreadyVisistedUrls.push(processor.matchingUrl);
+    processors.push(processor);
+  }
 }
 
 
@@ -148,6 +161,7 @@ function handleProcessor(processor, extractor, queue, startDownloadFn, updatePro
 
   } else if (!! processor.xmlDoc) {
     var links = processDocument(processor, processor.xmlDoc, extractor);
+    delete processor.xmlDoc; // Important! Otherwise, the processor will not be propagated to the view.
     onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView);
 
   } else {

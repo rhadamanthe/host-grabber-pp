@@ -121,6 +121,7 @@ function updateProcessor(processor) {
       index.set(oldDlLink.id, oldDlLink);
     });
 
+    // Add the new ones if necessary
     processor.downloadLinks.forEach( function(newDlLink) {
       if (index.has(newDlLink.id)) {
         var oldDlLink = index.get(newDlLink.id);
@@ -281,7 +282,7 @@ function updateDownloadLinkInView(dlLink) {
   if (!! dlLink.downloadItemId) {
     browser.downloads.getFileIcon(dlLink.downloadItemId).then(function(iconUrl) {
       var item = document.getElementById(dlLink.id + '-link');
-      if (!! item) {
+      if (!! item && item.getElementsByTagName('img').length === 0) {
         var img = document.createElement('img');
         img.src = iconUrl;
         item.insertBefore(img, item.childNodes[0]);
