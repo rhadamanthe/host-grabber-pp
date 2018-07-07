@@ -160,7 +160,7 @@ function updateProcessor(processor) {
 
     // Do we need to remove completed downloads automatically?
     // If so, let people see their item reach the green color.
-    if (removeCompletedDlAutomatically) {
+    if (class_ === 'success' && removeCompletedDlAutomatically) {
       setTimeout(function() {
         removeProcessor(processor.id);
       }, 1000);

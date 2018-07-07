@@ -7,12 +7,12 @@
 function newDlManager(queue) {
 
   var dlManager = {
-    currentDownloadIds: [],
     waitingDownloads: [],
     ongoingDownloadsCpt: 0,
     maxDownloadLimit: -1,
     onDonwloadComplete: onDonwloadComplete,
-    startDownload: startDownload
+    startDownload: startDownload,
+    downloadIdToLinkObject: new Map()
   };
 
 
@@ -34,24 +34,34 @@ function newDlManager(queue) {
 
   /**
    * Reacts to the completion of a download item.
-   * <p>
-   * Notice this method does not update the status of the objects.
-   * For the moment, the status of a download item is only about whether
-   * it started correctly.
-   * </p>
-   *
    * @param {object} downloadDelta An object with information about the completed download.
    * @returns {undefined}
-   * FIXME: should we update the status of an object here?
    */
   function onDonwloadComplete(downloadDelta) {
 
-    if (removeFromArray(dlManager.currentDownloadIds, downloadDelta.id)) {
-      // One download done
-      dlManager.ongoingDownloadsCpt --;
+    // Update the state of the link object
+    var linkObject = dlManager.downloadIdToLinkObject.get(downloadDelta.id);
+    if (!! linkObject) {
+      if (downloadDelta.state.current === 'complete') {
+        linkObject.status = DlStatus.SUCCESS;
+        updateProcessorInDownloadView(linkObject.processor);
 
-      // Process the next one, if there is one
-      startNextWaitingDownload();
+      } else if (downloadDelta.state.current === 'interrupted') {
+        linkObject.status = DlStatus.FAILURE;
+        updateProcessorInDownloadView(linkObject.processor);
+      }
+    }
+
+    // Should we process a new item?
+    if (downloadDelta.state.current === 'complete') {
+      if (dlManager.downloadIdToLinkObject.delete(downloadDelta.id)) {
+
+        // One download done
+        dlManager.ongoingDownloadsCpt --;
+
+        // Process the next one, if there is one
+        startNextWaitingDownload();
+      }
     }
   }
 
@@ -103,6 +113,9 @@ function newDlManager(queue) {
       return;
     }
 
+    // Update the structure of a download link locally
+    linkObject.processor = processor;
+
     // Account the download as accepted - although not yet started.
     // We do not want Firefox to start too many downloads at once.
     dlManager.ongoingDownloadsCpt ++;
@@ -116,10 +129,10 @@ function newDlManager(queue) {
 
     var downloading = browser.downloads.download(options).then( function(downloadItemId) {
       // Register the download
-      dlManager.currentDownloadIds.push(downloadItemId);
+      dlManager.downloadIdToLinkObject.set(downloadItemId, linkObject);
 
       // Update the status
-      linkObject.status = DlStatus.SUCCESS;
+      linkObject.status = DlStatus.DOWNLOADING;
       linkObject.downloadItemId = downloadItemId;
       updateProcessorInDownloadView(processor);
 

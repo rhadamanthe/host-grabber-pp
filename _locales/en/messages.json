@@ -131,21 +131,26 @@
 
   "waiting": {
     "message": "Waiting...",
-    "descroption": ""
+    "description": ""
   },
 
   "success": {
     "message": "Success",
-    "descroption": ""
+    "description": ""
   },
 
   "failure": {
     "message": "Failure",
-    "descroption": ""
+    "description": ""
+  },
+
+  "downloading": {
+    "message": "Downloading",
+    "description": ""
   },
 
   "mixed": {
     "message": "Some failures",
-    "descroption": ""
+    "description": ""
   }
 }

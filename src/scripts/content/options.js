@@ -39,12 +39,6 @@ document.querySelector('#save-btn').addEventListener('click', function() {
 });
 
 var defaultListener = function() {
-  console.log({
-    dlMaxParallel: document.querySelector('#dl-max-parallel').value,
-    dlClearCompleted: document.querySelector('#dl-clear-completed').checked,
-    dlShowViewWhenDlStarts: document.querySelector('#dl-show-view-when-dl-starts').checked,
-    dlAlwaysShowViewWhenDlStarts: document.querySelector('#dl-always-show-view-when-dl-starts').checked,
-  })
   browser.storage.local.set({
     dlMaxParallel: document.querySelector('#dl-max-parallel').value,
     dlClearCompleted: document.querySelector('#dl-clear-completed').checked,

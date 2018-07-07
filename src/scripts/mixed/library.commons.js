@@ -24,5 +24,6 @@ const ProcessorStatus = {
 const DlStatus = {
   WAITING: 1,
   SUCCESS: 2,
-  FAILURE: 3
+  FAILURE: 3,
+  DOWNLOADING: 4
 };

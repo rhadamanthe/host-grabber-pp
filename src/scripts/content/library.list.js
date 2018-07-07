@@ -12,6 +12,7 @@ function findClassNameFromStatus(dlLink) {
   case DlStatus.FAILURE: result = 'failure'; break;
   case DlStatus.SUCCESS: result = 'success'; break;
   case DlStatus.WAITING: result = 'waiting'; break;
+  case DlStatus.DOWNLOADING: result = 'downloading'; break;
   }
 
   return result;

@@ -7,7 +7,8 @@ describe('donwload view => list.functions', function() {
     expect(findClassNameFromStatus({status: 1})).to.eql('waiting');
     expect(findClassNameFromStatus({status: 2})).to.eql('success');
     expect(findClassNameFromStatus({status: 3})).to.eql('failure');
-    expect(findClassNameFromStatus({status: 4})).to.eql('');
+    expect(findClassNameFromStatus({status: 4})).to.eql('downloading');
+    expect(findClassNameFromStatus({status: 5})).to.eql('');
     done();
   });
 
