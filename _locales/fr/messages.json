@@ -119,14 +119,69 @@
     "description": "L'étiquette pour l'info-bulle de l'action 'supprimer les items selectionnés' (page de téléchargement)"
   },
 
-  "dlPage_retryDownloadsAction": {
+  "dlPage_removeAllAction": {
+    "message": "Tout Supprimer",
+    "description": "L'étiquette pour l'action 'supprimer les items selectionnés' (page de téléchargement)"
+  },
+
+  "dlPage_removeAllTooltip": {
+    "message": "Supprime tous les éléments, quel que soit leur état",
+    "description": "L'étiquette pour l'info-bulle de l'action 'supprimer les items selectionnés' (page de téléchargement)"
+  },
+
+  "dlPage_retrySelectedDownloadsAction": {
     "message": "Retélécharger la Sélection",
     "description": "L'étiquette pour l'action 'retélécharger les éléments selectionnés' (page de téléchargement)"
   },
 
-  "dlPage_retryDownloadsTooltip": {
+  "dlPage_retrySelectedDownloadsTooltip": {
     "message": "Essaye de retélécharger les éléments sélectionnés",
     "description": "L'étiquette pour l'info-bulle de l'action 'retélécharger les éléments selectionnés' (page de téléchargement)"
+  },
+
+  "dlPage_retryAllDownloadsAction": {
+    "message": "Relancer les téléchargements",
+    "description": "L'étiquette pour l'action 'relancer les téléchargements' (page de téléchargement)"
+  },
+
+  "dlPage_retryAllDownloadsTooltip": {
+    "message": "Relancer les téléchargements",
+    "description": "L'étiquette pour l'info-bulle de l'action 'relancer les téléchargements' (page de téléchargement)"
+  },
+
+  "dlPage_selectAllAction": {
+    "message": "Tout Sélectionner",
+    "description": "L'étiquette pour l'action 'tout sélectionner' (page de téléchargement)"
+  },
+
+  "dlPage_selectAllTooltip": {
+    "message": "Sélectionner tous les items",
+    "description": "L'étiquette pour l'info-bulle de l'action 'tout sélectionner' (page de téléchargement)"
+  },
+  
+  "dlPage_unselectAllAction": {
+    "message": "Tout Désélectionner",
+    "description": "L'étiquette pour l'action 'tout désélectionner' (page de téléchargement)"
+  },
+
+  "dlPage_unselectAllTooltip": {
+    "message": "Désélectionner tous les items",
+    "description": "L'étiquette pour l'info-bulle de l'action 'tout désélectionner' (page de téléchargement)"
+  },
+
+  "dlPage_selectionMenu": {
+    "message": "Sélection...",
+    "description": "L'étiquette pour le menu 'selection' (page de téléchargement)"
+  },
+
+  "dlPage_removeMenu": {
+    "message": "Enlever...",
+    "description": "L'étiquette pour le menu 'enlever' (page de téléchargement)"
+  },
+
+  "dlPage_retryMenu": {
+    "message": "Relancer...",
+    "description": "L'étiquette pour le menu 'relancer' (page de téléchargement)"
   },
 
   "waiting": {

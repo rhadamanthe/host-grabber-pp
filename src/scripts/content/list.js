@@ -26,7 +26,15 @@ browser.storage.local.get('dlClearCompleted').then((res) => {
 document.getElementById('options').onclick = showOptionsPage;
 document.getElementById('remove-completed').onclick = removeCompleted;
 document.getElementById('remove-selection').onclick = removeSelection;
-document.getElementById('retry-downloads').onclick = retryDownloads;
+document.getElementById('remove-all').onclick = removeAll;
+document.getElementById('select-all').onclick = selectAll;
+document.getElementById('unselect-all').onclick = unselectAll;
+document.getElementById('retry-selected').onclick = retrySelected;
+document.getElementById('retry-all').onclick = retryAll;
+
+document.querySelectorAll('.dropdown > button').forEach( function(item) {
+  item.onclick = showSubMenu;
+});
 
 browser.storage.onChanged.addListener(function(changes, area) {
   if (area !== 'local') {
@@ -354,6 +362,18 @@ function removeCompleted() {
 
 
 /**
+ * Removes all the processors.
+ * @returns {undefined}
+ */
+function removeAll() {
+
+  allProcessors.forEach( function(processor, processorId) {
+    removeProcessor(processor.id);
+  });
+}
+
+
+/**
  * Removes the selected processors.
  * @returns {undefined}
  */
@@ -366,12 +386,56 @@ function removeSelection() {
 
 
 /**
- * Tries to download items that failed.
+ * Selects all the processors.
  * @returns {undefined}
  */
-function retryDownloads() {
+function selectAll() {
 
-  document.querySelectorAll('.col3 > input:checked').forEach( function(item) {
+  document.querySelectorAll('.col3 > input').forEach( function(item) {
+    item.checked = true;
+  });
+}
+
+
+/**
+ * Selects all the processors.
+ * @returns {undefined}
+ */
+function unselectAll() {
+
+  document.querySelectorAll('.col3 > input').forEach( function(item) {
+    item.checked = false;
+  });
+}
+
+
+/**
+ * Restarts the download of all the selected items.
+ * @returns {undefined}
+ */
+function retrySelected() {
+  retryDownloads(true);
+}
+
+
+/**
+ * Restarts all the downloads.
+ * @returns {undefined}
+ */
+function retryAll() {
+  retryDownloads(false);
+}
+
+
+/**
+ * Restarts downloads.
+ * @param {boolean} selectedOnly True to only consider selected items.
+ * @returns {undefined}
+ */
+function retryDownloads(selectedOnly) {
+
+  var q = !! selectedOnly ? 'input:checked' : 'input';
+  document.querySelectorAll('.col3 > ' + q).forEach( function(item) {
     var processorId = item.id;
 
     // Remove download items from the view
@@ -401,4 +465,18 @@ function retryDownloads() {
  */
 function switchCheckedValueForCol3() {
   this.firstChild.checked = ! this.firstChild.checked;
+}
+
+
+/**
+ * Handles the display / hiding of sub-menus.
+ * @returns {undefined}
+ */
+function showSubMenu() {
+  this.classList.toggle('button-selected');
+
+  var contents = this.parentNode.getElementsByClassName('dropdown-content');
+  if (contents.length > 0) {
+    contents[0].classList.toggle('dropdown-content-show');
+  }
 }

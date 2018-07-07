@@ -119,14 +119,69 @@
     "description": "The label for the 'remove selected items' tooltip (download page)"
   },
 
-  "dlPage_retryDownloadsAction": {
+  "dlPage_removeAllAction": {
+    "message": "Remove All",
+    "description": "The label for the 'remove all' action (download page)"
+  },
+
+  "dlPage_removeAllTooltip": {
+    "message": "Remove all the items, no matter their state",
+    "description": "The label for the 'remove all' tooltip (download page)"
+  },
+
+  "dlPage_retrySelectedDownloadsAction": {
     "message": "Retry Selected Downloads",
     "description": "The label for the 'retry downloads' action (download page)"
   },
 
-  "dlPage_retryDownloadsTooltip": {
+  "dlPage_retrySelectedDownloadsTooltip": {
     "message": "Retry to download the selected items",
     "description": "The label for the 'retry downloads' tooltip (download page)"
+  },
+
+  "dlPage_retryAllDownloadsAction": {
+    "message": "Restart Downloads",
+    "description": "The label for the 'restart downloads' action (download page)"
+  },
+
+  "dlPage_retryAllDownloadsTooltip": {
+    "message": "Restart Downloads",
+    "description": "The label for the 'restart downloads' tooltip (download page)"
+  },
+  
+  "dlPage_selectAllAction": {
+    "message": "Select All",
+    "description": "The label for the 'select all' action (download page)"
+  },
+
+  "dlPage_selectAllTooltip": {
+    "message": "Select all the items",
+    "description": "The label for the 'select all' tooltip (download page)"
+  },
+  
+  "dlPage_unselectAllAction": {
+    "message": "Unselect All",
+    "description": "The label for the 'unselect all' action (download page)"
+  },
+
+  "dlPage_unselectAllTooltip": {
+    "message": "Unselect all the items",
+    "description": "The label for the 'unselect all' tooltip (download page)"
+  },
+
+  "dlPage_selectionMenu": {
+    "message": "Selection...",
+    "description": "The label for the 'selection' menu (download page)"
+  },
+
+  "dlPage_removeMenu": {
+    "message": "Remove...",
+    "description": "The label for the 'remove' menu (download page)"
+  },
+
+  "dlPage_retryMenu": {
+    "message": "Retry...",
+    "description": "The label for the 'retry' menu (download page)"
   },
 
   "waiting": {

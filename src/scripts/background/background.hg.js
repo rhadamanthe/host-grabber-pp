@@ -30,6 +30,14 @@ browser.contextMenus.create({
 });
 
 browser.contextMenus.create({
+  id: 'separator-1',
+  parentId: 'hg-menu',
+  type: 'separator',
+  contexts: ['all']
+});
+
+
+browser.contextMenus.create({
   id: 'hg-menu-show-dl-list',
   parentId: 'hg-menu',
   title: 'Show Downloads List',
@@ -38,16 +46,9 @@ browser.contextMenus.create({
 });
 
 browser.contextMenus.create({
-  id: 'separator-1',
-  parentId: 'hg-menu',
-  type: 'separator',
-  contexts: ['all']
-});
-
-browser.contextMenus.create({
   id: 'hg-menu-options',
   parentId: 'hg-menu',
-  title: 'Options',
+  title: 'Show Options',
   contexts: ['all'],
   onclick: showOptionsPage
 });

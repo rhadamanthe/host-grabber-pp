@@ -207,6 +207,15 @@ body {
 	background-color: white;
 }
 
+#pre-controls {
+	background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
+	position: fixed;
+	bottom: 80px;
+	left: 0;
+	right: 0;
+	height: 120px;
+}
+
 #items {
 	padding-bottom: 62px;
 }
@@ -229,6 +238,26 @@ button {
 	margin-left: 5px;
 }
 
+.dropdown {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-content {
+    position: absolute;
+    display: none;
+    bottom: 70px;
+    white-space: nowrap;
+}
+
+.dropdown-content-show {
+	display: block !important;
+}
+
+.dropdown-content > button:hover, .button-selected {
+	background-color: orange;
+}
+
 	</style>
 </head>
 
@@ -239,12 +268,34 @@ button {
 	</div><div class="col3 title"> - </div>
 
 	<div id="items"></div>
+	<div id="pre-controls"></div>
 	<div id="controls">
-		<button id="remove-completed" data-i18n="dlPage_clearCompletedDownloadsAction" data-i18n-tooltip="dlPage_clearCompletedDownloadsTooltip"></button>
-		<button id="options" data-i18n="dlPage_openOptionsPageAction" data-i18n-tooltip="dlPage_openOptionsPageTooltip"></button>
+		<div class="dropdown">
+			<button data-i18n="dlPage_selectionMenu"></button>
+			<div class="dropdown-content">
+				<button id="select-all" data-i18n="dlPage_selectAllAction" data-i18n-tooltip="dlPage_selectAllTooltip"></button>
+				<button id="unselect-all" data-i18n="dlPage_unselectAllAction" data-i18n-tooltip="dlPage_unselectAllTooltip"></button>
+			</div>
+		</div>
+		
+		<div class="dropdown">
+			<button data-i18n="dlPage_removeMenu"></button>
+			<div class="dropdown-content">
+				<button id="remove-completed" data-i18n="dlPage_clearCompletedDownloadsAction" data-i18n-tooltip="dlPage_clearCompletedDownloadsTooltip"></button>
+				<button id="remove-selection" data-i18n="dlPage_removeSelectionAction" data-i18n-tooltip="dlPage_removeSelectionTooltip"></button>
+				<button id="remove-all" data-i18n="dlPage_removeAllAction" data-i18n-tooltip="dlPage_removeAllTooltip"></button>
+			</div>
+		</div>
 
-		<button class="right-button" id="remove-selection" data-i18n="dlPage_removeSelectionAction" data-i18n-tooltip="dlPage_removeSelectionTooltip"></button>
-		<button class="right-button" id="retry-downloads" data-i18n="dlPage_retryDownloadsAction" data-i18n-tooltip="dlPage_retryDownloadsTooltip"></button>
+		<div class="dropdown">
+			<button data-i18n="dlPage_retryMenu"></button>
+			<div class="dropdown-content">
+				<button id="retry-selected" data-i18n="dlPage_retryAllDownloadsAction" data-i18n-tooltip="dlPage_retryAllDownloadsTooltip"></button>
+				<button id="retry-all" data-i18n="dlPage_retrySelectedDownloadsAction" data-i18n-tooltip="dlPage_retrySelectedDownloadsTooltip"></button>
+			</div>
+		</div>
+
+		<button id="options" class="right-button" data-i18n="dlPage_openOptionsPageAction" data-i18n-tooltip="dlPage_openOptionsPageTooltip"></button>
 	</div>
 
 	<script src="../scripts/mixed/commons.js"></script>
