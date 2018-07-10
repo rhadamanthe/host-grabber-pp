@@ -11,6 +11,9 @@ var dictionary = null;
 // Initialize the download manager
 var dlManager = newDlManager(queue);
 
+// Already visited URLs
+var alreadyVisitedUrls = [];
+
 
 /* Default actions */
 
@@ -75,6 +78,10 @@ browser.runtime.onMessage.addListener(request => {
     queue.remove(request.obj);
 
   } else if (request.req === 'restart-download') {
+    request.obj.downloadLinks.forEach( function(dlLink) {
+      removeFromArray(alreadyVisitedUrls, dlLink);
+    });
+
     queue.reschedule(request.obj);
   }
 });
@@ -243,5 +250,5 @@ function handleProcessorFn(processor) {
   // We use this function as a proxy so that we can...
   // - Get download links.
   // - Update the view.
-  handleProcessor(processor, extractor(), queue, dlManager.startDownload, updateProcessorInDownloadView);
+  handleProcessor(processor, extractor(), queue, dlManager.startDownload, updateProcessorInDownloadView, alreadyVisitedUrls);
 }

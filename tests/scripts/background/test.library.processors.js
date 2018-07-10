@@ -104,6 +104,7 @@ describe('background => library.processors', function() {
       <img src="http://titi.fr/gallery/view.php?img=t4.jpg" class="paf" />
       <br />
       <img src="http://bibi.com/path/to/this/image1.PNG" />
+      <img src="http://bibi.com/path/to/this/image3.jpg" />
       <img src="http://bibi.com/path/to/this/image2.svg" />
     </body></html>
     `;
@@ -116,7 +117,7 @@ describe('background => library.processors', function() {
       var res = findWhatToProcess(sourceDocument, 'http://titi.fr/some-folder/at-second-level/some-web-page.html', dictionary);
 
       // Verify we got them all
-      expect(res.length).to.eql(9);
+      expect(res.length).to.eql(11);
 
       expect(res[0].matchingUrl).to.eql('http://mimi.net/gallery/t2.jpg');
       expect(res[0].extMethod).to.eql(ExtMethods.EXPREG.id);
@@ -149,8 +150,16 @@ describe('background => library.processors', function() {
       expect(res[7].extMethod).to.eql(ExtMethods.REPLACE.id);
       expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
 
-      expect(res[8].matchingUrl).to.eql('http://bibi.com/path/to/this/image1.PNG');
+      expect(res[8].matchingUrl).to.eql('http://bibi.com/path/to/this/image3.jpg');
       expect(res[8].extMethod).to.eql(ExtMethods.SELF.id);
+
+      expect(res[9].matchingUrl).to.eql('http://bibi.com/path/to/this/image1.PNG');
+      expect(res[9].extMethod).to.eql(ExtMethods.SELF.id);
+
+      // This matching URL appears twice but because it matches two different processors
+      // (two dictionary items that target the same domain).
+      expect(res[10].matchingUrl).to.eql('http://bibi.com/path/to/this/image3.jpg');
+      expect(res[10].extMethod).to.eql(ExtMethods.SELF.id);
     });
   });
 
@@ -630,7 +639,7 @@ describe('background => library.processors', function() {
     };
 
     expect(p.downloadLinks.length).to.eql(0);
-    handleProcessor(p, extractor, queue, idleFn, idleFn);
+    handleProcessor(p, extractor, queue, idleFn, idleFn, []);
 
     expect(extractor.invoked).to.be(true);
     expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
@@ -663,7 +672,7 @@ describe('background => library.processors', function() {
     };
 
     expect(p.downloadLinks.length).to.eql(0);
-    handleProcessor(p, extractor, queue, idleFn, idleFn);
+    handleProcessor(p, extractor, queue, idleFn, idleFn, []);
 
     expect(extractor.invoked).to.be(true);
     expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
@@ -718,7 +727,7 @@ describe('background => library.processors', function() {
 
     var foundLinks = [];
     processors.forEach( function(processor) {
-      handleProcessor(processor, extractorFn, queue, idleFn, idleFn);
+      handleProcessor(processor, extractorFn, queue, idleFn, idleFn, []);
       processor.downloadLinks.forEach( function(link) {
         foundLinks.push(link);
       });
@@ -783,6 +792,9 @@ describe('background => library.processors', function() {
       <br />
       <img src="http://bibi.com/path/to/this/image1.PNG" />
       <img src="http://bibi.com/path/to/this/image2.svg" class="img" />
+      <br />
+      <!-- duplicate -->
+      <img src="https://host44.fr/gallery/t1.jpg" class="img" />
     </body></html>
     `;
 
@@ -810,7 +822,7 @@ describe('background => library.processors', function() {
     };
 
     var p = processors[0];
-    handleProcessor(p, extractorFn, queue, idleFn, idleFn);
+    handleProcessor(p, extractorFn, queue, idleFn, idleFn, []);
 
     expect(p.downloadLinks.length).to.eql(5);
     expect(p.downloadLinks[0].link).to.eql('http://host44.fr/gallery/t1.jpg');
@@ -859,7 +871,7 @@ describe('background => library.processors', function() {
 
     // Execute the test
     expect(p.downloadLinks.length).to.eql(0);
-    handleProcessor(p, extractor, queue, idleFn, idleFn);
+    handleProcessor(p, extractor, queue, idleFn, idleFn, []);
 
     // In this case, processing is asynchronous.
     return sleep(1000).then(function() {
@@ -902,7 +914,7 @@ describe('background => library.processors', function() {
 
     // Execute the test
     expect(p.downloadLinks.length).to.eql(0);
-    handleProcessor(p, extractor, queue, idleFn, idleFn);
+    handleProcessor(p, extractor, queue, idleFn, idleFn, []);
 
     // In this case, processing is asynchronous.
     return sleep(1000).then(function() {
@@ -939,7 +951,7 @@ describe('background => library.processors', function() {
 
     // Execute the test
     expect(p.downloadLinks.length).to.eql(0);
-    handleProcessor(p, extractor, queue, idleFn, idleFn);
+    handleProcessor(p, extractor, queue, idleFn, idleFn, []);
 
     // In this case, processing is asynchronous.
     return sleep(1000).then(function() {
@@ -976,7 +988,7 @@ describe('background => library.processors', function() {
 
     // Execute the test
     expect(p.downloadLinks.length).to.eql(0);
-    handleProcessor(p, extractor, queue, idleFn, idleFn);
+    handleProcessor(p, extractor, queue, idleFn, idleFn, []);
 
     // In this case, processing is asynchronous.
     return sleep(1000).then(function() {
@@ -1010,13 +1022,14 @@ describe('background => library.processors', function() {
       invoked: false,
       xpath: function(doc, xpathExpr) {
         this.invoked = true;
-        return ['test1'];
+        // Put some duplicate here => unified in the resulting array
+        return ['test1', 'test1'];
       }
     };
 
     // Execute the test
     expect(p.downloadLinks.length).to.eql(0);
-    handleProcessor(p, extractor, queue, idleFn, idleFn);
+    handleProcessor(p, extractor, queue, idleFn, idleFn, []);
 
     // In this case, processing is asynchronous.
     return sleep(1000).then(function() {
@@ -1054,7 +1067,7 @@ describe('background => library.processors', function() {
 
     // Execute the test
     expect(p.downloadLinks.length).to.eql(0);
-    handleProcessor(p, extractor, queue, idleFn, idleFn);
+    handleProcessor(p, extractor, queue, idleFn, idleFn, []);
 
     // In this case, processing is asynchronous.
     return sleep(1000).then(function() {
@@ -1084,7 +1097,7 @@ describe('background => library.processors', function() {
 
     // Execute the test
     expect(p.downloadLinks.length).to.eql(0);
-    handleProcessor(p, extractor(), queue, idleFn, idleFn);
+    handleProcessor(p, extractor(), queue, idleFn, idleFn, []);
 
     // In this case, processing is asynchronous.
     return sleep(1000).then(function() {

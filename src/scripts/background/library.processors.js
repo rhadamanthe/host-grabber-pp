@@ -11,7 +11,6 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
 
   // Prepare the result
   var processors = [];
-  var alreadyVisistedUrls = [];
 
   // Handle cases where the path patterns leads to a non-document
   if (! sourceDocument) {
@@ -47,7 +46,7 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
 
         var p = newProcessor(url, item.searchPattern, item.interceptors2);
         p.xmlDoc = sourceDocument;
-        pushProcessor(processors, p, alreadyVisistedUrls);
+        processors.push(p);
       }
 
       // Otherwise, find links to explore
@@ -61,6 +60,7 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
       }
 
       // Find all the URLs that match the given pattern
+      var preventDuplicatesForOneDictionaryItem = [];
       urlPatternWrappers.forEach( function(urlPatternWrapper) {
 
         var regexp = new RegExp(urlPatternWrapper.pattern, 'ig');
@@ -78,32 +78,20 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
             fixedLink = fixedLink.replace(interceptorRegex, interceptor.by);
           });
 
-          // Avoid duplicates
+          if (preventDuplicatesForOneDictionaryItem.indexOf(fixedLink) !== -1) {
+            continue;
+          }
+
+          // Save the processor
+          preventDuplicatesForOneDictionaryItem.push(fixedLink);
           var p = newProcessor(fixedLink, item.searchPattern, item.interceptors2);
-          pushProcessor(processors, p, alreadyVisistedUrls);
+          processors.push(p);
         }
       });
     });
   }
 
   return processors;
-}
-
-
-/**
- * Stores a processor.
- * @param {array} processors The array of processors.
- * @param {object} processor A processor object.
- * @param {array} alreadyVisistedUrls An array of already visited URLs.
- * @returns {undefined}
- */
-function pushProcessor(processors, processor, alreadyVisistedUrls) {
-
-  // Avoid duplicates
-  if (alreadyVisistedUrls.indexOf(processor.matchingUrl) === -1 ) {
-    alreadyVisistedUrls.push(processor.matchingUrl);
-    processors.push(processor);
-  }
 }
 
 
@@ -145,31 +133,32 @@ function resetProcessor(processor) {
  * @param {object} queue The queue, to process another item.
  * @param {function} startDownloadFn The function to start downloading some file.
  * @param {function} updateProcessorInDownloadView The function to update the view.
+ * @param {array} alreadyVisitedUrls The array of already visited URLs.
  * @returns {undefined}
  */
-function handleProcessor(processor, extractor, queue, startDownloadFn, updateProcessorInDownloadView) {
+function handleProcessor(processor, extractor, queue, startDownloadFn, updateProcessorInDownloadView, alreadyVisitedUrls) {
 
   if (ExtMethods.SELF.id === processor.extMethod) {
     var links = extractor.self(processor.matchingUrl);
-    onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView);
+    onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView, alreadyVisitedUrls);
 
   } else if (ExtMethods.REPLACE.id === processor.extMethod) {
     var match = ExtMethods.REPLACE.pattern.exec(processor.searchPattern);
     var links = extractor.replace(processor.matchingUrl, match[1].trim(), match[2].trim());
     ExtMethods.REPLACE.pattern.lastIndex = 0;
-    onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView);
+    onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView, alreadyVisitedUrls);
 
   } else if (!! processor.xmlDoc) {
     var links = processDocument(processor, processor.xmlDoc, extractor);
     delete processor.xmlDoc; // Important! Otherwise, the processor will not be propagated to the view.
-    onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView);
+    onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView, alreadyVisitedUrls);
 
   } else {
     processor.status = ProcessorStatus.RETRIEVING_LINKS;
     loadRemoteDocument(processor.matchingUrl).then( function(xmlDoc) {
       processor.status = ProcessorStatus.RETRIEVING_LINKS_DONE;
       var links = processDocument(processor, xmlDoc, extractor);
-      onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView);
+      onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView, alreadyVisitedUrls);
 
     }, function() {
       processor.status = ProcessorStatus.RETRIEVING_LINKS_FAILURE;
@@ -186,9 +175,10 @@ function handleProcessor(processor, extractor, queue, startDownloadFn, updatePro
  * @param {object} queue The queue, to process the next item if no link was found.
  * @param {function} startDownloadFn The function that triggers the real download action.
  * @param {function} updateProcessorInDownloadView The function that updates the download view when links were found.
+ * @param {array} alreadyVisitedUrls The array of already visited URLs.
  * @returns {undefined}
  */
-function onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView) {
+function onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView, alreadyVisitedUrls) {
 
   // If we have links, let things go on
   if (!! links && links.length > 0) {
@@ -204,7 +194,13 @@ function onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorI
         fixedLink = fixedLink.replace(interceptorRegex, interceptor.by);
       });
 
+      // Was the link already downloaded?
+      if (alreadyVisitedUrls.indexOf(fixedLink) !== -1) {
+        return;
+      }
+
       // Add the download link
+      alreadyVisitedUrls.push(fixedLink);
       processor.downloadLinks.push({
         id: processor.id + '-' + index,
         link: fixedLink,

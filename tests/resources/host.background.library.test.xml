@@ -15,7 +15,13 @@
 
 <host id="bibi">
 	<domain>bibi.com</domain>
-	<path-pattern>[^"]*\.(jpg|png|gif)</path-pattern>
+	<path-pattern>[^"]*\.(jpg|gif)</path-pattern>
+	<search-pattern>self</search-pattern>
+</host>
+
+<host id="bibi2">
+	<domain>bibi.com</domain>
+	<path-pattern>[^"]*\.(jpg|png)</path-pattern>
 	<search-pattern>self</search-pattern>
 </host>
 
