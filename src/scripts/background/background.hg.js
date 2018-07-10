@@ -68,7 +68,7 @@ browser.commands.onCommand.addListener((command) => {
 // Messages
 browser.runtime.onMessage.addListener(request => {
   if (request.req === 'dictionary-update') {
-    reloadDictionary();
+    downloadDictionary();
 
   } else if (request.req === 'get-processors') {
     var history = Array.from(queue.processingHistory.values());
@@ -92,20 +92,58 @@ browser.runtime.onMessageExternal.addListener(request => {
   }
 });
 
-// Download the dictionary when the browser starts...
+// Restore the dictionary when the browser starts...
 // ... or when the extension is installed or updated.
-browser.runtime.onStartup.addListener(reloadDictionary);
-browser.runtime.onInstalled.addListener(reloadDictionary);
+browser.runtime.onStartup.addListener(restoreDictionary);
+browser.runtime.onInstalled.addListener(restoreDictionary);
 
 
 
 /* Functions */
 
 /**
- * Reloads the dictionary.
+ * Restores the dictionary.
+ * <p>
+ * If it is not saved locally, download it.
+ * </p>
+ *
  * @returns {undefined}
  */
-function reloadDictionary() {
+function restoreDictionary() {
+
+  browser.storage.local.get('mainDictionary').then((localDictionary) => {
+    (!! localDictionary) ? (dictionary = localDictionary) : downloadDictionary();
+  }, () => {
+    downloadDictionary();
+  });
+}
+
+
+/**
+ * Saves the dictionary locally.
+ * @returns {undefined}
+ */
+function saveDictionary() {
+
+  if (!! dictionary) {
+    var dictionaryVersion = dictionary.documentElement.getAttribute('version');
+    var dictionarySpec = dictionary.documentElement.getAttribute('spec');
+    var newXmlStr = new XMLSerializer().serializeToString(dictionary);
+
+    browser.storage.local.set({
+      mainDictionary: newXmlStr,
+      mainDictionaryVersion: dictionaryVersion,
+      mainDictionarySpec: dictionarySpec
+    });
+  }
+}
+
+
+/**
+ * Downloads the dictionary.
+ * @returns {undefined}
+ */
+function downloadDictionary() {
 
   browser.storage.local.get('dictionaryUrl').then((res) => {
     var url = res.dictionaryUrl || defaultDictionaryUrl;
@@ -116,6 +154,7 @@ function reloadDictionary() {
     console.log('Loading dictionary from ' + url + '...');
     loadRemoteDocument(url, true, 'application/xml').then( function(downloadedDictionary) {
       dictionary = downloadedDictionary;
+      saveDictionary();
       notifyDictionaryReload('ok');
 
     }, function(details) {

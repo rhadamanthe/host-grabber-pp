@@ -7,14 +7,6 @@ document.addEventListener('DOMContentLoaded', restoreOptions);
  */
 function restoreOptions() {
 
-  var prefs = [
-    'dictionaryUrl',
-    'dlMaxParallel',
-    'dlClearCompleted',
-    'dlShowViewWhenDlStarts',
-    'dlAlwaysShowViewWhenDlStarts',
-  ];
-
   browser.storage.local.get().then((res) => {
     document.querySelector('#dictionary-url').value = res.dictionaryUrl || defaultDictionaryUrl;
     document.querySelector('#dl-max-parallel').value = res.dlMaxParallel || defaultDlMaxParallel;
