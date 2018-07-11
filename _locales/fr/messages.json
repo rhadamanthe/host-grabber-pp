@@ -39,6 +39,36 @@
     "description": "L'étiquette pour la section 'paramètres de Téléchargement' (page d'options)"
   },
 
+  "optionsPage_cacheSettingsSection": {
+    "message": "Gestion du Cache",
+    "description": "L'étiquette pour la section 'gestion du cache' (page d'options)"
+  },
+
+  "optionsPage_clearCacheButton": {
+    "message": "Purger le Cache",
+    "description": "L'étiquette pour l'action 'purger le cache' (page d'options)"
+  },
+
+  "optionsPage_automaticDictionaryUpdateOption": {
+    "message": "Mettre à jour le dictionnaire local automatiquement",
+    "description": "L'étiquette pour l'option 'mettre à jour le dictionnaire automatiquement' (page d'options)"
+  },
+
+  "optionsPage_useCacheOption": {
+    "message": "Activer le cache de session pour les liens téléchargés",
+    "description": "L'étiquette pour l'option 'activer le cache pour les liens téléchargés' (page d'options)"
+  },
+
+  "optionsPage_useCacheOptionWarning_1": {
+  	"message": "Cette option empêche qu'un même fichier ne soit téléchargé plusieurs fois pendant une même session.",
+  	"description": "Une partie de l'avertissement associé à l'option 'activer le cache de session' (page d'options)"
+  },
+
+  "optionsPage_useCacheOptionWarning_2": {
+  	"message": "Notez que si un fichier est explicitement demandé pour être retéléchargé, le cache ne s'y applique pas.",
+  	"description": "Une partie de l'avertissement associé à l'option 'activer le cache de session' (page d'options)"
+  },
+
   "optionsPage_clearCompletedDownloadsOption": {
     "message": "Enlever automatiquement les téléchargements complétés avec succès",
     "description": "L'étiquette pour cette option (page d'options)"

@@ -133,7 +133,7 @@ function resetProcessor(processor) {
  * @param {object} queue The queue, to process another item.
  * @param {function} startDownloadFn The function to start downloading some file.
  * @param {function} updateProcessorInDownloadView The function to update the view.
- * @param {array} alreadyVisitedUrls The array of already visited URLs.
+ * @param {array} alreadyVisitedUrls The cache for already visited URLs.
  * @returns {undefined}
  */
 function handleProcessor(processor, extractor, queue, startDownloadFn, updateProcessorInDownloadView, alreadyVisitedUrls) {
@@ -175,7 +175,7 @@ function handleProcessor(processor, extractor, queue, startDownloadFn, updatePro
  * @param {object} queue The queue, to process the next item if no link was found.
  * @param {function} startDownloadFn The function that triggers the real download action.
  * @param {function} updateProcessorInDownloadView The function that updates the download view when links were found.
- * @param {array} alreadyVisitedUrls The array of already visited URLs.
+ * @param {array} alreadyVisitedUrls The cache for already visited URLs.
  * @returns {undefined}
  */
 function onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView, alreadyVisitedUrls) {
@@ -195,12 +195,15 @@ function onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorI
       });
 
       // Was the link already downloaded?
-      if (alreadyVisitedUrls.indexOf(fixedLink) !== -1) {
+      if (alreadyVisitedUrls.enabled && alreadyVisitedUrls.list.indexOf(fixedLink) !== -1) {
         return;
       }
 
       // Add the download link
-      alreadyVisitedUrls.push(fixedLink);
+      if (alreadyVisitedUrls.enabled) {
+        alreadyVisitedUrls.list.push(fixedLink);
+      }
+
       processor.downloadLinks.push({
         id: processor.id + '-' + index,
         link: fixedLink,
@@ -259,4 +262,16 @@ function processDocument(processor, xmlDoc, extractor) {
   }
 
   return links;
+}
+
+
+/**
+ * Builds a new cache for download links.
+ * @returns {object} A new cache object.
+ */
+function newAlreadyVisitedUrls() {
+  return {
+    list: [],
+    enabled: true
+  };
 }

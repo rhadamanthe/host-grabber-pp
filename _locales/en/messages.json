@@ -39,11 +39,41 @@
     "description": "The label for the 'download settings' section (options page)"
   },
 
+  "optionsPage_cacheSettingsSection": {
+    "message": "Cache Settings",
+    "description": "The label for the 'cache settings' section (options page)"
+  },
+
+  "optionsPage_clearCacheButton": {
+    "message": "Clear the Cache",
+    "description": "The label for the 'clear the cache' action (options page)"
+  },
+
+  "optionsPage_automaticDictionaryUpdateOption": {
+    "message": "Automatically update the local dictionary",
+    "description": "The label for the 'automatically update the local dictionary' option (options page)"
+  },
+
+  "optionsPage_useCacheOption": {
+    "message": "Cache download links during sessions",
+    "description": "The label for the 'cache download links' option (options page)"
+  },
+
+  "optionsPage_useCacheOptionWarning_1": {
+  	"message": "This option prevents a same file from being downloaded several times during a same session.",
+  	"description": "A part of the warning message for the 'cache download links' option (options page)"
+  },
+
+  "optionsPage_useCacheOptionWarning_2": {
+  	"message": "Notice that if a file is explicitly requested to be downloaded once again, the cache will not apply.",
+  	"description": "A part of the warning message for the 'cache download links' option (options page)"
+  },
+
   "optionsPage_clearCompletedDownloadsOption": {
     "message": "Automatically clear downloads that successfully completed",
     "description": "The label for this option (options page)"
   },
-  
+
   "optionsPage_showViewWhenDlStarts": {
     "message": "Open the download view when it is closed and that a download starts",
     "description": "The label for this option (options page)"

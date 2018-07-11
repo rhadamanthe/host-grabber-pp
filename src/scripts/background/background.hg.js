@@ -12,7 +12,7 @@ var dictionary = null;
 var dlManager = newDlManager(queue);
 
 // Already visited URLs
-var alreadyVisitedUrls = [];
+var alreadyVisitedUrls = newAlreadyVisitedUrls();
 
 
 /* Default actions */
@@ -83,6 +83,9 @@ browser.runtime.onMessage.addListener(request => {
     });
 
     queue.reschedule(request.obj);
+
+  } else if (request.req === 'clear-already-visited-urls') {
+    alreadyVisitedUrls.list.length = 0;
   }
 });
 
@@ -96,6 +99,18 @@ browser.runtime.onMessageExternal.addListener(request => {
 // ... or when the extension is installed or updated.
 browser.runtime.onStartup.addListener(restoreDictionary);
 browser.runtime.onInstalled.addListener(restoreDictionary);
+
+// Deal with the cache for download links
+browser.storage.local.get('dlCacheDownloadLinks').then((res) => {
+  alreadyVisitedUrls.enabled = res.dlCacheDownloadLinks || defaultDlCacheDownloadLinks;
+});
+
+// Listen to changes for this preference
+browser.storage.onChanged.addListener(function(changes, area) {
+  if (area === 'local' && changes.hasOwnProperty( 'dlCacheDownloadLinks' )) {
+    alreadyVisitedUrls.enabled = changes.dlCacheDownloadLinks.newValue;
+  }
+});
 
 
 
@@ -111,10 +126,16 @@ browser.runtime.onInstalled.addListener(restoreDictionary);
  */
 function restoreDictionary() {
 
-  browser.storage.local.get('mainDictionary').then((localDictionary) => {
-    (!! localDictionary) ? (dictionary = localDictionary) : downloadDictionary();
-  }, () => {
-    downloadDictionary();
+  browser.storage.local.get('mainDictionary').then((res) => {
+    console.log('Restoring local dictionary...');
+    dictionary = res.mainDictionary;
+
+  }).finally( function() {
+    browser.storage.local.get('automaticallyUpdateDictionary').then((res) => {
+      if (!! res.automaticallyUpdateDictionary || defaultAutomaticallyUpdateDictionary) {
+        downloadDictionary();
+      }
+    });
   });
 }
 
@@ -126,14 +147,9 @@ function restoreDictionary() {
 function saveDictionary() {
 
   if (!! dictionary) {
-    var dictionaryVersion = dictionary.documentElement.getAttribute('version');
-    var dictionarySpec = dictionary.documentElement.getAttribute('spec');
     var newXmlStr = new XMLSerializer().serializeToString(dictionary);
-
     browser.storage.local.set({
-      mainDictionary: newXmlStr,
-      mainDictionaryVersion: dictionaryVersion,
-      mainDictionarySpec: dictionarySpec
+      mainDictionary: newXmlStr
     });
   }
 }
@@ -148,14 +164,12 @@ function downloadDictionary() {
   browser.storage.local.get('dictionaryUrl').then((res) => {
     var url = res.dictionaryUrl || defaultDictionaryUrl;
 
-    // By-pass the cache...
+    // By-pass the browser cache...
     url += ((/\?/).test(url) ? '&' : '?') + (new Date()).getTime();
 
     console.log('Loading dictionary from ' + url + '...');
     loadRemoteDocument(url, true, 'application/xml').then( function(downloadedDictionary) {
-      dictionary = downloadedDictionary;
-      saveDictionary();
-      notifyDictionaryReload('ok');
+      updateDictionary(downloadedDictionary);
 
     }, function(details) {
       notifyDictionaryReload('ko');
@@ -163,6 +177,32 @@ function downloadDictionary() {
       console.log(details);
     });
   });
+}
+
+
+/**
+ * Updates the dictionary, when possible.
+ * <p>
+ * The new dictionary must have a more recent version and be compliant
+ * with the specs this extension supports.
+ * </p>
+ *
+ * @param {object} newDictionary The new dictionary.
+ * @returns {undefined}
+ */
+function updateDictionary(newDictionary) {
+  var dictionarySpec = newDictionary.documentElement.getAttribute('spec');
+
+  // Is the remote dictionary supported by this version of HG?
+  if (supportedDictionarySpecs.indexOf(dictionarySpec) !== -1) {
+    console.log('Upgrading the local dictionary to a new version...');
+    dictionary = newDictionary;
+    saveDictionary();
+    notifyDictionaryReload('ok');
+
+  } else {
+    notifyDictionaryReload('us');
+  }
 }
 
 

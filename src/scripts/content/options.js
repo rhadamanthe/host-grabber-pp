@@ -13,8 +13,14 @@ function restoreOptions() {
     document.querySelector('#dl-clear-completed').checked =
       res.hasOwnProperty('dlClearCompleted') ? res.dlClearCompleted : defaultDlClearCompleted;
 
+    document.querySelector('#automatic-dictionary-update').checked =
+      res.hasOwnProperty('automaticallyUpdateDictionary') ? res.automaticallyUpdateDictionary : defaultAutomaticallyUpdateDictionary;
+
     document.querySelector('#dl-show-view-when-dl-starts').checked =
       res.hasOwnProperty('dlShowViewWhenDlStarts') ? res.dlShowViewWhenDlStarts : defaultDlShowViewWhenDlStarts;
+
+    document.querySelector('#dl-cache-download-links').checked =
+      res.hasOwnProperty('dlCacheDownloadLinks') ? res.dlCacheDownloadLinks : defaultDlCacheDownloadLinks;
 
     document.querySelector('#dl-always-show-view-when-dl-starts').checked =
       res.hasOwnProperty('dlAlwaysShowViewWhenDlStarts') ? res.dlAlwaysShowViewWhenDlStarts : defaultDlAlwaysShowViewWhenDlStarts;
@@ -36,6 +42,8 @@ var defaultListener = function() {
     dlClearCompleted: document.querySelector('#dl-clear-completed').checked,
     dlShowViewWhenDlStarts: document.querySelector('#dl-show-view-when-dl-starts').checked,
     dlAlwaysShowViewWhenDlStarts: document.querySelector('#dl-always-show-view-when-dl-starts').checked,
+    automaticallyUpdateDictionary: document.querySelector('#automatic-dictionary-update').checked,
+    dlCacheDownloadLinks: document.querySelector('#dl-cache-download-links').checked,
   });
 }
 
@@ -43,6 +51,8 @@ document.querySelector('#dl-max-parallel').addEventListener('change', defaultLis
 document.querySelector('#dl-clear-completed').addEventListener('change', defaultListener);
 document.querySelector('#dl-show-view-when-dl-starts').addEventListener('change', defaultListener);
 document.querySelector('#dl-always-show-view-when-dl-starts').addEventListener('change', defaultListener);
+document.querySelector('#automatic-dictionary-update').addEventListener('change', defaultListener);
+document.querySelector('#dl-cache-download-links').addEventListener('change', defaultListener);
 
 
 // Callbacks
@@ -65,11 +75,17 @@ document.querySelector('#restore-btn').addEventListener('click', function() {
   reloadDictionary();
 });
 
+document.querySelector('#clear-cache-btn').addEventListener('click', function() {
+  browser.runtime.sendMessage({'req':'clear-already-visited-urls'});
+});
+
 
 browser.runtime.onMessage.addListener(request => {
   if (request.req === 'dictionary-reload-cb') {
     if (request.status === 'ok') {
       document.querySelector('#dictionary-url').className = 'updated-ok';
+    } else if (request.status === 'us') {
+      document.querySelector('#dictionary-url').className = 'updated-us';
     } else {
       document.querySelector('#dictionary-url').className = 'updated-ko';
     }

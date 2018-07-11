@@ -6,6 +6,8 @@ const defaultDlClearCompleted = false;
 const defaultDlShowViewWhenDlStarts = true;
 const defaultDlAlwaysShowViewWhenDlStarts = true;
 const defaultDlMoveDownloadViewWhenDlStarts = true;
+const defaultAutomaticallyUpdateDictionary = true;
+const defaultDlCacheDownloadLinks = true;
 
 
 // Constants
@@ -27,3 +29,5 @@ const DlStatus = {
   FAILURE: 3,
   DOWNLOADING: 4
 };
+
+const supportedDictionarySpecs = ['1.0'];

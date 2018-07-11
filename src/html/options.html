@@ -48,6 +48,12 @@ input[type=checkbox] {
 	font-weight: bold;
 }
 
+.updated-us {
+	background-color: orange;
+	color: white;
+	font-weight: bold;
+}
+
 #dictionary-url {
 	transition: background-color 2s ease-out;
 }
@@ -112,11 +118,31 @@ p.warning {
 			<input name="dictionary-url" id="dictionary-url" type="text" />
 
 			<br />
+			<input type="checkbox" name="automatic-dictionary-update" id="automatic-dictionary-update" />
+			<label for="automatic-dictionary-update" data-i18n="optionsPage_automaticDictionaryUpdateOption"></label>
+
+			<br />
 			<button type="button" id="reload-btn" data-i18n="optionsPage_reloadDictionaryButton"></button>
 			<button type="button" id="restore-btn" data-i18n="optionsPage_restoreDefaultUrlButton"></button>
 			<button type="button" id="save-btn" data-i18n="optionsPage_saveDictionaryUrlButton"></button>
 
 			<br />
+			<fieldset>
+				<legend data-i18n="optionsPage_cacheSettingsSection"></legend>
+				<button type="button" id="clear-cache-btn" data-i18n="optionsPage_clearCacheButton"></button>
+
+				<p class="block">
+				<input type="checkbox" name="dl-cache-download-links" id="dl-cache-download-links" />
+				<label for="dl-cache-download-links" data-i18n="optionsPage_useCacheOption"></label>
+				</p>
+
+				<br />
+				<p class="block warning">
+				<span data-i18n="optionsPage_useCacheOptionWarning_1"></span><br />
+				<span data-i18n="optionsPage_useCacheOptionWarning_2"></span>
+				</p>
+			</fieldset>
+
 			<fieldset>
 				<legend data-i18n="optionsPage_downloadSettingsSection"></legend>
 
@@ -124,13 +150,13 @@ p.warning {
 				<input type="checkbox" name="dl-clear-completed" id="dl-clear-completed" />
 				<label for="dl-clear-completed" data-i18n="optionsPage_clearCompletedDownloadsOption"></label>
 				</p>
-				
+
 				<br />
 				<p class="block">
 				<input type="checkbox" name="dl-show-view-when-dl-starts" id="dl-show-view-when-dl-starts" />
 				<label for="dl-show-view-when-dl-starts" data-i18n="optionsPage_showViewWhenDlStarts"></label>
 				</p>
-				
+
 				<br />
 				<p class="block">
 				<input type="checkbox" name="dl-always-show-view-when-dl-starts" id="dl-always-show-view-when-dl-starts" />
@@ -147,7 +173,7 @@ p.warning {
 				<p class="block warning">
 				<span data-i18n="optionsPage_maximumParallelDownloadsWarning_1"></span><br />
 				<span data-i18n="optionsPage_maximumParallelDownloadsWarning_2"></span>
-				
+
 				<a href="https://support.mozilla.org/fr/questions/992338" 
 				   data-i18n="optionsPage_maximumParallelDownloadsWarning_3">
 				</a>
