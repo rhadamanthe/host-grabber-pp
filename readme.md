@@ -21,14 +21,12 @@ extension, but unlike it, it is not restricted to downloading images.
 
 **Short-term**
 
-* Add a menu to display the download links without downloading them (download simulation).
 * Add a panel to test URL and search patterns on the current tab.
 * Add a way to manage a dictionary locally (add, remove, enable, disable rules).
+* Add a separate menu to download direct images.
 
 **Long-term**
 
-* Add a separate menu to download direct images.
-* Allow to use several dictionaries in the preferences.
 * Adapt it so that it also works with for Chrome / Chromium.
 
 

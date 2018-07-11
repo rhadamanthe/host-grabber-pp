@@ -20,11 +20,12 @@ avec quelques différences:
 
 > Le projet est en version **beta**.
 
-<img src="../assets/images/dl-view-1--v0.3.jpg" alt="La vue des téléchargements" class="screenshot" />
-
-<img src="../assets/images/dl-view-2--v0.2.jpg" alt="Le menu contextuel" class="screenshot" />
-
-<img src="../assets/images/options-view--v0.3.jpg" alt="La page d'options" class="screenshot" />
+<img src="../assets/images/dl-view-1--v0.5.jpg" alt="La vue des téléchargements" class="screenshot" />
+<img src="../assets/images/dl-view-2--v0.5.jpg" alt="La vue des téléchargements (menu de sélection)" class="screenshot" />
+<img src="../assets/images/dl-view-3--v0.5.jpg" alt="La vue des téléchargements (menu de nettoyage)" class="screenshot" />
+<img src="../assets/images/dl-view-4--v0.5.jpg" alt="La vue des téléchargements (menu de retentative)" class="screenshot" />
+<img src="../assets/images/dl-view-5--v0.5.jpg" alt="Le menu contextuel" class="screenshot" />
+<img src="../assets/images/options-view--v0.5.jpg" alt="La page d'options" class="screenshot" />
 
 
 ## Installation
@@ -49,12 +50,19 @@ Voici une présentation des préférences disponibles.
 
 * **URL du catalogue** : le catalogue par défaut est hébergé [ici](https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml).  
 Vous pouvez définir le vôtre et le référencer dans les préférences de l'extension.
+* **Mettre à jour le catalogue automatiquement** : si activée, retélécharge le dictionnaire à chaque lancement
+de Firefox. Autrement, le dictionnaire est stocké localement une première fois. Cette copie locale ne pourra
+alors être mise à jour que manuellement, au travers de la page d'options.
 * **Masquer les téléchargments terminés avec succès** : cette option enlève de la vue
 des téléchargements, tous ceux qui se sont terminés avec succès. Ceux avec des échecs resteront visibles.
+* **Ouvrir la vue des téléchargements quand une page est analysée** : par défaut, cette vue s'ouvre chaque fois
+qu'une page est analysée. Ce comportement peut être modifié.
 * **Limiter le nombre de téléchargements simultanés** : cette option permet de limiter
 le nombre de téléchargements lancés par HG ++. Il faut noter aussi que Firefox limite de toute
 façon le nombre de connexions simultanées vers un même serveur (par défaut,
 [cette valeur](https://support.mozilla.org/fr/questions/992338) vaut 6).
+* **Activer le cache de session** : cette option empêche un même fichier d'être téléchargé plusieurs fois
+lors d'une même session. Ce cache peut être vidé, et même désactivé. 
 
 
 ## Remarque

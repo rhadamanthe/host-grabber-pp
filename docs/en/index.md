@@ -21,11 +21,12 @@ options that existed before.
 
 > The project is still in **beta** version.
 
-<img src="../assets/images/dl-view-1--v0.3.jpg" alt="The download view" class="screenshot" />
-
-<img src="../assets/images/dl-view-2--v0.2.jpg" alt="The menu" class="screenshot" />
-
-<img src="../assets/images/options-view--v0.3.jpg" alt="The options page" class="screenshot" />
+<img src="../assets/images/dl-view-1--v0.5.jpg" alt="The download view" class="screenshot" />
+<img src="../assets/images/dl-view-2--v0.5.jpg" alt="The download view (selection menu)" class="screenshot" />
+<img src="../assets/images/dl-view-3--v0.5.jpg" alt="The download view (remove menu)" class="screenshot" />
+<img src="../assets/images/dl-view-4--v0.5.jpg" alt="The download view (retry menu)" class="screenshot" />
+<img src="../assets/images/dl-view-5--v0.5.jpg" alt="The menu" class="screenshot" />
+<img src="../assets/images/options-view--v0.5.jpg" alt="The options page" class="screenshot" />
 
 
 ## Installation
@@ -51,12 +52,18 @@ Here is a short description of the preferences.
 
 * **Catalog URL**: the default dictionary is hosted [here](https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml).  
 You can define your own one if you want and specify it through the extension preferences.
+* **Automatically update the dictionary**: true to download the dictionary every time firefox starts.
+Otherwise, the catalog is cached locally and this local copy must be updated manually from the options page.
 * **Hide downloads that successfully completed**: this option hides from the download view
 all the downloads that were successful. Those with failures will remain visible.
+* **Open the download view when pages are analyzed**: this option seems quite explicit.
+The default behavior is to open the view. It can be disabled with this option. 
 * **Limit the number of simultaneous downloads**: this option allows to limit the number of
 parallel downloads started by HG ++. Notice that by default, Firefox already limits the number
 of active connections towards a same server (by default,
 [this value](https://support.mozilla.org/fr/questions/992338) is 6).
+* **Cache download links during sessions**: this option prevents a same file from being downloaded
+several times during a same session. The cache can be cleared or even disabled.
 
 
 ## Notice
