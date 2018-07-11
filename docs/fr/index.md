@@ -21,10 +21,15 @@ avec quelques différences:
 > Le projet est en version **beta**.
 
 <img src="../assets/images/dl-view-1--v0.5.jpg" alt="La vue des téléchargements" class="screenshot" />
+
 <img src="../assets/images/dl-view-2--v0.5.jpg" alt="La vue des téléchargements (menu de sélection)" class="screenshot" />
+
 <img src="../assets/images/dl-view-3--v0.5.jpg" alt="La vue des téléchargements (menu de nettoyage)" class="screenshot" />
+
 <img src="../assets/images/dl-view-4--v0.5.jpg" alt="La vue des téléchargements (menu de retentative)" class="screenshot" />
+
 <img src="../assets/images/dl-view-5--v0.5.jpg" alt="Le menu contextuel" class="screenshot" />
+
 <img src="../assets/images/options-view--v0.5.jpg" alt="La page d'options" class="screenshot" />
 
 

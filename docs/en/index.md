@@ -22,10 +22,15 @@ options that existed before.
 > The project is still in **beta** version.
 
 <img src="../assets/images/dl-view-1--v0.5.jpg" alt="The download view" class="screenshot" />
+
 <img src="../assets/images/dl-view-2--v0.5.jpg" alt="The download view (selection menu)" class="screenshot" />
+
 <img src="../assets/images/dl-view-3--v0.5.jpg" alt="The download view (remove menu)" class="screenshot" />
+
 <img src="../assets/images/dl-view-4--v0.5.jpg" alt="The download view (retry menu)" class="screenshot" />
+
 <img src="../assets/images/dl-view-5--v0.5.jpg" alt="The menu" class="screenshot" />
+
 <img src="../assets/images/options-view--v0.5.jpg" alt="The options page" class="screenshot" />
 
 
