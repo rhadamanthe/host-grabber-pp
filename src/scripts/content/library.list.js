@@ -35,7 +35,8 @@ function findClassNameFromProcessor(processor) {
   });
 
   var res = 'waiting';
-  if (processor.status === ProcessorStatus.NO_LINK_FOUND) {
+  if (processor.status === ProcessorStatus.NO_LINK_FOUND
+      || processor.status === ProcessorStatus.RETRIEVING_LINKS_FAILURE) {
     res = 'failure';
   } else if (processor.downloadLinks.length > 0) {
     if (processor.downloadLinks.length === ko) {

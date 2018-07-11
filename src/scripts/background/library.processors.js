@@ -155,14 +155,21 @@ function handleProcessor(processor, extractor, queue, startDownloadFn, updatePro
 
   } else {
     processor.status = ProcessorStatus.RETRIEVING_LINKS;
+    var gotXml = false;
     loadRemoteDocument(processor.matchingUrl).then( function(xmlDoc) {
       processor.status = ProcessorStatus.RETRIEVING_LINKS_DONE;
-      var links = processDocument(processor, xmlDoc, extractor);
-      onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView, alreadyVisitedUrls);
+      if (!! xmlDoc) {
+        gotXml = true;
+        var links = processDocument(processor, xmlDoc, extractor);
+        onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView, alreadyVisitedUrls);
+      }
 
-    }, function() {
-      processor.status = ProcessorStatus.RETRIEVING_LINKS_FAILURE;
-      queue.processNextItem();
+    }).finally( function() {
+      if (! gotXml) {
+        processor.status = ProcessorStatus.RETRIEVING_LINKS_FAILURE;
+        updateProcessorInDownloadView(processor);
+        queue.processNextItem();
+      }
     });
   }
 }

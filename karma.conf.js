@@ -22,7 +22,7 @@ module.exports = function(config) {
 
       // Fixture
       {
-        pattern:  './tests/**/*.*ml',
+        pattern:  './tests/resources/**/*.*',
         watched:  false,
         served:   true,
         included: false

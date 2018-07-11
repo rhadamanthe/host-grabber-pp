@@ -1128,6 +1128,32 @@ describe('background => library.processors', function() {
   });
 
 
+  it('should handle processors correctly (remote document is not a valid one)', function() {
+
+    var p = newProcessor('test', 'xpath: //test');
+    p.matchingUrl = 'http://localhost:9876/base/tests/resources/simple.txt';
+
+    var idleFn = function() {};
+    var queue = {
+      modified: false,
+      processNextItem: function() {
+        this.modified = true;
+      }
+    };
+
+    // Execute the test
+    expect(p.downloadLinks.length).to.eql(0);
+    handleProcessor(p, extractor(), queue, idleFn, idleFn, newAlreadyVisitedUrls());
+
+    // In this case, processing is asynchronous.
+    return sleep(1000).then(function() {
+      expect(p.status).to.eql(ProcessorStatus.RETRIEVING_LINKS_FAILURE);
+      expect(p.downloadLinks.length).to.eql(0);
+      expect(queue.modified).to.eql(true);
+    });
+  });
+
+
   it('should handle processors correctly (invalid strategy)', function() {
 
     var p = newProcessor('test', 'this is invalid');
