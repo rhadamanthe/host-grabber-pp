@@ -24,6 +24,9 @@ function restoreOptions() {
 
     document.querySelector('#dl-always-show-view-when-dl-starts').checked =
       res.hasOwnProperty('dlAlwaysShowViewWhenDlStarts') ? res.dlAlwaysShowViewWhenDlStarts : defaultDlAlwaysShowViewWhenDlStarts;
+
+    document.querySelector('#remove-successful-dl-from-native-dl-view').checked =
+      res.hasOwnProperty('hideSuccessfulDownloadItems') ? res.hideSuccessfulDownloadItems : defaultHideSuccessfulDownloadItems;
   });
 }
 
@@ -44,6 +47,7 @@ var defaultListener = function() {
     dlAlwaysShowViewWhenDlStarts: document.querySelector('#dl-always-show-view-when-dl-starts').checked,
     automaticallyUpdateDictionary: document.querySelector('#automatic-dictionary-update').checked,
     dlCacheDownloadLinks: document.querySelector('#dl-cache-download-links').checked,
+    hideSuccessfulDownloadItems: document.querySelector('#remove-successful-dl-from-native-dl-view').checked
   });
 }
 
@@ -53,6 +57,7 @@ document.querySelector('#dl-show-view-when-dl-starts').addEventListener('change'
 document.querySelector('#dl-always-show-view-when-dl-starts').addEventListener('change', defaultListener);
 document.querySelector('#automatic-dictionary-update').addEventListener('change', defaultListener);
 document.querySelector('#dl-cache-download-links').addEventListener('change', defaultListener);
+document.querySelector('#remove-successful-dl-from-native-dl-view').addEventListener('change', defaultListener);
 
 
 // Callbacks

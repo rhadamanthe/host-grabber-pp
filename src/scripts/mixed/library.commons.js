@@ -8,6 +8,7 @@ const defaultDlAlwaysShowViewWhenDlStarts = true;
 const defaultDlMoveDownloadViewWhenDlStarts = true;
 const defaultAutomaticallyUpdateDictionary = true;
 const defaultDlCacheDownloadLinks = true;
+const defaultHideSuccessfulDownloadItems = true;
 
 
 // Constants

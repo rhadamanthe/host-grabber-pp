@@ -84,6 +84,11 @@
     "description": "L'étiquette pour cette option (page d'options)"
   },
 
+  "optionsPage_removeSuccessfulDlFromNativeDlView": {
+    "message": "Enlever les téléchargements réussis de la liste des téléchargements de Firefox",
+    "description": "L'étiquette pour cette option (page d'options)"
+  },
+
   "optionsPage_maximumParallelDownloadsOption": {
     "message": "Nombre maximum de téléchargements simultanés",
     "description": "L'étiquette pour cette option (page d'options)"

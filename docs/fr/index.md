@@ -58,8 +58,10 @@ Vous pouvez définir le vôtre et le référencer dans les préférences de l'ex
 * **Mettre à jour le catalogue automatiquement** : si activée, retélécharge le dictionnaire à chaque lancement
 de Firefox. Autrement, le dictionnaire est stocké localement une première fois. Cette copie locale ne pourra
 alors être mise à jour que manuellement, au travers de la page d'options.
-* **Masquer les téléchargments terminés avec succès** : cette option enlève de la vue
+* **Masquer les téléchargments terminés avec succès** : cette option enlève automatiquement de la vue
 des téléchargements, tous ceux qui se sont terminés avec succès. Ceux avec des échecs resteront visibles.
+* **Enlever les téléchargements réussis de la liste des téléchargements de Firefox** : cette option enlève de la vue
+des téléchargements <strong>de Firefox</strong>, tous ceux qui se sont terminés avec succès. Ceux avec des échecs resteront visibles.
 * **Ouvrir la vue des téléchargements quand une page est analysée** : par défaut, cette vue s'ouvre chaque fois
 qu'une page est analysée. Ce comportement peut être modifié.
 * **Limiter le nombre de téléchargements simultanés** : cette option permet de limiter

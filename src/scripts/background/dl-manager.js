@@ -10,6 +10,7 @@ function newDlManager(queue) {
     waitingDownloads: [],
     ongoingDownloadsCpt: 0,
     maxDownloadLimit: -1,
+    hideSuccessfulDownloadItems: true,
     onDonwloadComplete: onDonwloadComplete,
     startDownload: startDownload,
     downloadIdToLinkObject: new Map()
@@ -17,14 +18,19 @@ function newDlManager(queue) {
 
 
   // Get the right value from the preferences
-  browser.storage.local.get('dlMaxParallel').then((res) => {
+  browser.storage.local.get(['dlMaxParallel', 'hideSuccessfulDownloadItems']).then((res) => {
     dlManager.maxDownloadLimit = res.dlMaxParallel || defaultDlMaxParallel;
+    dlManager.hideSuccessfulDownloadItems = res.hideSuccessfulDownloadItems || defaultHideSuccessfulDownloadItems;
   });
 
   // Listen to changes for this preference
   browser.storage.onChanged.addListener(function(changes, area) {
-    if (area === 'local' && changes.hasOwnProperty( 'dlMaxParallel' )) {
-      dlManager.maxDownloadLimit = changes.dlMaxParallel.newValue;
+    if (area === 'local') {
+      if (changes.hasOwnProperty( 'dlMaxParallel' )) {
+        dlManager.maxDownloadLimit = changes.dlMaxParallel.newValue;
+      } else if (changes.hasOwnProperty( 'hideSuccessfulDownloadItems' )) {
+        dlManager.hideSuccessfulDownloadItems = changes.hideSuccessfulDownloadItems.newValue;
+      }
     }
   });
 
@@ -39,29 +45,33 @@ function newDlManager(queue) {
    */
   function onDonwloadComplete(downloadDelta) {
 
-    // Update the state of the link object
+    // Verify whether it is a download we started
     var linkObject = dlManager.downloadIdToLinkObject.get(downloadDelta.id);
-    if (!! linkObject) {
-      if (downloadDelta.state.current === 'complete') {
-        linkObject.status = DlStatus.SUCCESS;
-        updateProcessorInDownloadView(linkObject.processor);
-
-      } else if (downloadDelta.state.current === 'interrupted') {
-        linkObject.status = DlStatus.FAILURE;
-        updateProcessorInDownloadView(linkObject.processor);
-      }
+    if (! linkObject) {
+      return;
     }
 
-    // Should we process a new item?
+    // So, this is a download we started
     if (downloadDelta.state.current === 'complete') {
-      if (dlManager.downloadIdToLinkObject.delete(downloadDelta.id)) {
+      linkObject.status = DlStatus.SUCCESS;
+      updateProcessorInDownloadView(linkObject.processor);
 
-        // One download done
-        dlManager.ongoingDownloadsCpt --;
-
-        // Process the next one, if there is one
-        startNextWaitingDownload();
+      if (dlManager.hideSuccessfulDownloadItems) {
+        browser.downloads.erase({id: downloadDelta.id});
       }
+
+    } else if (downloadDelta.state.current === 'interrupted') {
+      linkObject.status = DlStatus.FAILURE;
+      updateProcessorInDownloadView(linkObject.processor);
+    }
+
+    // Process a new item?
+    if (dlManager.downloadIdToLinkObject.delete(downloadDelta.id)) {
+       // One download stopped
+      dlManager.ongoingDownloadsCpt --;
+
+      // Process the next one, if there is one
+      startNextWaitingDownload();
     }
   }
 

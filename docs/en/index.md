@@ -59,7 +59,9 @@ Here is a short description of the preferences.
 You can define your own one if you want and specify it through the extension preferences.
 * **Automatically update the dictionary**: true to download the dictionary every time firefox starts.
 Otherwise, the catalog is cached locally and this local copy must be updated manually from the options page.
-* **Hide downloads that successfully completed**: this option hides from the download view
+* **Hide downloads that successfully completed**: this option hides from the extension's download view
+all the downloads that were successful. Those with failures will remain visible.
+* **Remove successful downloads from Firefox's download view**: this option removes from Firefox's download view
 all the downloads that were successful. Those with failures will remain visible.
 * **Open the download view when pages are analyzed**: this option seems quite explicit.
 The default behavior is to open the view. It can be disabled with this option. 

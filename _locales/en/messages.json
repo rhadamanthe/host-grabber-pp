@@ -84,6 +84,11 @@
     "description": "The label for this option (options page)"
   },
 
+  "optionsPage_removeSuccessfulDlFromNativeDlView": {
+    "message": "Remove successful downloads from Firefox's download view",
+    "description": "The label for this option (options page)"
+  },
+
   "optionsPage_maximumParallelDownloadsOption": {
     "message": "Maximum number of parallel downloads",
     "description": "The label for this option (options page)"
