@@ -4,6 +4,8 @@
   "description": "The descriptor that allows to run tests for this extension",
   "scripts": {
     "test": "karma start",
+    "test-firefox": "karma start --browsers Firefox",
+    "test-chrome": "karma start --browsers Chrome",
     "test:debug": "karma start --no-single-run --auto-watch",
     "lint": "eslint . && web-ext lint --ignore-files \"coverage/**/*\" --ignore-files \"docs/**/*\"",
     "web-ext": "web-ext run --browser-console",

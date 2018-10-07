@@ -38,8 +38,14 @@ CLI options:
 # Install dependencies
 npm install
 
-# Execute tests
+# Execute tests on both Chrome and Firefox
 npm test
+
+# Execute tests for Firefox only
+npm run test-firefox
+
+# Execute tests for Chrome only
+npm run test-chrome
 
 # Verifying linting
 npm run lint
