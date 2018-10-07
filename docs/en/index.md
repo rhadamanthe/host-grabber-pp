@@ -39,6 +39,25 @@ options that existed before.
 You can install it from [addons.mozilla.org](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/).
 
 
+## Known Problems
+
+**With Firefox:**
+
+* No known problem.
+
+**With Chrome:**
+
+* Once this extension has been installed or upgraded, it is necessary to restart
+Chrome, or to reload all the existing tabs (with the F5 key) that would need it.
+Unlike firefox, Chrome does not reinject some scripts in already-loaded pages.
+
+* In order to use this extension in good conditions with Chrome, it is necessary
+to update the download preferences. All the files should be saved in the same
+folder, and Chrome should not ask for the download location.
+[A bug was reported to the Chrome team](https://bugs.chromium.org/p/chromium/issues/detail?id=417112).
+ Feel free to vote for it, it may speed up its resolution.
+
+
 ## Usage
 
 Simply browse a web page and right-click anywhere.  

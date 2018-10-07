@@ -7,12 +7,9 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     response = document.documentElement.innerHTML;
   }
 
-  // Use sendResponse as it works on both Firefox and Chrome.
-  // Returning the promise instead of 'true' always works on Firefox.
   // On Chrome, it only works in tabs loaded AFTER the extension.
   // Refreshing the extension makes the messaging fail, unless we refresh the tabs.
-  //sendResponse(Promise.resolve(response));
-  //return false;
+  // In fact, content scripts are not injected in pre-existing tabs.
 
   return Promise.resolve(response);
 });

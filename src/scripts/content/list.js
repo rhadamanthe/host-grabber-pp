@@ -297,7 +297,7 @@ function updateDownloadLinkInView(dlLink) {
       }
 
     }, function() {
-      console.log('Failed to retrieve the file icon for ' + dlLink.link);
+      // console.log('Failed to retrieve the file icon for ' + dlLink.link);
     });
   }
 }

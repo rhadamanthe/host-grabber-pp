@@ -218,4 +218,54 @@ describe('background => library.utilities', function() {
     expect(res[3].excludeHost).to.eql(true);
     done();
   });
+
+
+  it('should prepare a processor for messaging correctly', function(done) {
+
+    var p = newProcessor('http://this.is.the/matching/url', 'search-pattern', []);
+    p.status = ProcessorStatus.SUCCESS;
+    p.downloadLinks.push({
+      id: 'i2',
+      link: '1',
+      status: DlStatus.WAITING
+    });
+
+    p.downloadLinks.push({
+      id: 'iop',
+      link: '2',
+      status: DlStatus.SUCCESS,
+      downloadItemId: 97
+    });
+
+    var res = prepareProcessorForMessaging(p);
+    expect(res.id).to.eql(p.id);
+    expect(res.status).to.eql(p.status);
+    expect(res.matchingUrl).to.eql(p.matchingUrl);
+    expect(res.downloadLinks.length).to.eql(2);
+    expect(Object.keys( res ).length).to.eql(4);
+
+    expect(res.downloadLinks[0].id).to.eql('i2');
+    expect(res.downloadLinks[0].link).to.eql('1');
+    expect(res.downloadLinks[0].status).to.eql(DlStatus.WAITING);
+    expect(Object.keys( res.downloadLinks[ 0 ]).length).to.eql(3);
+
+    expect(res.downloadLinks[1].id).to.eql('iop');
+    expect(res.downloadLinks[1].link).to.eql('2');
+    expect(res.downloadLinks[1].status).to.eql(DlStatus.SUCCESS);
+    expect(res.downloadLinks[1].downloadItemId).to.eql(97);
+    expect(Object.keys( res.downloadLinks[ 1 ]).length).to.eql(4);
+
+    done();
+  });
+
+
+  it('should prepare processors for messaging correctly', function(done) {
+
+    var p1 = newProcessor('http://this.is.the/matching/url', 'search-pattern1', []);
+    var p2 = newProcessor('http://this.is.another/matching/url', 'search-pattern2', []);
+
+    var res = prepareProcessorsForMessaging([ p1, p2 ]);
+    expect(res.length).to.eql(2);
+    done();
+  });
 });

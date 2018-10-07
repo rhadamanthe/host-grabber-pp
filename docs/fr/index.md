@@ -38,6 +38,27 @@ avec quelques différences:
 Vous pouvez installer cette extension depuis [addons.mozilla.org](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/).
 
 
+## Problèmes Connus
+
+**Avec Firefox :**
+
+* Aucun problème connu.
+
+**Avec Chrome :**
+
+* Après installation ou mise à jour de l'extension, il faut soit redémarrer Chrome,
+soit rafraîchir les onglets existants (via F5) afin que l'extension fonctionne avec
+les pages déjà chargées. Chrome ne réinjecte pas certains scripts automatiquement,
+contrairement à Firefox.
+
+* Pour que cette extension fonctionne dans de bonnes conditions avec Chrome,
+il faut modifier les préférences de téléchargement, afin que Chrome sauvegarde
+les fichiers téléchargés dans un même dossier.
+[Un bug a été reporté auprès de l'équipe de Chrome](https://bugs.chromium.org/p/chromium/issues/detail?id=417112),
+qui permettrait de contourner cette obligation. N'hésitez pas à voter pour ce ticket,
+cela pourrait accélérer sa résolution. 
+
+
 ## Utilisation
 
 Visitez la page web de votre choix, and faîtes un clic droit n'importe où.  

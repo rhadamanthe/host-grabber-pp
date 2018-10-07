@@ -56,6 +56,68 @@ function fixRelativeLinks(newLink, pageUrl) {
 
 
 /**
+ * Prepares a processor to be sent to a content script.
+ * <p>
+ * This function's goal is to remove circular dependencies.
+ * Therefore, it filters the properties to send to the script.
+ * </p>
+ * <p>
+ * Required for Chrome.
+ * </p>
+ *
+ * @param {object} processor A processor.
+ * @returns {object} A partial copy of the processor, as a new object.
+ */
+function prepareProcessorForMessaging(processor) {
+
+  var clone = {};
+  clone.id = processor.id;
+  clone.status = processor.status;
+  clone.matchingUrl = processor.matchingUrl;
+  clone.downloadLinks = [];
+
+  processor.downloadLinks.forEach( function(dlLink) {
+    var cloneLink = {};
+    cloneLink.id = dlLink.id;
+    cloneLink.link = dlLink.link;
+    cloneLink.status = dlLink.status;
+    if (!! dlLink.downloadItemId) {
+      cloneLink.downloadItemId = dlLink.downloadItemId;
+    }
+
+    clone.downloadLinks.push(cloneLink);
+  });
+
+  return clone;
+}
+
+
+/**
+ * Prepares an array of processors to be sent to a content script.
+ * <p>
+ * This function's goal is to remove circular dependencies.
+ * Therefore, it filters the properties to send to the script.
+ * </p>
+ * <p>
+ * Required for Chrome.
+ * </p>
+ *
+ * @param {object} processors An array of processors.
+ * @returns {object} A partial copy of the processors, as a new array of new objects.
+ */
+function prepareProcessorsForMessaging(processors) {
+
+  var clones = [];
+  processors.forEach( function(processor) {
+    var clone = prepareProcessorForMessaging(processor);
+    clones.push(clone);
+  });
+
+  return clones;
+}
+
+
+/**
  * Generates a UUID.
  * <p>
  * Found at https://gist.github.com/jcxplorer/823878
