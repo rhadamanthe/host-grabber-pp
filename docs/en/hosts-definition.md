@@ -75,7 +75,12 @@ name is `toto.net`.
 ```
 
 When you define a domain, HG ++ will consider all the links with *http*, *https*,
-*www.* prefixes, as well as sub-domains. The value of a domain is a text. Not a regular expression. 
+*www.* prefixes, as well as sub-domains. The value of a domain is a text. Not a regular expression.
+
+If the rule definition covers several web sites, you can use the `_$CURRENT$_` value.  
+This is what the [Coppermine](http://coppermine-gallery.net/) uses in the default catalog. Many web sites run
+such a gallery system. The Coppermine rule indicates we should apply it to every web site, not for a single domain.
+When a web page is analyzed, the `_$CURRENT$_` value means we use the host name of the current page.
 
 
 ## Path Pattern

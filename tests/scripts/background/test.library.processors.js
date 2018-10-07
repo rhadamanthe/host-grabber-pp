@@ -320,6 +320,45 @@ describe('background => library.processors', function() {
   });
 
 
+  it('should find what to process (with current domain)', function() {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html><body>
+      <img src="/gallery/path/to/thumb_05.jpg" class="paf" />
+      <img src="http://titi.fr/path/to/the/thumb_001~01.jpg" />
+      <br />
+      <img src="http://mimi.net/path/to/thumb_001~02.jpg" />
+      <img src="gallery2/path/to/thumb_191.jpg" />
+      <br />
+      <img src="https://titi.fr/gallery/view.php?img=t5.gif" />
+    </body></html>
+    `;
+
+    // Test resources are served by Karma
+    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.no-domain.xml');
+    return dictionaryP.then( function(dictionary) {
+
+      // Extract links
+      var res = findWhatToProcess(sourceDocument, 'http://titi.fr/some-folder/at-second-level/some-web-page.html', dictionary);
+
+      // Verify we got them all
+      expect(res.length).to.eql(3);
+
+      expect(res[0].matchingUrl).to.eql('http://titi.fr/path/to/the/thumb_001~01.jpg');
+      expect(res[0].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[1].matchingUrl).to.eql('http://titi.fr/gallery/path/to/thumb_05.jpg');
+      expect(res[1].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+
+      expect(res[2].matchingUrl).to.eql('http://titi.fr/some-folder/at-second-level/gallery2/path/to/thumb_191.jpg');
+      expect(res[2].extMethod).to.eql(ExtMethods.REPLACE.id);
+      expect(ExtMethods.REPLACE.pattern.lastIndex).to.eql(0);
+    });
+  });
+
+
   it('should find nothing to process when the path pattern is missing', function(done) {
 
     var sourceDocument = document.implementation.createHTMLDocument('');

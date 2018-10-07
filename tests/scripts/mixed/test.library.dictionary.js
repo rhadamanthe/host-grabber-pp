@@ -84,6 +84,33 @@ describe('background => library.dictionary', function() {
   });
 
 
+  it('should validate a dictionary item with the current domain', function(done) {
+
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
+        <host id="coppermine">
+          <domain>_$CURRENT$_</domain>
+          <path-pattern>.+\\.jpg</path-pattern>
+          <search-pattern>expreg: src="(.*\\.jpg)"</search-pattern>
+        </host>
+    `;
+
+    var obj = parseAndVerifyDictionary(dictionary);
+    expect(obj.errors.length).to.eql(0);
+    expect(obj.items.length).to.eql(1);
+    expect(obj.items[0].domain).to.eql(exploreCurrentPage);
+    expect(obj.items[0].pathPattern).to.eql('.+\\.jpg');
+    expect(obj.items[0].searchPattern).to.eql('expreg: src="(.*\\.jpg)"');
+    expect(obj.items[0].errors.length).to.eql(0);
+    expect(obj.items[0].interceptors1.length).to.eql(0);
+    expect(obj.items[0].interceptors2.length).to.eql(0);
+    done();
+  });
+
+
   it('should validate a dictionary item with 4 interceptors', function(done) {
 
     var dictionary = document.implementation.createDocument('', 'root');

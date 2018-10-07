@@ -108,7 +108,8 @@ function buildUrlPatterns(pageUrl, domain, pathPattern, hostId) {
 
   var res = [];
   var domainMatch = domain.match(domainPattern);
-  if (! domainMatch || domainMatch.length === 0) {
+  if (domain !== exploreCurrentPage &&
+      (! domainMatch || domainMatch.length === 0)) {
     console.log('Invalid domain for ' + hostId);
 
   } else if (pathPattern.startsWith('/') || pathPattern.startsWith('^') || pathPattern.endsWith('$')) {
@@ -117,6 +118,11 @@ function buildUrlPatterns(pageUrl, domain, pathPattern, hostId) {
   } else {
     // Deal with global links
     const esc = '[^<>"]';
+
+    // Deal with the current domain
+    if (domain === exploreCurrentPage) {
+      domain = new URL(pageUrl).hostname;
+    }
 
     // The base pattern covers HTTP, HTTPS, www. and sub-domains URLs
     var basePattern = buildDomainPattern(domain);

@@ -78,6 +78,11 @@ Lorsque vous définissez un domaine, HG ++ considérera tous les préfixes *http
 *www.*, ainsi que les sous-domaines. La valeur d'un domaine est un simple texte. Ce n'est pas une
 expression régulière.
 
+Si la règle s'applique à de nombreux sites web, alors il est possible d'utiliser la valeur `_$CURRENT$_`.  
+Plusieurs sites proposent une galerie basée sur [Coppermine](http://coppermine-gallery.net/).
+La règle associée ne spécifie donc pas de domaine particulier. Elle s'applique sur tous les sites.
+Lors de l'analyse d'une page, la valeur `_$CURRENT$_` signfie que l'on utilise le nom d'hôte de la page courante.
+
 
 ## Modèle de Chemin
 
@@ -156,7 +161,7 @@ Elle repose sur l'idée que le lien de téléchargement peut être déduit du mo
 ```
 
 Ce modèle d'URL identifie des images qui pourraient être des miniatures.  
-And le modèle de recherche permet de remplacer certains segments de l'URL.
+Et le modèle de recherche permet de remplacer certains segments de l'URL.
 
 Notez que l'on peut aussi utiliser une expression régulière pour la recherche.
 

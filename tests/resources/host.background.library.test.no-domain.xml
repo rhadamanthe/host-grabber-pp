@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root id="test" version="test" spec="1.0">
+
+<host id="mimi">
+	<domain>_$CURRENT$_</domain>
+	<path-pattern>(.+/)*thumb.*\.jpg</path-pattern>
+	<search-pattern>replace: 'thumb', 'normal'</search-pattern>
+</host>
+
+</root>

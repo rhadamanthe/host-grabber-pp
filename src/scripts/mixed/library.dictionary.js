@@ -87,7 +87,7 @@ function parseAndVerifyDictionaryItem(domElement) {
         tempErrors.push('A domain was found at an invalid position.');
       }
 
-      if (!domain.match(domainPattern)) {
+      if (domain !== exploreCurrentPage && !domain.match(domainPattern)) {
         tempErrors.push('Invalid domain: ' + domain);
       }
 
