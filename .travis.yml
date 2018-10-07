@@ -4,7 +4,7 @@ node_js:
   - "8"
 
 addons:
-  - firefox: "58.0"
+  - firefox: "60.0"
   - chrome: stable
 
 before_script:
