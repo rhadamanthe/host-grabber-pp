@@ -17,5 +17,5 @@ before_script:
 script:
   - npm install
   - npm run lint
-  - npm test-firefox
+  - npm run test-firefox
   - cd tests/node.js && node validate-dictionary.js
