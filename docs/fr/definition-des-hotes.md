@@ -67,7 +67,7 @@ Cet identifiant sert en cas d'erreur à corriger ou en cas d'évolution.
 ## Domaine
 
 Le domaine concerne celui des liens à découvrir et explorer.  
-Par exemple, si l'on souhaite trouver tous les liens qui pointent vers `http://toto.net``,
+Par exemple, si l'on souhaite trouver tous les liens qui pointent vers `http://toto.net`,
 alors le nom de domain est `toto.net`.
 
 ```xml

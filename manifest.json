@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Host Grabber ++",
   "description": "__MSG_extensionDescription__",
-  "version": "0.6",
+  "version": "0.7",
 
   "author": "Rhadamanthe",
   "homepage_url": "https://rhadamanthe.github.io/host-grabber-pp",
@@ -19,7 +19,7 @@
   },
 
   "options_ui": {
-  	"page": "src/html/content/options.html",
+  	"page": "src/html/options.html",
   	"browser_style": true,
   	"open_in_tab": true
   },
@@ -32,6 +32,7 @@
 
   "background": {
 	"scripts": [
+	  "src/scripts/npm/browser-polyfill.min.0.3.1.js",
 	  "src/scripts/background/library.utilities.js",
 	  "src/scripts/background/library.strategies.js",
 	  "src/scripts/background/library.processors.js",
@@ -48,13 +49,15 @@
   {
     "matches": ["<all_urls>"],
     "js": [
+      "src/scripts/npm/browser-polyfill.min.0.3.1.js",
       "src/scripts/content/content.hg.js"
     ]
   }],
 
   "commands": {
     "dl": {
-      "suggested_key": { "default": "Ctrl+Shift+Down" }
+      "suggested_key": { "default": "Ctrl+Shift+Down" },
+      "description": "Download media files from the current page"
     }
   },
 

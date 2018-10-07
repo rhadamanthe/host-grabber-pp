@@ -312,9 +312,25 @@ function sendProcessorsToDownloadView(processors) {
  * @returns {undefined}
  */
 function updateProcessorInDownloadView(processor) {
+
+  // Our processor structure has circular references
+  // A processor contains download links, and download links
+  // reference their processor. The problem is that Chrome uses
+  // stringify which does not allow such circular stuff. The
+  // problem does not occur with Firefox. Anyway, we by-pass
+  // this problem by cloning the processor and the download
+  // links, and removing the processor reference from the links.
+  var clone = Object.assign({}, processor);
+  clone.downloadLinks.forEach( function(dlLink, index) {
+    var cloneLink = Object.assign({}, dlLink);
+    delete cloneLink.processor;
+    clone.downloadLinks[ index ] = cloneLink;
+  });
+
+  // Send the message
   browser.tabs.query({ title: 'HG ++' }).then( function(tabs) {
     if (tabs.length > 0) {
-      browser.tabs.sendMessage(tabs[0].id, {req: 'update-processor', obj: processor});
+      browser.tabs.sendMessage(tabs[0].id, {req: 'update-processor', obj: clone});
     }
   });
 }

@@ -67,7 +67,7 @@ The ID is useful when there is an error to fix or an upgrade to perform.
 ## Domain
 
 The domain is the one of the links we want to discover and explore.  
-As an example, if you want to explore links that point to `http://toto.net``, the domain
+As an example, if you want to explore links that point to `http://toto.net`, the domain
 name is `toto.net`.
 
 ```xml

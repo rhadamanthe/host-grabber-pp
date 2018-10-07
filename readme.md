@@ -26,10 +26,6 @@ extension, but unlike it, it is not restricted to downloading images.
 * Add a way to manage a dictionary locally (add, remove, enable, disable rules).
 * Add a separate menu to download direct images.
 
-**Long-term**
-
-* Adapt it so that it also works with for Chrome / Chromium.
-
 
 ## Development
 
@@ -52,6 +48,9 @@ npm run lint
 npm run build
 ```
 
+
+## Testing in Firefox
+
 Testing in a separate browser:
 
 * Make sure you have followed the previous instructions (CLI options).
@@ -70,6 +69,17 @@ Debugging the extension:
 * Check the box labeled **Enable add-on debugging**.
 * Click the **Debug** button next to the extension.
 * Click **OK** in the warning dialog.
+
+
+## Testing in Chrome / Chromium
+
+Testing in your usual browser:
+
+* Open **chrome:extensions** in Firefox.
+* Make sure the page is in developer mode.
+* Click **Load unpacked** and select any file in the module's sources.
+
+You can debug it by clicking **Inspect views: background page**.
 
 
 ## Testing the Documentation

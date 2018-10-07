@@ -51,6 +51,11 @@ function newDlManager(queue) {
       return;
     }
 
+    // In Chrome, there is no state when a download starts
+    if (! downloadDelta.state) {
+      return;
+    }
+
     // So, this is a download we started
     if (downloadDelta.state.current === 'complete') {
       linkObject.status = DlStatus.SUCCESS;
@@ -136,6 +141,8 @@ function newDlManager(queue) {
       url: linkObject.link,
       saveAs: false
     };
+
+    // Bug in Chrome: https://bugs.chromium.org/p/chromium/issues/detail?id=417112
 
     var downloading = browser.downloads.download(options).then( function(downloadItemId) {
       // Register the download
