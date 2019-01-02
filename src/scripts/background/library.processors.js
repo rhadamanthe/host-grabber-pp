@@ -31,7 +31,7 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
     dictionaryWrapper.items.forEach( function(item) {
 
       if (item.errors.length > 0) {
-        //console.log('Errors were found for item ' + item.id);
+        console.log('Errors were found for item ' + item.id);
         //item.errors.forEach( function(error) {
         //  console.log('[' + item.id + '] ' + error);
         //});
@@ -41,8 +41,8 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
       // Explore the current page?
       var urlPatternWrappers = [];
       var domainPattern = buildDomainPattern(item.domain);
-      if (item.pathPattern === exploreCurrentPage
-          && pageUrlMatches(url, domainPattern)) {
+      if (item.pathPattern === globalCurrent
+            && pageUrlMatches(url, domainPattern)) {
 
         var p = newProcessor(url, item.searchPattern, item.interceptors2);
         p.xmlDoc = sourceDocument;

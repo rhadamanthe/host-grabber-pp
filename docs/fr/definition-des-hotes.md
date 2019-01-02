@@ -66,6 +66,8 @@ Cet identifiant sert en cas d'erreur à corriger ou en cas d'évolution.
 
 ## Domaine
 
+### Les Domaines Simples
+
 Le domaine concerne celui des liens à découvrir et explorer.  
 Par exemple, si l'on souhaite trouver tous les liens qui pointent vers `http://toto.net`,
 alors le nom de domain est `toto.net`.
@@ -78,10 +80,48 @@ Lorsque vous définissez un domaine, HG ++ considérera tous les préfixes *http
 *www.*, ainsi que les sous-domaines. La valeur d'un domaine est un simple texte. Ce n'est pas une
 expression régulière.
 
-Si la règle s'applique à de nombreux sites web, alors il est possible d'utiliser la valeur `_$CURRENT$_`.  
-Plusieurs sites proposent une galerie basée sur [Coppermine](http://coppermine-gallery.net/).
-La règle associée ne spécifie donc pas de domaine particulier. Elle s'applique sur tous les sites.
-Lors de l'analyse d'une page, la valeur `_$CURRENT$_` signfie que l'on utilise le nom d'hôte de la page courante.
+
+### Règle Particulière (indépendante du domaine)
+
+Si la règle s'applique à de nombreux sites web, alors il est possible d'utiliser la
+valeur `_$CURRENT$_`.
+
+```xml
+<domain>_$CURRENT$_</domain>
+```
+
+Plusieurs sites proposent une galerie basée sur
+[Coppermine](http://coppermine-gallery.net/). La règle associée ne spécifie donc pas de
+domaine particulier. Elle s'applique sur tous les sites. Lors de l'analyse d'une page, la
+valeur `_$CURRENT$_` signfie que l'on utilise **le nom d'hôte de la page courante**.
+
+Si l'on garde l'exemple de Coppermine, imaginons qu'une telle galerie soit hébergée
+sur *toto.net*. Lors d'une visite sur ce site, IHG ++ trouverait tous les médias
+hébergés sur *toto.net* utilisant la règle Coppermine. Cependant, si quelque part dans la
+page apparaît un lien vers une autre galerie Coppermine (hébergée par exemple sur
+*un-autre-site.com*), alors ce lien ne sera pas pris en compte.
+
+La valeur `_$CURRENT$_` s'applique potentiellement à n'importe quel domaine.  
+Mais dés qu'elle est utilisée sur une page donnée, alors seul le domaine courant est considéré.
+
+
+### Expressions Régulières pour un Domaine
+
+Il est possible d'utiliser une expression régulière pour un domaine.  
+Il faut alors utiliser la balise `domain-pattern`.
+
+```xml
+<domain-pattern>toto\d+\.net</domain-pattern>
+<!--
+Cet exemple accepte n'importe quel déclinaison du domaine qui se termine par un entier :
+toto1, toto2, toto24, toto528, etc.
+-->
+```
+
+Tout comme pour un domaine, les préfixes *http*, *https*,
+*www.*, ainsi que les sous-domaines, sont gérés automatiquement.
+Contrairement à la constante `_$CURRENT$_`, cette règle acceptera n'importe quel lien
+dont le domaine correspond à l'expression régulière, et quelle que soit la page courante.
 
 
 ## Modèle de Chemin
@@ -108,7 +148,7 @@ Il y a quelques règles à connaître pour la définition de cette propriété.
 * Elle ne peut pas commencer par `^`.
 * Elle ne peut pas finir par `$`.
 * Le symbole `.` sera remplacé par `[^<>"]`.
-* Pour obtenir le symbole `.`, il faut écrire `&dot`.
+* Pour obtenir le symbole `.`, il faut écrire `&dot;`.
 * L'entité HTML `<` doit être écrite sous la forme `&lt;`.
 * L'entité HTML `>` doit être écrite sous la forme `&gt;`.
 * L'entité HTML `&` doit être écrite sous la forme `&amp;`.

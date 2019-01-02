@@ -243,6 +243,55 @@ describe('background => library.processors', function() {
   });
 
 
+  it('should find what to process (with relative and absolute links + domain patterns)', function() {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html><body>
+      <img src="http://toto.fr/gallery/view.php?img=t1.jpg" class="paf" />
+      <br />
+      <img src="http://mimi.net/gallery/t2.jpg" />
+      <br />
+      <img src="https://toto4.fr/gallery/p1.jpg" />
+      <img src="http://tito4.fr/gallery/p2.jpg" />
+      <img src="http://toto14.fr/gallery/p3.jpg" />
+      <img src="http://toto14.fr/gallery/p43.jpg" />
+      <br />
+      <img src="http://google.com/images/view.php?img=http://toto.fr/gallery/view.php?img=t5.jpg" class="g" />
+      <img src="../../gallery/p_194.jpg" class="paf" /><!--relative link -->
+      <br />
+      <img src="http://bibi.com/path/to/this/image1.jpg" />
+      <img src="http://bibi.com/path/to/this/image2.svg" />
+    </body></html>
+    `;
+
+    // Test resources are served by Karma
+    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.domain-pattern.xml');
+    return dictionaryP.then( function(dictionary) {
+
+      // Extract links
+      var res = findWhatToProcess(sourceDocument, 'http://toto2.fr/some-folder/at-second-level/some-web-page.html', dictionary);
+
+      // Verify we got them all
+      expect(res.length).to.eql(5);
+
+      expect(res[0].matchingUrl).to.eql('http://toto.fr/gallery/view.php?img=t1.jpg');
+      expect(res[0].extMethod).to.eql(ExtMethods.SELF.id);
+
+      expect(res[1].matchingUrl).to.eql('https://toto4.fr/gallery/p1.jpg');
+      expect(res[1].extMethod).to.eql(ExtMethods.SELF.id);
+
+      expect(res[2].matchingUrl).to.eql('http://toto14.fr/gallery/p3.jpg');
+      expect(res[2].extMethod).to.eql(ExtMethods.SELF.id);
+
+      expect(res[3].matchingUrl).to.eql('http://toto14.fr/gallery/p43.jpg');
+      expect(res[3].extMethod).to.eql(ExtMethods.SELF.id);
+
+      expect(res[4].matchingUrl).to.eql('http://toto2.fr/gallery/p_194.jpg');
+      expect(res[4].extMethod).to.eql(ExtMethods.SELF.id);
+    });
+  });
+
+
   it('should find what to process (when there are redirections)', function() {
 
     var sourceDocument = document.implementation.createHTMLDocument('');

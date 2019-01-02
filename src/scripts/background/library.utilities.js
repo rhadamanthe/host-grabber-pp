@@ -160,8 +160,13 @@ function removeFromArray(array, item) {
 
 /**
  * Builds URL patterns for a given domain.
+ * <p>
+ * Precondition: we already know the page URL matches
+ * the domain (or domain pattern).
+ * </p>
+ *
  * @param {string} pageUrl The page's URL.
- * @param {string} domain The domain.
+ * @param {string|RegExp} domain The domain or a domain pattern.
  * @param {string} pathPattern The path pattern.
  * @param {string} hostId The host ID (for error reporting).
  * @returns {array} An array of objects.
@@ -169,9 +174,11 @@ function removeFromArray(array, item) {
 function buildUrlPatterns(pageUrl, domain, pathPattern, hostId) {
 
   var res = [];
-  var domainMatch = domain.match(domainPattern);
-  if (domain !== exploreCurrentPage &&
-      (! domainMatch || domainMatch.length === 0)) {
+  var domainIsRegExp = domain instanceof RegExp;
+  var domainMatch = domainIsRegExp ? null : domain.match(globalDomainPattern);
+  if (domain !== globalCurrent
+        && ! domainIsRegExp
+        && (! domainMatch || domainMatch.length === 0)) {
     console.log('Invalid domain for ' + hostId);
 
   } else if (pathPattern.startsWith('/') || pathPattern.startsWith('^') || pathPattern.endsWith('$')) {
@@ -181,8 +188,8 @@ function buildUrlPatterns(pageUrl, domain, pathPattern, hostId) {
     // Deal with global links
     const esc = '[^<>"]';
 
-    // Deal with the current domain
-    if (domain === exploreCurrentPage) {
+    // Deal with the current page
+    if (domain === globalCurrent) {
       domain = new URL(pageUrl).hostname;
     }
 
@@ -192,7 +199,7 @@ function buildUrlPatterns(pageUrl, domain, pathPattern, hostId) {
         .replace(/\.\+/, esc + '+')
         .replace(/\.\*/, esc + '*')
         .replace(/\.(\{\d+(,\d*)?\})/, esc + '$1')
-        .replace('&dot', '.')
+        .replace('&dot;', '.')
         .replace('&lt;', '<')
         .replace('&gt;', '>')
         .replace('&amp;', '&');
@@ -217,11 +224,31 @@ function buildUrlPatterns(pageUrl, domain, pathPattern, hostId) {
  * This includes HTTP, HTTPS, www. and sub-domains.
  * </p>
  *
- * @param {string} domain A domain definition, as stated in a dictionary.
+ * @param {string|RegExp} domain A domain definition, as stated in a dictionary.
  * @returns {string} A pattern for a regular expression.
  */
 function buildDomainPattern(domain) {
-  return 'https?://([-\\w]+\\.)*' + domain.replace('.', '\\.');
+
+  if (domain instanceof RegExp) {
+    const esc = '[^<>"/]';
+    domain = String(domain);
+    domain = domain.substring(1, domain.length - 1);
+    domain = domain
+      .replace(/\\\./, '&escaped-dot;')
+      .replace(/\.\+/, esc + '+')
+      .replace(/\.\*/, esc + '*')
+      .replace(/\.(\{\d+(,\d*)?\})/, esc + '$1')
+      .replace('&dot;', '.')
+      .replace('&escaped-dot;', '\\.')
+      .replace('&lt;', '<')
+      .replace('&gt;', '>')
+      .replace('&amp;', '&');
+
+  } else {
+    domain = domain.replace('.', '\\.')
+  }
+
+  return 'https?://([-\\w]+\\.)*' + domain;
 }
 
 

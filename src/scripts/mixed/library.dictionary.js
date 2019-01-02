@@ -1,8 +1,8 @@
 // This file is made so that it can be executed alone.
 // No dependency to any other script.
 
-const domainPattern = /^\w[-\w\.]*\w$/;
-const exploreCurrentPage = '_$CURRENT$_';
+const globalDomainPattern = /^\w[-\w\.]*\w$/;
+const globalCurrent = '_$CURRENT$_';
 
 
 /**
@@ -87,12 +87,27 @@ function parseAndVerifyDictionaryItem(domElement) {
         tempErrors.push('A domain was found at an invalid position.');
       }
 
-      if (domain !== exploreCurrentPage && !domain.match(domainPattern)) {
+      var matchRes = domain.match(globalDomainPattern);
+      if (domain !== globalCurrent &&
+            (! matchRes || matchRes.length === 0)) {
         tempErrors.push('Invalid domain: ' + domain);
       }
 
       if (tempErrors.length === 0) {
         result.domain = domain;
+        current = 'domain';
+      }
+    }
+
+    // Domain pattern
+    else if (elt.tagName === 'domain-pattern') {
+      var domainP = elt.textContent.trim();
+      if (loopCount !== 0) {
+        tempErrors.push('A domain pattern was found at an invalid position.');
+      }
+
+      if (tempErrors.length === 0) {
+        result.domain = new RegExp(domainP);
         current = 'domain';
       }
     }
@@ -184,7 +199,7 @@ function parseAndVerifyDictionaryItem(domElement) {
 
   // Validate the object
   if (!result.domain) {
-    result.errors.push('A domain was expected.');
+    result.errors.push('A domain or a domain pattern was expected.');
   }
 
   if (!result.pathPattern) {

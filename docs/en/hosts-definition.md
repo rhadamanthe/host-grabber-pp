@@ -66,6 +66,8 @@ The ID is useful when there is an error to fix or an upgrade to perform.
 
 ## Domain
 
+### Simple Domains
+
 The domain is the one of the links we want to discover and explore.  
 As an example, if you want to explore links that point to `http://toto.net`, the domain
 name is `toto.net`.
@@ -75,12 +77,50 @@ name is `toto.net`.
 ```
 
 When you define a domain, HG ++ will consider all the links with *http*, *https*,
-*www.* prefixes, as well as sub-domains. The value of a domain is a text. Not a regular expression.
+*www.* prefixes, as well as sub-domains. The value of a domain is a text. **Not a regular expression**.
 
-If the rule definition covers several web sites, you can use the `_$CURRENT$_` value.  
-This is what the [Coppermine](http://coppermine-gallery.net/) uses in the default catalog. Many web sites run
-such a gallery system. The Coppermine rule indicates we should apply it to every web site, not for a single domain.
-When a web page is analyzed, the `_$CURRENT$_` value means we use the host name of the current page.
+
+### Specific Rule (not restricted to any domain)
+
+If the rule definition targets a tool that can appear on several web sites, you can use
+the `_$CURRENT$_` value.
+
+```xml
+<domain>_$CURRENT$_</domain>
+```
+
+This is what the [Coppermine](http://coppermine-gallery.net/) uses in the default catalog.
+Many web sites run such a gallery system. The Coppermine rule indicates we should apply it
+to every web site, not for a single domain. When a web page is analyzed, the `_$CURRENT$_`
+value means we use **the host name of the current page**.
+
+If we keep the Coppermine example, let's imagine we have such a gallery hosted on
+*toto.net*. If we visit this web site, IHG ++ will find all the media
+hosted on *toto.net* by using the Coppermine rule. But if somewhere in the page, there
+is a reference to another Coppermine gallery (e.g. a link to *other-web-site.com*), then
+it will be skipped.
+
+The `_$CURRENT$_` value applies to a several domains.  
+But within the scope of a single page, it will only apply to this domain.
+
+
+### Regular Expressions for Domain
+
+It is possible to use a regular expression for domains.  
+But you have to use a `domain-pattern` mark-up instead.
+
+```xml
+<domain-pattern>toto\d+\.net</domain-pattern>
+<!--
+This example will match all the derivating domains that end with an integer:
+toto1, toto2, toto24, toto548, etc.
+-->
+```
+
+Just like for a domain, *http*, *https*, *www.* prefixes and sub-domains
+will be managed automatically. Unlike the `_$CURRENT$_` value, this rule
+will accept any link that matches the domain pattern, no matter what is the
+current web page.
 
 
 ## Path Pattern
@@ -106,7 +146,7 @@ There are some rules to know when setting this property
 * It cannot start with `^`.
 * It cannot end with `$`.
 * The `.` symbol will be replaced by `[^<>"]`.
-* To get the `.` symbol, one should write `&dot`.
+* To get the `.` symbol, one should write `&dot;`.
 * The HTML entity for `<` must be written `&lt;`.
 * The HTML entity for `>` must be written `&gt;`.
 * The HTML entity for `&` must be written `&amp;`.

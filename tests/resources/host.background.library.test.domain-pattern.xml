@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root id="test" version="test" spec="1.0">
+
+<host id="toto">
+	<domain-pattern>toto\d*\.fr</domain-pattern>
+	<path-pattern>.*\.jpg</path-pattern>
+	<search-pattern>self</search-pattern>
+</host>
+
+</root>

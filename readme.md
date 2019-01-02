@@ -30,6 +30,7 @@ extension, but unlike it, it is not restricted to downloading images.
 ## Development
 
 Source code is available on Github.  
+Test assertions are written with [expect.js](https://www.npmjs.com/package/expect.js?activeTab=versions).  
 To test and debug it live, use...
 
 CLI options:
