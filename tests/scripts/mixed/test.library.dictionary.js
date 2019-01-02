@@ -636,5 +636,10 @@ describe('background => library.dictionary', function() {
   it('should validate test dictionaries - 4', function() {
     return verifyDictionary('host.background.library.test.no-domain.xml');
   });
+
+
+  it('should validate test dictionaries - bug 49', function() {
+    return verifyDictionary('host.bug-49.xml');
+  });
 });
 

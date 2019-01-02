@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- See https://github.com/rhadamanthe/host-grabber-pp/issues/49 -->
+<root id="test" version="test" spec="1.0">
+
+<host id="bug-49">
+	<domain>something.org</domain>
+	<path-pattern>.+/fotos.*/.+\.jpg</path-pattern>
+	<search-pattern>SELF</search-pattern>
+	<interceptor>replace: '/tn_', '/'</interceptor>
+</host>
+
+</root>

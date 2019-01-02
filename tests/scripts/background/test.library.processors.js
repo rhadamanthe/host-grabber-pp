@@ -829,6 +829,54 @@ describe('background => library.processors', function() {
   });
 
 
+  it('should handle processors correctly (SELF with interceptor - bug 49)', function() {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html><body>
+      <img src="http://something.org/t1.jpg" class="paf" />
+      <br />
+      <img src="http://mimi.net/gallery/t2.jpg" />
+      <br />
+      <img src="http://something.org/album1/fotos/sub/tn_es1.jpg" />
+      <img src="https://something.org/album2/fotos41/es2.jpg" />
+      <br />
+      <img src="http://bibi.com/path/to/this/image1.PNG" />
+      <img src="http://something.org/album51/fotos98/tn_s51.jpg" />
+      <img src="https://something.org/album3/fotos41/edfs2.jpg" />
+      <img src="http://bibi.com/path/to/this/image2.svg" />
+    </body></html>
+    `;
+
+    // Test resources are served by Karma
+    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.bug-49.xml');
+    return dictionaryP.then( function(dictionary) {
+
+      // Extract links
+      var processors = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', [dictionary]);
+      var idleFn = function() {};
+      var extractorFn = extractor();
+      var queue = {
+        processNextItem: function() {}
+      };
+
+      var dlLinks = [];
+      processors.forEach(function(p) {
+        handleProcessor(p, extractorFn, queue, idleFn, idleFn, newAlreadyVisitedUrls());
+        p.downloadLinks.forEach(function(dlLink) {
+          dlLinks.push(dlLink.link);
+        });
+      });
+
+      // Verify we got them all
+      expect(dlLinks.length).to.eql(4);
+      expect(dlLinks[0]).to.eql('http://something.org/album1/fotos/sub/es1.jpg');
+      expect(dlLinks[1]).to.eql('https://something.org/album2/fotos41/es2.jpg');
+      expect(dlLinks[2]).to.eql('http://something.org/album51/fotos98/s51.jpg');
+      expect(dlLinks[3]).to.eql('https://something.org/album3/fotos41/edfs2.jpg');
+    });
+  });
+
+
   it('should handle processors correctly on the current page (NOT the right URL)', function(done) {
 
     var sourceDocument = document.implementation.createHTMLDocument('');
