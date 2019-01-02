@@ -409,3 +409,12 @@ Toutefois, cette solution offre suffisamment de flexibilité pour les cas comple
 
 Les liens relatifs sont résolus par rapport à la page où ils ont été trouvés.  
 Ils sont donc correctement gérés.
+
+
+## Résolution des Problèmes
+
+**Tout semble correct, et pourtant cela ne marche pas.**
+
+Même si c'est hautement improbable, il est possible que vous ayez inséré des caractères
+invisibles dans le catalogue. Ceci est [déjà arrivé](https://github.com/rhadamanthe/host-grabber-pp/issues/49).
+Identifiez l'entrée du catalogue, retapez-la depuis zéro, sans copier-coller, puis essayez à nouveau.

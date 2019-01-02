@@ -408,3 +408,13 @@ enough flexibility for most of the situations.
 
 Relative links are resolved against the web page where they were found.  
 Therefore, they are handled correctly.
+
+
+## Troubleshooting
+
+**Everything is correct and should work, but it does not.**
+
+It may happen that everything is correct and still does not work.  
+A possible reason, although it is unlikely, is that a catalog entry contains
+invisible characters. Such a case was reported [here](https://github.com/rhadamanthe/host-grabber-pp/issues/49).
+Type in the catalog entry from zero, without copy-paste, and test it once again.
