@@ -99,4 +99,11 @@ browser.runtime.onMessage.addListener(request => {
       document.querySelector('#dictionary-url').className = '';
     }, 5000);
   }
+  
+  else if(request.req === 'clear-already-visited-urls-cb') {
+    document.querySelector('#clear-cache-btn').className = 'updated-ok';
+    setTimeout( function() {
+      document.querySelector('#clear-cache-btn').className = '';
+    }, 3000);
+  }
 });

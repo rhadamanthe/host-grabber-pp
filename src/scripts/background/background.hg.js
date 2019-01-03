@@ -86,6 +86,7 @@ browser.runtime.onMessage.addListener(request => {
 
   } else if (request.req === 'clear-already-visited-urls') {
     alreadyVisitedUrls.list.length = 0;
+    notifyOptionsPage({req: 'clear-already-visited-urls-cb'});
   }
 });
 
@@ -212,11 +213,21 @@ function updateDictionary(newDictionary) {
  * @returns {undefined}
  */
 function notifyDictionaryReload(status) {
+  notifyOptionsPage({req: 'dictionary-reload-cb', status: status});
+}
+
+
+/**
+ * Notifies the options page (provided it is open).
+ * @param {object} message A message object.
+ * @returns {undefined}
+ */
+function notifyOptionsPage(message) {
 
   browser.tabs.query({ title: 'Options - HG ++' }).then( function(tabs) {
-    if (tabs.length > 0) {
-      browser.tabs.sendMessage(tabs[0].id, {req: 'dictionary-reload-cb', status: status});
-    }
+    tabs.forEach(function(tab) {
+      browser.tabs.sendMessage(tab.id, message);
+    });
   });
 }
 
