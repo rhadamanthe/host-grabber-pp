@@ -198,17 +198,25 @@ function displayNewProcessors(processors) {
     collapsible.className = 'wrap-collabsible';
     items.appendChild(collapsible);
 
-    var input = document.createElement('input');
-    input.id = processor.id + '-collapsible';
-    input.className = 'toggle';
-    input.type = 'checkbox';
-    collapsible.appendChild(input);
+    var toggleInput = document.createElement('input');
+    toggleInput.id = processor.id + '-collapsible';
+    toggleInput.className = 'toggle';
+    toggleInput.type = 'checkbox';
+    collapsible.appendChild(toggleInput);
 
     var label = document.createElement('label');
     label.htmlFor = processor.id + '-collapsible';
     label.className = 'lbl-toggle col1';
-    label.textContent = processor.matchingUrl;
     collapsible.appendChild(label);
+
+    var link = document.createElement('a');
+    link.textContent = processor.matchingUrl;
+    link.href = processor.matchingUrl;
+    label.appendChild(link);
+    link.addEventListener('click', function(event) {
+      event.preventDefault();
+      toggleInput.checked = ! toggleInput.checked;
+    });
 
     var class_ = findClassNameFromProcessor(processor);
     var p = document.createElement('p');
@@ -222,7 +230,7 @@ function displayNewProcessors(processors) {
     p.onclick = switchCheckedValueForCol3;
     collapsible.appendChild(p);
 
-    input = document.createElement('input');
+    var input = document.createElement('input');
     input.type = 'checkbox';
     input.id = processor.id;
     p.appendChild(input);
@@ -260,10 +268,14 @@ function displayNewLink(processorId, dlLink) {
   var p = document.createElement('p');
   p.className = 'dlLink col11';
   p.id = dlLink.id + '-link';
-  p.textContent = dlLink.link;
   innerContentDiv.appendChild(p);
-
-  p.addEventListener('click', function() {
+  
+  var link = document.createElement('a');
+  link.textContent = dlLink.link;
+  link.href = dlLink.link;
+  p.appendChild(link);
+  link.addEventListener('click', function(event) {
+    event.preventDefault();
     openDownloadItem(dlLink);
   });
 
