@@ -22,7 +22,7 @@ legend {
 
 fieldset {
 	padding: 8px 20px 16px;
-	margin-top: 60px;
+	margin-top: 30px;
 }
 
 input[type=text] {
@@ -32,7 +32,7 @@ input[type=text] {
     border: solid black 1px;
 }
 
-input[type=checkbox] {
+input[type=checkbox], input[type=radio] {
     margin-right: 6px;
 }
 
@@ -126,7 +126,7 @@ p.warning {
 			<button type="button" id="restore-btn" data-i18n="optionsPage_restoreDefaultUrlButton"></button>
 			<button type="button" id="save-btn" data-i18n="optionsPage_saveDictionaryUrlButton"></button>
 
-			<br />
+			<br /><br />
 			<fieldset>
 				<legend data-i18n="optionsPage_cacheSettingsSection"></legend>
 				<button type="button" id="clear-cache-btn" data-i18n="optionsPage_clearCacheButton"></button>
@@ -180,12 +180,34 @@ p.warning {
 				<span data-i18n="optionsPage_maximumParallelDownloadsWarning_1"></span><br />
 				<span data-i18n="optionsPage_maximumParallelDownloadsWarning_2"></span>
 
-				<a href="https://support.mozilla.org/fr/questions/992338" 
+				<a href="https://support.mozilla.org/fr/questions/992338"
 				   data-i18n="optionsPage_maximumParallelDownloadsWarning_3">
 				</a>
 				<span data-i18n="optionsPage_maximumParallelDownloadsWarning_4"></span>
 				</p>
 			</fieldset>
+
+			<fieldset>
+				<legend>Download Directory</legend>
+				<p class="block">
+					Select where and how media files are saved.
+				</p><br />
+
+				<p class="block">
+				<input type="radio" name="dl-strategy" id="dl-strategy-default" value="1" />
+				<label for="dl-strategy-default">Default: save everything in the default download directory</label>
+				<br />
+				<input type="radio" name="dl-strategy" id="dl-strategy-by-domain" value="2" />
+				<label for="dl-strategy-by-domain">By web site: use sub-directories, one per domain name</label>
+				<br />
+				<input type="radio" name="dl-strategy" id="dl-strategy-by-alpha-date" value="3" />
+				<label for="dl-strategy-by-alpha-date">By date: use flat sub-directories, one per day</label>
+				<br />
+				<input type="radio" name="dl-strategy" id="dl-strategy-by-tree-date" value="4" />
+				<label for="dl-strategy-by-tree-date">By date: use hierarchical sub-directories, one per day</label>
+				</p>
+			</fieldset>
+			<br /><br />
 		</form>
 	</div>
 

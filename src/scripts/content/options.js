@@ -27,6 +27,22 @@ function restoreOptions() {
 
     document.querySelector('#remove-successful-dl-from-native-dl-view').checked =
       res.hasOwnProperty('hideSuccessfulDownloadItems') ? res.hideSuccessfulDownloadItems : defaultHideSuccessfulDownloadItems;
+
+    var dlStrategy = res.hasOwnProperty('dlStrategy') ? res.dlStrategy : defaultDlStrategy;
+    switch (dlStrategy) {
+    case DL_STRATEGY_DIR_PER_DOMAIN:
+      document.querySelector('#dl-strategy-by-domain').checked = true;
+      break;
+    case DL_STRATEGY_DIR_PER_ALPHA_DATE:
+      document.querySelector('#dl-strategy-by-alpha-date').checked = true;
+      break;
+    case DL_STRATEGY_DIR_PER_TREE_DATE:
+      document.querySelector('#dl-strategy-by-tree-date').checked = true;
+      break;
+    default:
+      document.querySelector('#dl-strategy-default').checked = true;
+      break;
+    }
   });
 }
 
@@ -47,7 +63,8 @@ var defaultListener = function() {
     dlAlwaysShowViewWhenDlStarts: document.querySelector('#dl-always-show-view-when-dl-starts').checked,
     automaticallyUpdateDictionary: document.querySelector('#automatic-dictionary-update').checked,
     dlCacheDownloadLinks: document.querySelector('#dl-cache-download-links').checked,
-    hideSuccessfulDownloadItems: document.querySelector('#remove-successful-dl-from-native-dl-view').checked
+    hideSuccessfulDownloadItems: document.querySelector('#remove-successful-dl-from-native-dl-view').checked,
+    dlStrategy: parseInt(document.querySelector('input[name="dl-strategy"]:checked').value)
   });
 }
 
@@ -58,6 +75,9 @@ document.querySelector('#dl-always-show-view-when-dl-starts').addEventListener('
 document.querySelector('#automatic-dictionary-update').addEventListener('change', defaultListener);
 document.querySelector('#dl-cache-download-links').addEventListener('change', defaultListener);
 document.querySelector('#remove-successful-dl-from-native-dl-view').addEventListener('change', defaultListener);
+document.querySelectorAll('input[name="dl-strategy"]').forEach(function(radioButton) {
+  radioButton.addEventListener('change', defaultListener);
+});
 
 
 // Callbacks
@@ -99,7 +119,7 @@ browser.runtime.onMessage.addListener(request => {
       document.querySelector('#dictionary-url').className = '';
     }, 5000);
   }
-  
+
   else if(request.req === 'clear-already-visited-urls-cb') {
     document.querySelector('#clear-cache-btn').className = 'updated-ok';
     setTimeout( function() {

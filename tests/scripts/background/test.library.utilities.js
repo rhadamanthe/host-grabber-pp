@@ -263,7 +263,7 @@ describe('background => library.utilities', function() {
 
   it('should prepare a processor for messaging correctly', function(done) {
 
-    var p = newProcessor('http://this.is.the/matching/url', 'search-pattern', []);
+    var p = newProcessor('http://this.is.the/matching/url', 'search-pattern', 'origin url', []);
     p.status = ProcessorStatus.SUCCESS;
     p.downloadLinks.push({
       id: 'i2',
@@ -302,11 +302,140 @@ describe('background => library.utilities', function() {
 
   it('should prepare processors for messaging correctly', function(done) {
 
-    var p1 = newProcessor('http://this.is.the/matching/url', 'search-pattern1', []);
-    var p2 = newProcessor('http://this.is.another/matching/url', 'search-pattern2', []);
+    var p1 = newProcessor('http://this.is.the/matching/url', 'search-pattern1', 'origin url', []);
+    var p2 = newProcessor('http://this.is.another/matching/url', 'search-pattern2', 'origin url', []);
 
     var res = prepareProcessorsForMessaging([ p1, p2 ]);
     expect(res.length).to.eql(2);
+    done();
+  });
+
+
+  it('should verify the building of download options (default strategy)', function(done) {
+
+    var p = newProcessor('http://this.is.the/matching/url', 'search-pattern1', 'https://origin.url/dir');
+    var dlLink = {
+      id: p.id + '-1',
+      link: 'https://web.host.net/directory/file.jpg',
+      status: DlStatus.WAITING
+    };
+
+    var options = buildDownloadOptions(dlLink, p, DL_STRATEGY_DEFAULT);
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/file.jpg');
+    expect(options.filename).to.be(undefined);
+
+    done();
+  });
+
+
+  it('should verify the building of download options (invalid strategy => default)', function(done) {
+
+    var p = newProcessor('http://this.is.the/matching/url', 'search-pattern1', 'https://origin.url/dir');
+    var dlLink = {
+      id: p.id + '-1',
+      link: 'https://web.host.net/directory/file.jpg',
+      status: DlStatus.WAITING
+    };
+
+    var options = buildDownloadOptions(dlLink, p, -87);
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/file.jpg');
+    expect(options.filename).to.be(undefined);
+
+    done();
+  });
+
+
+  it('should verify the building of download options (by domain)', function(done) {
+
+    var p = newProcessor('http://this.is.the/matching/url', 'search-pattern1', 'https://origin.url/dir');
+    var dlLink = {
+      id: p.id + '-1',
+      link: 'https://web.host.net/directory/file.jpg',
+      status: DlStatus.WAITING
+    };
+
+    var options = buildDownloadOptions(dlLink, p, DL_STRATEGY_DIR_PER_DOMAIN);
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/file.jpg');
+    expect(options.filename).to.be('origin.url/file.jpg');
+
+    done();
+  });
+
+
+  it('should verify the building of download options (by domain, with www. and complex URL)', function(done) {
+
+    var p = newProcessor('http://this.is.the/matching/url', 'search-pattern1', 'https://www.origin.url/dir');
+    var dlLink = {
+      id: p.id + '-1',
+      link: 'https://web.host.net/directory/index.php#anchor?file.jpg',
+      status: DlStatus.WAITING
+    };
+
+    var options = buildDownloadOptions(dlLink, p, DL_STRATEGY_DIR_PER_DOMAIN);
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/index.php#anchor?file.jpg');
+    expect(options.filename).to.be('origin.url/index.php');
+
+    done();
+  });
+
+
+  it('should verify the building of download options (by alpha date)', function(done) {
+
+    var p = newProcessor('http://this.is.the/matching/url', 'search-pattern1', 'https://www.origin.url/dir');
+    var dlLink = {
+      id: p.id + '-1',
+      link: 'https://web.host.net/directory/index.php?file.jpg#anchor',
+      status: DlStatus.WAITING
+    };
+
+    var now = new Date();
+    var options = buildDownloadOptions(dlLink, p, DL_STRATEGY_DIR_PER_ALPHA_DATE);
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
+    expect(options.filename).to.be(formatDateForDl(now, '-') + '/index.php');
+
+    done();
+  });
+
+
+  it('should verify the building of download options (by tree date)', function(done) {
+
+    var p = newProcessor('http://this.is.the/matching/url', 'search-pattern1', 'https://www.origin.url/dir');
+    var dlLink = {
+      id: p.id + '-1',
+      link: 'https://web.host.net/directory/index.php?file.jpg#anchor',
+      status: DlStatus.WAITING
+    };
+
+    var now = new Date();
+    var options = buildDownloadOptions(dlLink, p, DL_STRATEGY_DIR_PER_TREE_DATE);
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
+    expect(options.filename).to.be(formatDateForDl(now, '/') + '/index.php');
+
+    done();
+  });
+
+
+  it('should verify the formatting of dates for Downloads', function(done) {
+
+    var date = new Date(2018, 10, 30);
+    var fDate = formatDateForDl(date, '/');
+    expect(fDate).to.eql('2018/11/30');
+
+    date = new Date(2016, 0, 2);
+    fDate = formatDateForDl(date, '**');
+    expect(fDate).to.eql('2016**01**02');
     done();
   });
 });

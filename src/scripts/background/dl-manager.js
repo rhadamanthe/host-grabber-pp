@@ -10,6 +10,7 @@ function newDlManager(queue) {
     waitingDownloads: [],
     ongoingDownloadsCpt: 0,
     maxDownloadLimit: -1,
+    dlStrategy: 0,
     hideSuccessfulDownloadItems: true,
     onDonwloadComplete: onDonwloadComplete,
     startDownload: startDownload,
@@ -18,19 +19,28 @@ function newDlManager(queue) {
 
 
   // Get the right value from the preferences
-  browser.storage.local.get(['dlMaxParallel', 'hideSuccessfulDownloadItems']).then((res) => {
+  browser.storage.local.get(['dlMaxParallel', 'hideSuccessfulDownloadItems', 'dlStrategy']).then((res) => {
     dlManager.maxDownloadLimit = res.dlMaxParallel || defaultDlMaxParallel;
     dlManager.hideSuccessfulDownloadItems = res.hideSuccessfulDownloadItems || defaultHideSuccessfulDownloadItems;
+    dlManager.dlStrategy = res.dlStrategy || defaultDlStrategy;
   });
 
-  // Listen to changes for this preference
+  // Listen to changes for these preferences
   browser.storage.onChanged.addListener(function(changes, area) {
-    if (area === 'local') {
-      if (changes.hasOwnProperty( 'dlMaxParallel' )) {
-        dlManager.maxDownloadLimit = changes.dlMaxParallel.newValue;
-      } else if (changes.hasOwnProperty( 'hideSuccessfulDownloadItems' )) {
-        dlManager.hideSuccessfulDownloadItems = changes.hideSuccessfulDownloadItems.newValue;
-      }
+    if (area !== 'local') {
+      return;
+    }
+
+    if (changes.hasOwnProperty( 'dlMaxParallel' )) {
+      dlManager.maxDownloadLimit = changes.dlMaxParallel.newValue;
+    }
+
+    if (changes.hasOwnProperty( 'hideSuccessfulDownloadItems' )) {
+      dlManager.hideSuccessfulDownloadItems = changes.hideSuccessfulDownloadItems.newValue;
+    }
+
+    if (changes.hasOwnProperty( 'dlStrategy' )) {
+      dlManager.dlStrategy = changes.dlStrategy.newValue;
     }
   });
 
@@ -136,14 +146,9 @@ function newDlManager(queue) {
     dlManager.ongoingDownloadsCpt ++;
 
     // Start the download
-    var options = {
-      conflictAction: 'uniquify',
-      url: linkObject.link,
-      saveAs: false
-    };
+    var options = buildDownloadOptions(linkObject, processor, dlManager.dlStrategy);
 
     // Bug in Chrome: https://bugs.chromium.org/p/chromium/issues/detail?id=417112
-
     var downloading = browser.downloads.download(options).then( function(downloadItemId) {
       // Register the download
       dlManager.downloadIdToLinkObject.set(downloadItemId, linkObject);

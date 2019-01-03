@@ -261,3 +261,66 @@ function buildDomainPattern(domain) {
 function pageUrlMatches(pageUrl, domainPattern) {
   return pageUrl.match( '^' + domainPattern + '($|/).*');
 }
+
+
+/**
+ * Builds the download options for the browser API.
+ * @param {object} linkObject A link object.
+ * @param {object} processor A processor object.
+ * @param {integer} strategy The download strategy.
+ * @returns {object} The download options, as an object.
+ */
+function buildDownloadOptions(linkObject, processor, strategy) {
+
+  var options = {
+    conflictAction: 'uniquify',
+    url: linkObject.link,
+    saveAs: false
+  };
+
+  // The real question is whether we download in a sub-directory
+  var subDir = '';
+  var now = new Date();
+  if (strategy === DL_STRATEGY_DIR_PER_DOMAIN ) {
+    subDir = new URL(processor.originUrl).hostname.replace('www.', '') + '/';
+
+  } else if (strategy === DL_STRATEGY_DIR_PER_ALPHA_DATE) {
+    subDir = formatDateForDl(now, '-') + '/';
+
+  } else if (strategy === DL_STRATEGY_DIR_PER_TREE_DATE) {
+    subDir = formatDateForDl(now, '/') + '/';
+  }
+
+  // When there is a sub-directory, we need to specify the file name
+  if (subDir !== '') {
+    var name = linkObject.link.split('/').pop().split('#')[0].split('?')[0];
+    options.filename = subDir + name;
+  }
+
+  return options;
+}
+
+
+/**
+ * Formats a date nicely for download directories.
+ * @param {object} date A date.
+ * @param {string} separator A separator to insert around the month number.
+ * @returns {string} A formatted date.
+ */
+function formatDateForDl(date, separator) {
+
+  var res = date.getFullYear() + separator;
+  var temp = (date.getMonth() + 1);
+  if (temp < 10) {
+    res += '0';
+  }
+
+  res += temp + separator;
+  temp = date.getDate();
+  if (temp < 10) {
+    res += '0';
+  }
+
+  res += temp;
+  return res;
+}

@@ -269,7 +269,7 @@ function displayNewLink(processorId, dlLink) {
   p.className = 'dlLink col11';
   p.id = dlLink.id + '-link';
   innerContentDiv.appendChild(p);
-  
+
   var link = document.createElement('a');
   link.textContent = dlLink.link;
   link.href = dlLink.link;

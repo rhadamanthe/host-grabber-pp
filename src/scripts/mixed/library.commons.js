@@ -1,3 +1,26 @@
+// Download strategies
+
+/**
+ * Download everything in the default directory.
+ */
+const DL_STRATEGY_DEFAULT = 1;
+
+/**
+ * Dispatch downloads in sub-directories, one per domain.
+ */
+const DL_STRATEGY_DIR_PER_DOMAIN = 2;
+
+/**
+ * Dispatch downloads in sub-directories, one per day (alphabetical).
+ */
+const DL_STRATEGY_DIR_PER_ALPHA_DATE = 3;
+
+/**
+ * Dispatch downloads in sub-directories, one per day (hierarchical).
+ */
+const DL_STRATEGY_DIR_PER_TREE_DATE = 4;
+
+
 // Default values for preferences
 
 const defaultDictionaryUrl = 'https://raw.githubusercontent.com/rhadamanthe/host-grabber-pp-host.xml/master/hosts.xml';
@@ -9,9 +32,10 @@ const defaultDlMoveDownloadViewWhenDlStarts = true;
 const defaultAutomaticallyUpdateDictionary = true;
 const defaultDlCacheDownloadLinks = true;
 const defaultHideSuccessfulDownloadItems = true;
+const defaultDlStrategy = DL_STRATEGY_DEFAULT;
 
 
-// Constants
+// Other constants
 
 const ProcessorStatus = {
   WAITING: 1,

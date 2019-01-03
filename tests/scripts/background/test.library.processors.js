@@ -632,8 +632,9 @@ describe('background => library.processors', function() {
 
   it('should create new processors correctly', function(done) {
 
-    var np = newProcessor('the url', 'the search pattern');
+    var np = newProcessor('the url', 'the search pattern', 'originUrl');
     expect(np.matchingUrl).to.eql('the url');
+    expect(np.originUrl).to.eql('originUrl');
     expect(np.searchPattern).to.eql('the search pattern');
     expect(np.extMethod).to.eql(0);
     expect(np.status).to.eql(ProcessorStatus.WAITING);
@@ -641,8 +642,9 @@ describe('background => library.processors', function() {
     expect(!! np.id).to.be(true);
     expect(np.interceptors).to.eql([]);
 
-    np = newProcessor('the url', 'Self', [{replace: 'ok', by: 'that'}]);
+    np = newProcessor('the url', 'Self', 'origin Url', [{replace: 'ok', by: 'that'}]);
     expect(np.matchingUrl).to.eql('the url');
+    expect(np.originUrl).to.eql('origin Url');
     expect(np.searchPattern).to.eql('Self');
     expect(np.extMethod).to.eql(ExtMethods.SELF.id);
     expect(np.status).to.eql(ProcessorStatus.WAITING);
@@ -708,7 +710,7 @@ describe('background => library.processors', function() {
 
   it('should handle processors correctly (SELF)', function(done) {
 
-    var p = newProcessor('http://tutu.com/some-image.jpg', 'self');
+    var p = newProcessor('http://tutu.com/some-image.jpg', 'self', 'origin url');
     var idleFn = function() {};
     var queue = {
       modified: false,
@@ -741,7 +743,7 @@ describe('background => library.processors', function() {
 
   it('should handle processors correctly (REPLACE)', function(done) {
 
-    var p = newProcessor('http://tutu.com/some-page.html', 'replace: \'html\', \'jpg\'');
+    var p = newProcessor('http://tutu.com/some-page.html', 'replace: \'html\', \'jpg\'', 'origin url');
     var idleFn = function() {};
     var queue = {
       modified: false,
@@ -986,7 +988,7 @@ describe('background => library.processors', function() {
   // Instead, we return a promise. If it fails, it will fail the test.
   it('should handle processors correctly (CLASS)', function() {
 
-    var p = newProcessor('test', 'class: toto');
+    var p = newProcessor('test', 'class: toto', 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
 
     var idleFn = function() {};
@@ -1029,7 +1031,7 @@ describe('background => library.processors', function() {
   // Instead, we return a promise. If it fails, it will fail the test.
   it('should handle processors correctly (CLASS with unreachable remote page)', function() {
 
-    var p = newProcessor('test', 'class: toto');
+    var p = newProcessor('test', 'class: toto', 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/it.does.not.exist.html';
 
     var idleFn = function() {};
@@ -1066,7 +1068,7 @@ describe('background => library.processors', function() {
   // Instead, we return a promise. If it fails, it will fail the test.
   it('should handle processors correctly (CLASS with no found link)', function() {
 
-    var p = newProcessor('test', 'class: toto');
+    var p = newProcessor('test', 'class: toto', 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
 
     var idleFn = function() {};
@@ -1103,7 +1105,7 @@ describe('background => library.processors', function() {
   // Instead, we return a promise. If it fails, it will fail the test.
   it('should handle processors correctly (ID)', function() {
 
-    var p = newProcessor('test', 'id: toto');
+    var p = newProcessor('test', 'id: toto', 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
 
     var idleFn = function() {};
@@ -1143,7 +1145,7 @@ describe('background => library.processors', function() {
   // Instead, we return a promise. If it fails, it will fail the test.
   it('should handle processors correctly (XPATH with cache for visited URLs)', function() {
 
-    var p = newProcessor('test', 'xpath: //test');
+    var p = newProcessor('test', 'xpath: //test', 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
 
     var idleFn = function() {};
@@ -1184,7 +1186,7 @@ describe('background => library.processors', function() {
   // Instead, we return a promise. If it fails, it will fail the test.
   it('should handle processors correctly (XPATH and no cache for visited URLs)', function() {
 
-    var p = newProcessor('test', 'xpath: //test');
+    var p = newProcessor('test', 'xpath: //test', 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
 
     var idleFn = function() {};
@@ -1228,7 +1230,7 @@ describe('background => library.processors', function() {
 
   it('should handle processors correctly (EXPREG)', function() {
 
-    var p = newProcessor('test', 'expreg: src="([^)]+)"');
+    var p = newProcessor('test', 'expreg: src="([^)]+)"', 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
 
     var idleFn = function() {};
@@ -1266,7 +1268,7 @@ describe('background => library.processors', function() {
 
   it('should handle processors correctly (remote document is not a valid one)', function() {
 
-    var p = newProcessor('test', 'xpath: //test');
+    var p = newProcessor('test', 'xpath: //test', 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/simple.txt';
 
     var idleFn = function() {};
@@ -1292,7 +1294,7 @@ describe('background => library.processors', function() {
 
   it('should handle processors correctly (invalid strategy)', function() {
 
-    var p = newProcessor('test', 'this is invalid');
+    var p = newProcessor('test', 'this is invalid', 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
 
     var idleFn = function() {};

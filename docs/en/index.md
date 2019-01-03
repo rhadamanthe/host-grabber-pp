@@ -33,6 +33,8 @@ options that existed before.
 
 <img src="../assets/images/options-view--v0.5.jpg" alt="The options page" class="screenshot" />
 
+<img src="../assets/images/options-view--v0.7.jpg" alt="The options page (following)" class="screenshot" />
+
 
 ## Installation
 
@@ -90,6 +92,8 @@ of active connections towards a same server (by default,
 [this value](https://support.mozilla.org/fr/questions/992338) is 6).
 * **Cache download links during sessions**: this option prevents a same file from being downloaded
 several times during a same session. The cache can be cleared or even disabled.
+* **Download directory**: by default, everything is downloaded in the same directory.
+But it is also possible to dispatch files in sub-directories (by domain or by date).
 
 
 ## Notice

@@ -32,6 +32,8 @@ avec quelques différences:
 
 <img src="../assets/images/options-view--v0.5.jpg" alt="La page d'options" class="screenshot" />
 
+<img src="../assets/images/options-view--v0.7.jpg" alt="La page d'options (suite)" class="screenshot" />
+
 
 ## Installation
 
@@ -90,7 +92,9 @@ le nombre de téléchargements lancés par HG ++. Il faut noter aussi que Firefo
 façon le nombre de connexions simultanées vers un même serveur (par défaut,
 [cette valeur](https://support.mozilla.org/fr/questions/992338) vaut 6).
 * **Activer le cache de session** : cette option empêche un même fichier d'être téléchargé plusieurs fois
-lors d'une même session. Ce cache peut être vidé, et même désactivé. 
+lors d'une même session. Ce cache peut être vidé, et même désactivé.
+* **Répertoire de téléchargement** : par défaut, tout est téléchargé dans le même répertoire.
+Mais il est possible de répartir les fichiers dans des sous-dissiers (par domaine ou par date).
 
 
 ## Remarque

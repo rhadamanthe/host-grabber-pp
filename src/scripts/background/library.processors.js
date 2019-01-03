@@ -44,7 +44,7 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
       if (item.pathPattern === globalCurrent
             && pageUrlMatches(url, domainPattern)) {
 
-        var p = newProcessor(url, item.searchPattern, item.interceptors2);
+        var p = newProcessor(url, item.searchPattern, url, item.interceptors2);
         p.xmlDoc = sourceDocument;
         processors.push(p);
       }
@@ -84,7 +84,7 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
 
           // Save the processor
           preventDuplicatesForOneDictionaryItem.push(fixedLink);
-          var p = newProcessor(fixedLink, item.searchPattern, item.interceptors2);
+          var p = newProcessor(fixedLink, item.searchPattern, url, item.interceptors2);
           processors.push(p);
         }
       });
@@ -99,13 +99,15 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
  * Builds a new processor.
  * @param {string} matchingUrl The URL of the link that was found.
  * @param {string} searchPattern The search pattern associated.
+ * @param {string} originUrl The URL of the page that was explored.
  * @param {array} interceptors An array of interceptors to update found URLs.
  * @returns {object} A new processor.
  */
-function newProcessor(matchingUrl, searchPattern, interceptors) {
+function newProcessor(matchingUrl, searchPattern, originUrl, interceptors) {
   return {
     id: uuid(),
     matchingUrl: matchingUrl,
+    originUrl: originUrl,
     searchPattern: searchPattern,
     extMethod: findExtractionMethod(searchPattern),
     status: ProcessorStatus.WAITING,
