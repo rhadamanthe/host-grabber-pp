@@ -78,7 +78,7 @@
     "message": "Open the download view when it is closed and that a download starts",
     "description": "The label for this option (options page)"
   },
-  
+
   "optionsPage_alwaysShowViewWhenDlStarts": {
     "message": "Always open the download view when a download starts",
     "description": "The label for this option (options page)"
@@ -112,6 +112,36 @@
   "optionsPage_maximumParallelDownloadsWarning_4": {
     "message": "for more details. This setting allows to limit the number of simultaneous downloads started by this extension. Other items will be downloaded after the previous ones complete.",
     "description": "A part of the warning message for the 'maximum number of parallel downloads' option (options page)"
+  },
+
+  "optionsPage_downloadDirectorySection": {
+    "message": "Download Directory",
+    "description": "The label for the 'Download Directory' section (options page)"
+  },
+
+  "optionsPage_downloadDirectorySectionComment": {
+    "message": "Select where and how media files are saved.",
+    "description": "The explanation for the 'Download Directory' section (options page)"
+  },
+
+  "optionsPage_dlStrategyRadio_default": {
+    "message": "Default: save everything in the same directory",
+    "description": "The label for this option (options page)"
+  },
+
+  "optionsPage_dlStrategyRadio_byDomain": {
+    "message": "By web site: use sub-directories, one per domain name",
+    "description": "The label for this option (options page)"
+  },
+
+  "optionsPage_dlStrategyRadio_byAlphaDate": {
+    "message": "By date: use flat sub-directories, one per day",
+    "description": "The label for this option (options page)"
+  },
+
+  "optionsPage_dlStrategyRadio_byTreeDate": {
+    "message": "By date: use hierarchical sub-directories, one per day",
+    "description": "The label for this option (options page)"
   },
 
   "dlPage_elementToExploreColumn": {
@@ -183,7 +213,7 @@
     "message": "Restart Downloads",
     "description": "The label for the 'restart downloads' tooltip (download page)"
   },
-  
+
   "dlPage_selectAllAction": {
     "message": "Select All",
     "description": "The label for the 'select all' action (download page)"
@@ -193,7 +223,7 @@
     "message": "Select all the items",
     "description": "The label for the 'select all' tooltip (download page)"
   },
-  
+
   "dlPage_unselectAllAction": {
     "message": "Unselect All",
     "description": "The label for the 'unselect all' action (download page)"

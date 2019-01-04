@@ -73,12 +73,12 @@
     "message": "Enlever automatiquement les téléchargements complétés avec succès",
     "description": "L'étiquette pour cette option (page d'options)"
   },
-  
+
   "optionsPage_showViewWhenDlStarts": {
     "message": "Ouvrir la vue des téléchargements quand elle est fermée et qu'un téléchargement démarre",
     "description": "L'étiquette pour cette option (page d'options)"
   },
-  
+
   "optionsPage_alwaysShowViewWhenDlStarts": {
     "message": "Toujours ouvrir la vue des téléchargements quand un téléchargement démarre",
     "description": "L'étiquette pour cette option (page d'options)"
@@ -112,6 +112,36 @@
   "optionsPage_maximumParallelDownloadsWarning_4": {
     "message": "pour de plus amples informations (en anglais). Ce paramètre permet de limiter le nombre de total de téléchargements lancés en parallèle par cette extension. Les autres éléments seront téléchargés après que les précédents aient terminé.",
     "description": "Une partie de l'avertissement associé à l'option 'nombre maximum de téléchargements simultanés' (page d'options)"
+  },
+
+  "optionsPage_downloadDirectorySection": {
+    "message": "Répertoire de Téléchargement",
+    "description": "L'étiquette pour la section 'Répertoire de Téléchargement' (page d'options)"
+  },
+
+  "optionsPage_downloadDirectorySectionComment": {
+    "message": "Définir où et comment les fichiers média seront téléchargés.",
+    "description": "L'explication pour la section 'Répertoire de Téléchargement' (page d'options)"
+  },
+
+  "optionsPage_dlStrategyRadio_default": {
+    "message": "Défaut : tout sauvegarder dans le même répertoire de téléchargement",
+    "description": "L'étiquette pour cette option (page d'options)"
+  },
+
+  "optionsPage_dlStrategyRadio_byDomain": {
+    "message": "Par site web : utilisation de sous-répertoires, un par nom de domaine",
+    "description": "L'étiquette pour cette option (page d'options)"
+  },
+
+  "optionsPage_dlStrategyRadio_byAlphaDate": {
+    "message": "Par date : utilisation de sous-répertoires, un par jour",
+    "description": "L'étiquette pour cette option (page d'options)"
+  },
+
+  "optionsPage_dlStrategyRadio_byTreeDate": {
+    "message": "Par date : utilisation de sous-répertoires hiérarchiques, un par jour",
+    "description": "L'étiquette pour cette option (page d'options)"
   },
 
   "dlPage_elementToExploreColumn": {
@@ -193,7 +223,7 @@
     "message": "Sélectionner tous les items",
     "description": "L'étiquette pour l'info-bulle de l'action 'tout sélectionner' (page de téléchargement)"
   },
-  
+
   "dlPage_unselectAllAction": {
     "message": "Tout Désélectionner",
     "description": "L'étiquette pour l'action 'tout désélectionner' (page de téléchargement)"
