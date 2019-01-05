@@ -324,3 +324,29 @@ function formatDateForDl(date, separator) {
   res += temp;
   return res;
 }
+
+
+/**
+ * Verifies whether a download item seems valid.
+ * @param {object} downloadItem A  download item.
+ * @returns {object} An error object.
+ * <p>
+ * If the error code is 0, then no error was found.<br />
+ * Otherwise, this code is a DlStatus constant.
+ * </p>
+ */
+function verifyDownloadedItem(downloadItem) {
+
+  var error = { code: 0 };
+  if (!! downloadItem.mime && downloadItem.mime.startsWith('text/')) {
+    error.code = DlStatus.INVALID_MIME_TYPE;
+    error.details = downloadItem.mime;
+
+  } else if (!! downloadItem.fileSize
+      && downloadItem.fileSize !== -1
+      && downloadItem.fileSize < 3 * 1024) {
+    error.code = DlStatus.UNEXPECTED_SMALL_SIZE;
+  }
+
+  return error;
+}

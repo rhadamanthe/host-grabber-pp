@@ -438,4 +438,40 @@ describe('background => library.utilities', function() {
     expect(fDate).to.eql('2016**01**02');
     done();
   });
+
+
+
+  it('should be able to verify download items', function(done) {
+
+    var downloadItem = {};
+    downloadItem.fileSize = 5874;
+    downloadItem.mime = 'image/jpeg';
+
+    var analysisResult = verifyDownloadedItem(downloadItem);
+    expect(analysisResult.code).to.eql(0);
+
+    downloadItem.mime = 'text/html';
+    analysisResult = verifyDownloadedItem(downloadItem);
+    expect(analysisResult.code).to.eql(DlStatus.INVALID_MIME_TYPE);
+    expect(analysisResult.details).to.eql('text/html');
+
+    downloadItem.fileSize = 1874;
+    downloadItem.mime = 'image/jpeg';
+    analysisResult = verifyDownloadedItem(downloadItem);
+    expect(analysisResult.code).to.eql(DlStatus.UNEXPECTED_SMALL_SIZE);
+
+    delete downloadItem.fileSize;
+    downloadItem.mime = 'image/jpeg';
+    analysisResult = verifyDownloadedItem(downloadItem);
+    expect(analysisResult.code).to.eql(0);
+
+    delete downloadItem.mime;
+    analysisResult = verifyDownloadedItem(downloadItem);
+    expect(analysisResult.code).to.eql(0);
+
+    downloadItem.fileSize = -1;
+    analysisResult = verifyDownloadedItem(downloadItem);
+    expect(analysisResult.code).to.eql(0);
+    done();
+  });
 });

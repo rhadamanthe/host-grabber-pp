@@ -8,7 +8,9 @@ describe('donwload view => list.functions', function() {
     expect(findClassNameFromStatus({status: 2})).to.eql('success');
     expect(findClassNameFromStatus({status: 3})).to.eql('failure');
     expect(findClassNameFromStatus({status: 4})).to.eql('downloading');
-    expect(findClassNameFromStatus({status: 5})).to.eql('');
+    expect(findClassNameFromStatus({status: 5})).to.eql('invalid-mime-type');
+    expect(findClassNameFromStatus({status: 6})).to.eql('unexpected-small-size');
+    expect(findClassNameFromStatus({status: 5748})).to.eql('');
     done();
   });
 
@@ -72,6 +74,17 @@ describe('donwload view => list.functions', function() {
     var processor = {
       status: 0,
       downloadLinks: [{status: 2}, {status: 3}, {status: 2}]
+    };
+
+    expect(findClassNameFromProcessor(processor)).to.eql('mixed');
+    done();
+  });
+
+
+  it('should find class names from a processor (some success and some invalid MIME type)', function(done) {
+    var processor = {
+      status: 0,
+      downloadLinks: [{status: 2}, {status: 5}, {status: 2}]
     };
 
     expect(findClassNameFromProcessor(processor)).to.eql('mixed');

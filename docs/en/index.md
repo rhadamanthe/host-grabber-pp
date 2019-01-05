@@ -38,7 +38,10 @@ options that existed before.
 
 ## Installation
 
-You can install it from [addons.mozilla.org](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/).
+You can install it from [addons.mozilla.org](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/).  
+From the version 0.7, a side-panel shows up the first time.
+You can close it without worrying about it. By default, Firefox opens the side-panel
+of every newly-installed extension that has one.
 
 
 ## Known Problems

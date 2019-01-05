@@ -68,12 +68,28 @@ function newDlManager(queue) {
 
     // So, this is a download we started
     if (downloadDelta.state.current === 'complete') {
-      linkObject.status = DlStatus.SUCCESS;
-      updateProcessorInDownloadView(linkObject.processor);
 
-      if (dlManager.hideSuccessfulDownloadItems) {
-        browser.downloads.erase({id: downloadDelta.id});
-      }
+      // Is the MIME type valid? Or more exactly, not invalid.
+      // The download delta does not hold this information, get the download item.
+      browser.downloads.search({id: downloadDelta.id}).then(function(ditems) {
+
+        if (ditems.length === 0) {
+          return;
+        }
+
+        var simpleAnalysis = verifyDownloadedItem(ditems[ 0 ]);
+        if (simpleAnalysis.code === 0) {
+          linkObject.status = DlStatus.SUCCESS;
+          if (dlManager.hideSuccessfulDownloadItems) {
+            browser.downloads.erase({id: ditems[ 0 ].id});
+          }
+        } else {
+          linkObject.status = simpleAnalysis.code;
+        }
+
+        // Update the status in the view
+        updateProcessorInDownloadView(linkObject.processor);
+      });
 
     } else if (downloadDelta.state.current === 'interrupted') {
       linkObject.status = DlStatus.FAILURE;
@@ -81,6 +97,7 @@ function newDlManager(queue) {
     }
 
     // Process a new item?
+    // No need to wait for the search promise to complete.
     if (dlManager.downloadIdToLinkObject.delete(downloadDelta.id)) {
        // One download stopped
       dlManager.ongoingDownloadsCpt --;

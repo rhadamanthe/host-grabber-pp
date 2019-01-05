@@ -37,7 +37,10 @@ avec quelques différences:
 
 ## Installation
 
-Vous pouvez installer cette extension depuis [addons.mozilla.org](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/).
+Vous pouvez installer cette extension depuis [addons.mozilla.org](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/).    
+A partir de la version 0.7, un panneau latéral s'ouvre la première fois.
+Vous pouvez le fermer sans inquiétude. Par défaut, Firefox ouvre le panneau latéral de
+toute extension nouvellement installée qui en aurait un.
 
 
 ## Problèmes Connus
