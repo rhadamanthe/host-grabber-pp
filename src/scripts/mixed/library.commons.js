@@ -54,7 +54,8 @@ const DlStatus = {
   FAILURE: 3,
   DOWNLOADING: 4,
   INVALID_MIME_TYPE: 5,
-  UNEXPECTED_SMALL_SIZE: 6
+  UNEXPECTED_SMALL_SIZE: 6,
+  ALREADY_DOWNLOADED: 7
 };
 
 const supportedDictionarySpecs = ['1.0'];

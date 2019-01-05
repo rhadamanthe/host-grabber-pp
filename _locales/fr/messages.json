@@ -279,6 +279,11 @@
     "description": ""
   },
 
+  "already-downloaded": {
+    "message": "Déjà trouvé / téléchargé",
+    "description": ""
+  },
+
   "unexpected-small-size": {
     "message": "Taille de fichier inattendue",
     "description": ""

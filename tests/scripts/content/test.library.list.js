@@ -4,12 +4,13 @@ describe('donwload view => list.functions', function() {
 
   it('should find class names from a download link', function(done) {
 
-    expect(findClassNameFromStatus({status: 1})).to.eql('waiting');
-    expect(findClassNameFromStatus({status: 2})).to.eql('success');
-    expect(findClassNameFromStatus({status: 3})).to.eql('failure');
-    expect(findClassNameFromStatus({status: 4})).to.eql('downloading');
-    expect(findClassNameFromStatus({status: 5})).to.eql('invalid-mime-type');
-    expect(findClassNameFromStatus({status: 6})).to.eql('unexpected-small-size');
+    expect(findClassNameFromStatus({status: DlStatus.WAITING})).to.eql('waiting');
+    expect(findClassNameFromStatus({status: DlStatus.SUCCESS})).to.eql('success');
+    expect(findClassNameFromStatus({status: DlStatus.FAILURE})).to.eql('failure');
+    expect(findClassNameFromStatus({status: DlStatus.DOWNLOADING})).to.eql('downloading');
+    expect(findClassNameFromStatus({status: DlStatus.INVALID_MIME_TYPE})).to.eql('invalid-mime-type');
+    expect(findClassNameFromStatus({status: DlStatus.UNEXPECTED_SMALL_SIZE})).to.eql('unexpected-small-size');
+    expect(findClassNameFromStatus({status: DlStatus.ALREADY_DOWNLOADED})).to.eql('already-downloaded');
     expect(findClassNameFromStatus({status: 5748})).to.eql('');
     done();
   });
@@ -40,7 +41,7 @@ describe('donwload view => list.functions', function() {
   it('should find class names from a processor (all failed)', function(done) {
     var processor = {
       status: 0,
-      downloadLinks: [{status: 3}, {status: 3}]
+      downloadLinks: [{status: DlStatus.FAILURE}, {status: DlStatus.FAILURE}]
     };
 
     expect(findClassNameFromProcessor(processor)).to.eql('failure');
@@ -51,7 +52,7 @@ describe('donwload view => list.functions', function() {
   it('should find class names from a processor (all succeeded)', function(done) {
     var processor = {
       status: 0,
-      downloadLinks: [{status: 2}, {status: 2}]
+      downloadLinks: [{status: DlStatus.SUCCESS}, {status: DlStatus.SUCCESS}]
     };
 
     expect(findClassNameFromProcessor(processor)).to.eql('success');
@@ -62,7 +63,7 @@ describe('donwload view => list.functions', function() {
   it('should find class names from a processor (some are still waiting)', function(done) {
     var processor = {
       status: 0,
-      downloadLinks: [{status: 2}, {status: 1}, {status: 3}]
+      downloadLinks: [{status: DlStatus.SUCCESS}, {status: 1}, {status: DlStatus.FAILURE}]
     };
 
     expect(findClassNameFromProcessor(processor)).to.eql('waiting');
@@ -73,7 +74,7 @@ describe('donwload view => list.functions', function() {
   it('should find class names from a processor (some success and some failures)', function(done) {
     var processor = {
       status: 0,
-      downloadLinks: [{status: 2}, {status: 3}, {status: 2}]
+      downloadLinks: [{status: DlStatus.SUCCESS}, {status: DlStatus.FAILURE}, {status: DlStatus.SUCCESS}]
     };
 
     expect(findClassNameFromProcessor(processor)).to.eql('mixed');
@@ -84,10 +85,21 @@ describe('donwload view => list.functions', function() {
   it('should find class names from a processor (some success and some invalid MIME type)', function(done) {
     var processor = {
       status: 0,
-      downloadLinks: [{status: 2}, {status: 5}, {status: 2}]
+      downloadLinks: [{status: DlStatus.SUCCESS}, {status: DlStatus.INVALID_MIME_TYPE}, {status: DlStatus.SUCCESS}]
     };
 
     expect(findClassNameFromProcessor(processor)).to.eql('mixed');
+    done();
+  });
+
+
+  it('should find class names from a processor (some success and some already downloaded)', function(done) {
+    var processor = {
+      status: 0,
+      downloadLinks: [{status: DlStatus.SUCCESS}, {status: DlStatus.ALREADY_DOWNLOADED}, {status: DlStatus.SUCCESS}]
+    };
+
+    expect(findClassNameFromProcessor(processor)).to.eql('success');
     done();
   });
 });

@@ -143,15 +143,24 @@ function newDlManager(queue) {
    */
   function startDownload(linkObject, processor) {
 
+    // Only waiting links have to be considered
+    // (VS. already downloaded)
+    if (linkObject.status !== DlStatus.WAITING) {
+      updateProcessorInDownloadView(processor);
+      queue.processNextItem();
+      return;
+    }
+
     // Can we start the download right now?
     // Or should we make it wait?
     if (dlManager.maxDownloadLimit > 0 &&
-        dlManager.ongoingDownloadsCpt >= dlManager.maxDownloadLimit) {
+          dlManager.ongoingDownloadsCpt >= dlManager.maxDownloadLimit) {
 
       dlManager.waitingDownloads.push({
         link: linkObject,
         processor: processor
       });
+
       return;
     }
 

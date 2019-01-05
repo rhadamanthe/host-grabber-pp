@@ -15,6 +15,7 @@ function findClassNameFromStatus(dlLink) {
   case DlStatus.INVALID_MIME_TYPE: result = 'invalid-mime-type'; break;
   case DlStatus.UNEXPECTED_SMALL_SIZE: result = 'unexpected-small-size'; break;
   case DlStatus.DOWNLOADING: result = 'downloading'; break;
+  case DlStatus.ALREADY_DOWNLOADED: result = 'already-downloaded'; break;
   }
 
   return result;
@@ -32,6 +33,7 @@ function findClassNameFromProcessor(processor) {
     switch(dlLink.status) {
     case DlStatus.FAILURE:  ko ++; break;
     case DlStatus.SUCCESS: result = ok ++; break;
+    case DlStatus.ALREADY_DOWNLOADED: result = ok ++; break;
     case DlStatus.WAITING: result = waiting ++; break;
     default: /* We do not care about invalid, etc). */ break;
     }

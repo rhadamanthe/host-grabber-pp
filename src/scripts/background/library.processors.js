@@ -188,6 +188,7 @@ function onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorI
 
   // If we have links, let things go on
   if (!! links && links.length > 0) {
+    var avoidDuplicatesInThisProcessor = [];
     links.forEach( function(link, index) {
 
       // A found link might be relative.
@@ -200,20 +201,28 @@ function onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorI
         fixedLink = fixedLink.replace(interceptorRegex, interceptor.by);
       });
 
-      // Was the link already downloaded?
-      if (alreadyVisitedUrls.enabled && alreadyVisitedUrls.list.indexOf(fixedLink) !== -1) {
+      // Did we already find it in this processor?
+      // Stop here.
+      if (avoidDuplicatesInThisProcessor.indexOf(fixedLink) !== -1) {
         return;
       }
 
-      // Add the download link
+      avoidDuplicatesInThisProcessor.push(fixedLink);
+
+      // Was the link already downloaded or found in another processor?
+      // Keep it and mark it, so that the user understands.
+      var already = false;
       if (alreadyVisitedUrls.enabled) {
-        alreadyVisitedUrls.list.push(fixedLink);
+        already = alreadyVisitedUrls.list.indexOf(fixedLink) !== -1;
+        if (! already) {
+          alreadyVisitedUrls.list.push(fixedLink);
+        }
       }
 
       processor.downloadLinks.push({
         id: processor.id + '-' + index,
         link: fixedLink,
-        status: DlStatus.WAITING
+        status: already ? DlStatus.ALREADY_DOWNLOADED : DlStatus.WAITING
       });
     });
 
