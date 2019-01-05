@@ -10,7 +10,7 @@ const TITLE_OPTIONS_VIEW = 'Options - HG ++';
 var queue = newQueue(handleProcessorFn);
 
 // Initialize the dictionary
-var dictionary = null;
+var dictionaryWrapper = null;
 
 // Initialize the download manager
 var dlManager = newDlManager(queue);
@@ -60,14 +60,6 @@ browser.contextMenus.create({
   onclick: showOptionsPage
 });
 
-browser.contextMenus.create({
-  id: 'hg-menu-show-debug-panel',
-  parentId: 'hg-menu',
-  title: browser.i18n.getMessage('menu_showDebugPanel'),
-  contexts: ['all'],
-  onclick: showDebugPanel
-});
-
 
 // Commands
 browser.commands.onCommand.addListener((command) => {
@@ -99,9 +91,6 @@ browser.runtime.onMessage.addListener(request => {
   } else if (request.req === 'clear-already-visited-urls') {
     alreadyVisitedUrls.list.length = 0;
     notifyOptionsPage({req: 'clear-already-visited-urls-cb'});
-
-  } else if (request.req === 'get-dictionary') {
-    sendDictionaryToSidebar();
   }
 });
 
@@ -144,7 +133,8 @@ function restoreDictionary() {
 
   browser.storage.local.get('mainDictionary').then((res) => {
     console.log('Restoring local dictionary...');
-    dictionary = res.mainDictionary;
+    var dictionary = new DOMParser().parseFromString(res.mainDictionary,'text/xml')
+    dictionaryWrapper = parseAndVerifyDictionary(dictionary);
 
   }).finally( function() {
     browser.storage.local.get('automaticallyUpdateDictionary').then((res) => {
@@ -160,9 +150,10 @@ function restoreDictionary() {
 
 /**
  * Saves the dictionary locally.
+ * @param {object} dictionary The dictionary, as a DOM document.
  * @returns {undefined}
  */
-function saveDictionary() {
+function saveDictionary(dictionary) {
 
   if (!! dictionary) {
     var newXmlStr = new XMLSerializer().serializeToString(dictionary);
@@ -214,8 +205,8 @@ function updateDictionary(newDictionary) {
   // Is the remote dictionary supported by this version of HG?
   if (supportedDictionarySpecs.indexOf(dictionarySpec) !== -1) {
     console.log('Upgrading the local dictionary to a new version...');
-    dictionary = newDictionary;
-    saveDictionary();
+    saveDictionary(newDictionary);
+    dictionaryWrapper = parseAndVerifyDictionary(newDictionary);
     sendDictionaryToSidebar();
     notifyDictionaryReload('ok');
 
@@ -306,7 +297,7 @@ function downloadContentFromText(sourceAsText, url) {
 
   // Parse the source code and find the links
   var sourceDocument = new DOMParser().parseFromString(sourceAsText,'text/html');
-  var processors = findWhatToProcess(sourceDocument, url, dictionary);
+  var processors = findWhatToProcess(sourceDocument, url, dictionaryWrapper);
 
   // We get link candidates to process and/or explore
   processors.forEach(function(processor) {
@@ -373,29 +364,6 @@ function updateProcessorInTab(processor, tabTitle) {
       browser.tabs.sendMessage(tabs[0].id, {req: 'update-processor', obj: clone});
     }
   });
-}
-
-
-/**
- * Sends the dictionary, if it exists, to the side bar.
- * @returns {undefined}
- */
-function sendDictionaryToSidebar() {
-
-  if (!! dictionary && !! dictionary.documentElement) {
-    // We must parse the dictionary because Firefox cannot clone it
-    var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
-    browser.runtime.sendMessage({req: 'this-dictionary', obj: dictionaryWrapper.items});
-  }
-}
-
-
-/**
- * Shows the debug panel.
- * @returns {undefined}
- */
-function showDebugPanel() {
-  browser.sidebarAction.open();
 }
 
 

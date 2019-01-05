@@ -142,16 +142,16 @@ function simulateAction() {
 
   // Validate
   var dictionaryDocument = new DOMParser().parseFromString(dictionaryAsString,'text/xml');
-  var wrapper = parseAndVerifyDictionary(dictionaryDocument);
+  var dictionaryWrapper = parseAndVerifyDictionary(dictionaryDocument);
 
   // If everything is complete, send a message to the background script
-  if (wrapper.errors.length === 0) {
+  if (dictionaryWrapper.errors.length === 0) {
     document.querySelector('#errors').textContent = '';
-    browser.runtime.sendMessage({req: 'simulate-download', obj: dictionaryAsString});
+    browser.runtime.sendMessage({req: 'simulate-download', obj: dictionaryWrapper});
 
   } else {
     var errorMessage = '';
-    wrapper.errors.forEach(function(error) {
+    dictionaryWrapper.errors.forEach(function(error) {
       errorMessage += error + '\n';
     });
 

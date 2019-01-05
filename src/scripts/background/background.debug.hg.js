@@ -1,10 +1,20 @@
 // The code in "background.hg.js" is already complicated.
 // Rather than adding more parameters and options, and thus
-// making it more complex, we put testing apart and copy what we need.
+// making it more complex, we put everything related to the
+// debug panel apart, and copy what we need.
 
 var simulationQueue = {};
 var simulationPageUrl = '';
 const TITLE_SIMULATION_VIEW = 'Simulation - HG ++';
+
+
+browser.contextMenus.create({
+  id: 'hg-menu-show-debug-panel',
+  parentId: 'hg-menu',
+  title: browser.i18n.getMessage('menu_showDebugPanel'),
+  contexts: ['all'],
+  onclick: showDebugPanel
+});
 
 browser.runtime.onMessage.addListener(request => {
   if (request.req === 'simulate-download') {
@@ -13,16 +23,19 @@ browser.runtime.onMessage.addListener(request => {
   } else if (request.req === 'get-simulation-processors') {
     var history = Array.from(simulationQueue.processingHistory.values());
     sendProcessorsToSimulationView(history, {pageUrl: simulationPageUrl});
+
+  } else if (request.req === 'get-dictionary') {
+    sendDictionaryToSidebar();
   }
 });
 
 
 /**
  * Performs an analysis and simulate downloads on the current tab.
- * @param {string} dictionaryAsString The content of a temporary dictionary.
+ * @param {object} simulationDictionary The temporary dictionary, wrapped as an object created by library.dictionary.js.
  * @returns {undefined}
  */
-function simulateDownload(dictionaryAsString) {
+function simulateDownload(simulationDictionary) {
 
   simulationQueue = newQueue();
   simulationQueue.handleProcessorFn = junkHandleProcessorFn(simulationQueue, newAlreadyVisitedUrls());
@@ -31,7 +44,7 @@ function simulateDownload(dictionaryAsString) {
   browser.tabs.query({active: true, currentWindow: true}).then( tabs => {
     simulationPageUrl = tabs[0].url;
     browser.tabs.sendMessage( tabs[0].id, {req: 'source-code'}).then( sourceAsText => {
-      simulateProcessing(sourceAsText, tabs[0].url, simulationQueue, dictionaryAsString);
+      simulateProcessing(sourceAsText, tabs[0].url, simulationQueue, simulationDictionary);
     });
   });
 }
@@ -42,13 +55,10 @@ function simulateDownload(dictionaryAsString) {
  * @param {string} sourceAsText The source code to analyze.
  * @param {string} url The URL of the page.
  * @param {object} simulationQueue The simulation queue.
- * @param {string} dictionaryAsString The content of a temporary dictionary.
+ * @param {object} simulationDictionary The temporary dictionary, wrapped as an object created by library.dictionary.js.
  * @returns {undefined}
  */
-function simulateProcessing(sourceAsText, url, simulationQueue, dictionaryAsString) {
-
-  // Build a temporary XML
-  var simulationDictionary = new DOMParser().parseFromString(dictionaryAsString,'text/xml');
+function simulateProcessing(sourceAsText, url, simulationQueue, simulationDictionary) {
 
   // Open the simulation tab
   showTab(TITLE_SIMULATION_VIEW, '/src/html/simulation-list.html');
@@ -108,4 +118,25 @@ function junkHandleProcessorFn(simulationQueue, simulationAlreadyVisitedUrls) {
   return function(processor) {
     handleProcessor(processor, extractor(), simulationQueue, replaceDownloadFn, updateProcessorInSimulationView, simulationAlreadyVisitedUrls);
   };
+}
+
+
+/**
+ * Sends the dictionary, if it exists, to the side bar.
+ * @returns {undefined}
+ */
+function sendDictionaryToSidebar() {
+
+  if (!! dictionaryWrapper) {
+    browser.runtime.sendMessage({req: 'this-dictionary', obj: dictionaryWrapper.items});
+  }
+}
+
+
+/**
+ * Shows the debug panel.
+ * @returns {undefined}
+ */
+function showDebugPanel() {
+  browser.sidebarAction.open();
 }

@@ -4,10 +4,10 @@
  * Finds what to process from the matches in the original web page, against dictionaries.
  * @param {object} sourceDocument The source page as a DOM document.
  * @param {string} url The URL of the current web page.
- * @param {object|array} dictionaries The DOM dictionary to use or an array of dictionaries.
+ * @param {object|array} dictionaryWrappers The dictionary to use or an array of dictionaries (as build in library.dictionary.js).
  * @returns {Array} A non-null array of processors.
  */
-function findWhatToProcess(sourceDocument, url, dictionaries) {
+function findWhatToProcess(sourceDocument, url, dictionaryWrappers) {
 
   // Prepare the result
   var processors = [];
@@ -18,17 +18,14 @@ function findWhatToProcess(sourceDocument, url, dictionaries) {
   }
 
   // Fix the dictionaries parameter
-  if (! Array.isArray(dictionaries)) {
-    dictionaries = [dictionaries];
+  if (! Array.isArray(dictionaryWrappers)) {
+    dictionaryWrappers = [dictionaryWrappers];
   }
 
   // Iterate over the dictionaries
   var source = sourceDocument.documentElement.innerHTML;
-  for (var index = 0; index < dictionaries.length; index ++) {
-
-    var dictionary = dictionaries[index];
-    var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
-    dictionaryWrapper.items.forEach( function(item) {
+  for (var index = 0; index < dictionaryWrappers.length; index ++) {
+    dictionaryWrappers[index].items.forEach( function(item) {
 
       if (item.errors.length > 0) {
         console.log('Errors were found for item ' + item.id);

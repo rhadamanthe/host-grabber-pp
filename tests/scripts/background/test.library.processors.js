@@ -40,8 +40,11 @@ describe('background => library.processors', function() {
     var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml');
     return dictionaryP.then( function(dictionary) {
 
+      // Parse the dictionary
+      var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
       // Extract links
-      var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
+      var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionaryWrapper);
 
       // Verify we got them all
       expect(res.length).to.eql(6);
@@ -76,7 +79,8 @@ describe('background => library.processors', function() {
     // Test resources are served by Karma
     var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml');
     return dictionaryP.then( function(dictionary) {
-      var res = findWhatToProcess(null, 'http://titi.fr/page.html', dictionary);
+      var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+      var res = findWhatToProcess(null, 'http://titi.fr/page.html', dictionaryWrapper);
       expect(res.length).to.eql(0);
     });
   });
@@ -113,8 +117,11 @@ describe('background => library.processors', function() {
     var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml');
     return dictionaryP.then( function(dictionary) {
 
+      // Parse the dictionary
+      var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
       // Extract links
-      var res = findWhatToProcess(sourceDocument, 'http://titi.fr/some-folder/at-second-level/some-web-page.html', dictionary);
+      var res = findWhatToProcess(sourceDocument, 'http://titi.fr/some-folder/at-second-level/some-web-page.html', dictionaryWrapper);
 
       // Verify we got them all
       expect(res.length).to.eql(11);
@@ -196,8 +203,11 @@ describe('background => library.processors', function() {
     var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml');
     return dictionaryP.then( function(dictionary) {
 
+      // Parse the dictionary
+      var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
       // Extract links
-      var res = findWhatToProcess(sourceDocument, 'http://sub-p1.titi.fr/some-folder/at-second-level/some-web-page.html', dictionary);
+      var res = findWhatToProcess(sourceDocument, 'http://sub-p1.titi.fr/some-folder/at-second-level/some-web-page.html', dictionaryWrapper);
 
       // Verify we got them all
       expect(res.length).to.eql(10);
@@ -268,8 +278,11 @@ describe('background => library.processors', function() {
     var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.domain-pattern.xml');
     return dictionaryP.then( function(dictionary) {
 
+      // Parse the dictionary
+      var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
       // Extract links
-      var res = findWhatToProcess(sourceDocument, 'http://toto2.fr/some-folder/at-second-level/some-web-page.html', dictionary);
+      var res = findWhatToProcess(sourceDocument, 'http://toto2.fr/some-folder/at-second-level/some-web-page.html', dictionaryWrapper);
 
       // Verify we got them all
       expect(res.length).to.eql(5);
@@ -308,8 +321,11 @@ describe('background => library.processors', function() {
     var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml');
     return dictionaryP.then( function(dictionary) {
 
+      // Parse the dictionary
+      var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
       // Extract links
-      var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
+      var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionaryWrapper);
 
       // Verify we got them all.
       // The only valid redirection is about host1. Others are not redirected.
@@ -356,8 +372,11 @@ describe('background => library.processors', function() {
     var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.cdata.xml');
     return dictionaryP.then( function(dictionary) {
 
+      // Parse the dictionary
+      var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
       // Extract links
-      var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', [dictionary]);
+      var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', [dictionaryWrapper]);
 
       // Verify we got them all
       expect(res.length).to.eql(1);
@@ -387,8 +406,11 @@ describe('background => library.processors', function() {
     var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.no-domain.xml');
     return dictionaryP.then( function(dictionary) {
 
+      // Parse the dictionary
+      var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
       // Extract links
-      var res = findWhatToProcess(sourceDocument, 'http://titi.fr/some-folder/at-second-level/some-web-page.html', dictionary);
+      var res = findWhatToProcess(sourceDocument, 'http://titi.fr/some-folder/at-second-level/some-web-page.html', dictionaryWrapper);
 
       // Verify we got them all
       expect(res.length).to.eql(3);
@@ -439,8 +461,11 @@ describe('background => library.processors', function() {
         </host>
     `;
 
+    // Parse the dictionary
+    var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
     // Extract links
-    var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
+    var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionaryWrapper);
 
     // Verify we got them all
     expect(res.length).to.eql(0);
@@ -479,8 +504,11 @@ describe('background => library.processors', function() {
         </host>
     `;
 
+    // Parse the dictionary
+    var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
     // Extract links
-    var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
+    var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionaryWrapper);
 
     // Verify we got them all
     expect(res.length).to.eql(0);
@@ -519,8 +547,11 @@ describe('background => library.processors', function() {
         </host>
     `;
 
+    // Parse the dictionary
+    var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
     // Extract links
-    var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
+    var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionaryWrapper);
 
     // Verify we got them all
     expect(res.length).to.eql(0);
@@ -560,8 +591,11 @@ describe('background => library.processors', function() {
         </host>
     `;
 
+    // Parse the dictionary
+    var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
     // Extract links
-    var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
+    var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionaryWrapper);
 
     // Verify we got them all
     expect(res.length).to.eql(3);
@@ -609,8 +643,11 @@ describe('background => library.processors', function() {
         </host>
     `;
 
+    // Parse the dictionary
+    var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
     // Extract links
-    var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
+    var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionaryWrapper);
 
     // Verify we got them all
     expect(res.length).to.eql(4);
@@ -805,8 +842,11 @@ describe('background => library.processors', function() {
         </host>
     `;
 
+    // Parse the dictionary
+    var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
     // Extract links
-    var processors = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
+    var processors = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionaryWrapper);
     expect(processors.length).to.eql(4);
 
     var idleFn = function() {};
@@ -853,8 +893,11 @@ describe('background => library.processors', function() {
     var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.bug-49.xml');
     return dictionaryP.then( function(dictionary) {
 
+      // Parse the dictionary
+      var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
       // Extract links
-      var processors = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', [dictionary]);
+      var processors = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', [dictionaryWrapper]);
       var idleFn = function() {};
       var extractorFn = extractor();
       var queue = {
@@ -909,8 +952,11 @@ describe('background => library.processors', function() {
         </host>
     `;
 
+    // Parse the dictionary
+    var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
     // Extract links
-    var processors = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionary);
+    var processors = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionaryWrapper);
     expect(processors.length).to.eql(0);
     done();
   });
@@ -949,8 +995,11 @@ describe('background => library.processors', function() {
         </host>
     `;
 
+    // Parse the dictionary
+    var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
     // Extract links
-    var processors = findWhatToProcess(sourceDocument, 'https://host44.fr/here/it/is.php', dictionary);
+    var processors = findWhatToProcess(sourceDocument, 'https://host44.fr/here/it/is.php', dictionaryWrapper);
     expect(processors.length).to.eql(1);
 
     var idleFn = function() {};
