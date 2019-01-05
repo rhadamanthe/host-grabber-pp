@@ -4,7 +4,7 @@
 [![Web site](docs/assets/images/badge.svg)](https://rhadamanthe.github.io/host-grabber-pp)
 [![Join the chat at https://gitter.im/host-grabber-pp/Lobby](https://badges.gitter.im/host-grabber-pp/Lobby.svg)](https://gitter.im/host-grabber-pp/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Download on Mozilla's web site](https://img.shields.io/badge/install%20from-mozilla-%23ffd935.svg)](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/)
-&nbsp; [![Firefox](docs/assets/images/firefox_x24.png)]
+&nbsp; ![Firefox](docs/assets/images/firefox_x24.png)
 
 A web extension that allows to find and download media files from various hosts.  
 It was originally designed for Mozilla Firefox but might be adapted to other web browsers.
@@ -22,7 +22,6 @@ extension, but unlike it, it is not restricted to downloading images.
 
 **Short-term**
 
-* Add a panel to test URL and search patterns on the current tab.
 * Add a way to manage a dictionary locally (add, remove, enable, disable rules).
 * Add a separate menu to download direct images.
 
