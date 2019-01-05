@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Debug - HG ++</title>
+	<style type="text/css">
+
+* {
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+body {
+	padding: 20px;
+	font-size: 1.1em;
+}
+
+#nav > p {
+	width: 30%;
+	font-weight: bold;
+	font-size: 18px;
+	color: white;
+	padding: 10px 20px;
+	display: inline-block;
+	text-align: center;
+}
+
+.orange {
+	background-color: orange;
+}
+
+.green {
+	background-color: green;
+}
+
+select, option, input[type="text"] {
+	border: solid black 1px;
+	width: 90%;
+	margin: 4px 0;
+	padding: 3px;
+}
+
+label.important {
+	font-weight: bold;
+}
+
+button {
+	background-color: #333;
+    border: none;
+    color: white;
+    padding: 10px 12px;
+    text-align: center;
+    font-weight: bold;
+    display: inline-block;
+    font-size: 20px;
+	border-radius: 6px;
+	margin-top: 6px;
+}
+
+#errors {
+	color: red;
+	font-weight: bold;
+}
+
+	</style>
+</head>
+
+<body>
+	<div class="section">
+		<span data-i18n="debugPage_intro"></span>
+
+		<br /><br />
+		<label for="domain" class="important" data-i18n="debugPage_inputDomain"></label>
+		<br /><input type="text" id="domain" />
+		<br /><input type="checkbox" id="domain-is-regexp" />
+		<label for="domain-is-regexp" data-i18n="debugPage_inputDomainOption"></label>
+
+		<br /><br />
+		<label for="path-pattern" class="important" data-i18n="debugPage_inputPathPattern"></label>
+		<br /><input type="text" id="path-pattern" />
+
+		<br /><br />
+		<label for="interceptor1" class="important" data-i18n="debugPage_inputInterceptor1"></label>
+		<br /><input type="text" id="interceptor1" />
+
+		<br /><br />
+		<label for="search-pattern" class="important" data-i18n="debugPage_inputSearchPattern"></label>
+		<br /><input type="text" id="search-pattern" />
+
+		<br /><br />
+		<label for="interceptor2" class="important" data-i18n="debugPage_inputInterceptor2">Interceptor 2:</label>
+		<br /><input type="text" id="interceptor2" />
+
+		<br /><br />
+		<span data-i18n="debugPage_youCanAlso"></span>
+		<br />
+		<select name="dictionary-items" id="dictionary-items">
+		</select>
+
+		<br /><br />
+		<button id="simulateButton" data-i18n="debugPage_simulateButton"></button>
+
+		<br /><br />
+		<pre id="errors"></pre>
+	</div>
+
+	<script src="../scripts/npm/browser-polyfill.min.0.3.1.js"></script>
+	<script src="../scripts/mixed/i18n.js"></script>
+	<script src="../scripts/mixed/library.dictionary.js"></script>
+	<script src="../scripts/content/debug.js"></script>
+</body>
+</html>

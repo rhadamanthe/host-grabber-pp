@@ -12,7 +12,7 @@ with some differences thought:
 
 * It is not restricted to images.
 * It does not check for MIME types.
-* It is a little more strict in terms of what can specified in **hosts.xml** files (no function).
+* It is a little more strict in terms of what can be specified in **hosts.xml** files (no function).
 * It has much more less options, for the moment. It is not planned to restore all the
 options that existed before.
 
@@ -29,7 +29,7 @@ options that existed before.
 
 <img src="../assets/images/dl-view-4--v0.5.jpg" alt="The download view (retry menu)" class="screenshot" />
 
-<img src="../assets/images/dl-view-5--v0.5.jpg" alt="The menu" class="screenshot" />
+<img src="../assets/images/dl-view-5--v0.7.jpg" alt="The menu" class="screenshot" />
 
 <img src="../assets/images/options-view--v0.5.jpg" alt="The options page" class="screenshot" />
 
@@ -112,7 +112,20 @@ a better list of hosts appears somewhere else.
 [This page](hosts-definition.html) explains the various strategies available to find media files to download on a web page.
 
 
-## Reuse by other Web Extensions
+## Debugging
+
+<img src="../assets/images/debug-view--v0.7.jpg" alt="The debug panel (for Firefox only)" class="screenshot" />
+
+In Firefox, there is a debugging panel to create, edit and test dictionary rules.
+You can access it with a right-click menu and by selecting **Host Grabber &gt; Show Debug Panel**.
+
+This panel remains open, no matter what tab is selected.  
+Once a rule is defined, it can be tested by browsing any web page. By clicking the
+**Extract Links** button, the page is analyzed with this single rule. Links are extracted,
+and displayed in a separate view, but nothing is downloaded. This is only to help writing dictionary items.
+
+
+## Reuse by Other Web Extensions
 
 The first use case for this extension is to be invoked by a user through a menu
 or a shortcut. However, it may also be used by other web extensions through an API.

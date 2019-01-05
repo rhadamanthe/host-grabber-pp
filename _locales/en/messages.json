@@ -272,5 +272,75 @@
   "mixed": {
     "message": "Some failures",
     "description": ""
+  },
+
+  "simulationPage_title": {
+    "message": "Simulation for",
+    "description": "The title of the simulation page"
+  },
+
+  "debugPage_intro": {
+    "message": "Specify and test a new dictionary item.",
+    "description": "The introduction of the debug page"
+  },
+
+  "debugPage_inputDomain": {
+    "message": "Domain:",
+    "description": "The label for this element (debug page)"
+  },
+
+  "debugPage_inputDomainOption": {
+    "message": "The domain is a regular expression",
+    "description": "The label for this element (debug page)"
+  },
+
+  "debugPage_inputInterceptor1": {
+    "message": "Interceptor 1:",
+    "description": "The label for this element (debug page)"
+  },
+
+  "debugPage_inputInterceptor2": {
+    "message": "Interceptor 2:",
+    "description": "The label for this element (debug page)"
+  },
+
+  "debugPage_inputPathPattern": {
+    "message": "Path Pattern:",
+    "description": "The label for this element (debug page)"
+  },
+
+  "debugPage_inputSearchPattern": {
+    "message": "Search Pattern:",
+    "description": "The label for this element (debug page)"
+  },
+
+  "debugPage_youCanAlso": {
+    "message": "You can also select or reuse an existing item from the dictionary.",
+    "description": "Part of the debug page"
+  },
+
+  "debugPage_simulateButton": {
+    "message": "Extract Links",
+    "description": "The label for this element (debug page)"
+  },
+
+  "menu_showDownloadList": {
+    "message": "Show Downloads List",
+    "description": "The label for this menu"
+  },
+
+  "menu_showOptions": {
+    "message": "Show Options",
+    "description": "The label for this menu"
+  },
+
+  "menu_showDebugPanel": {
+    "message": "Show Debug Panel",
+    "description": "The label for this menu"
+  },
+
+  "menu_extractAndDownload": {
+    "message": "Extract and Download",
+    "description": "The label for this menu"
   }
 }

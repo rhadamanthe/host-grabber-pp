@@ -41,7 +41,8 @@
 	  "src/scripts/mixed/library.commons.js",
 	  "src/scripts/mixed/library.dictionary.js",
 	  "src/scripts/background/dl-manager.js",
-	  "src/scripts/background/background.hg.js"
+	  "src/scripts/background/background.hg.js",
+	  "src/scripts/background/background.debug.hg.js"
     ]
   },
 
@@ -59,6 +60,12 @@
       "suggested_key": { "default": "Ctrl+Shift+Down" },
       "description": "Download media files from the current page"
     }
+  },
+  
+  "sidebar_action": {
+    "default_title": "Debug - IHG ++",
+    "default_panel": "src/html/debug.html",
+    "default_icon": "icons/logo_x48.png"
   },
 
   "permissions": [

@@ -22,15 +22,18 @@ browser.storage.local.get('dlClearCompleted').then((res) => {
 
 /* Callbacks */
 
-
-document.getElementById('options').onclick = showOptionsPage;
-document.getElementById('remove-completed').onclick = removeCompleted;
-document.getElementById('remove-selection').onclick = removeSelection;
-document.getElementById('remove-all').onclick = removeAll;
-document.getElementById('select-all').onclick = selectAll;
-document.getElementById('unselect-all').onclick = unselectAll;
-document.getElementById('retry-selected').onclick = retrySelected;
-document.getElementById('retry-all').onclick = retryAll;
+// If one button is visible, they all are.
+// They do not exist in the simulation page.
+if ((!! document.getElementById('options'))) {
+  document.getElementById('options').onclick = showOptionsPage;
+  document.getElementById('remove-completed').onclick = removeCompleted;
+  document.getElementById('remove-selection').onclick = removeSelection;
+  document.getElementById('remove-all').onclick = removeAll;
+  document.getElementById('select-all').onclick = selectAll;
+  document.getElementById('unselect-all').onclick = unselectAll;
+  document.getElementById('retry-selected').onclick = retrySelected;
+  document.getElementById('retry-all').onclick = retryAll;
+}
 
 document.querySelectorAll('.dropdown > button').forEach( function(item) {
   item.onclick = showSubMenu;
@@ -57,6 +60,18 @@ browser.runtime.onMessage.addListener(request => {
 
   // We have new processors
   if(request.req === 'new-processors') {
+    if (!! request.options) {
+      if (request.options.clear) {
+        removeAll();
+      }
+
+      if (!! request.options.pageUrl) {
+        var anchor = document.querySelector('#title-link');
+        anchor.textContent = request.options.pageUrl;
+        anchor.href = request.options.pageUrl;
+      }
+    }
+
     request.obj.forEach( function(processor) {
       allProcessors.set(processor.id, processor);
     });
@@ -89,24 +104,19 @@ function storeProcessors() {
 
 
 /**
- * Gets the processors from the local storage.
+ * Gets the processors from the background script.
  * @returns {object} A non-null map.
  */
 function loadProcessors() {
 
-  /*
-  browser.storage.local.get('processorsMap').then( function(item) {
-    console.log(item);
-    allProcessors = item || new Map();
-  }, function() {
-    allProcessors = new Map();
-  });
-  */
-
-  // TODO: local storage?
-
-  // Eventually, retrieve the new ones
-  browser.runtime.sendMessage({req: 'get-processors'});
+  // Hack from the death: we check the page's title
+  // to determine what processors we want: the real ones,
+  // or those for simulation.
+  if (document.title.toUpperCase().includes('SIMULATION')) {
+    browser.runtime.sendMessage({req: 'get-simulation-processors'});
+  } else {
+    browser.runtime.sendMessage({req: 'get-processors'});
+  }
 }
 
 

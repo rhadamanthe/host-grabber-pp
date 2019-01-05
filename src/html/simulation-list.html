@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Simulation - HG ++</title>
+	<style type="text/css">
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	padding: 20px;
+	font-size: 1.1em;
+}
+
+.dlLink {
+	margin-left: 17px;
+	cursor: pointer;
+	font-size: 24px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding: 4px;
+	color: blue;
+}
+
+.dlLink:hover {
+	text-decoration: underline;
+}
+
+.title {
+	font-weight: bold;
+	font-size: 24px;
+	padding: 10px;
+	border-top: solid black 1px;
+	border-bottom: solid black 1px;
+	margin-bottom: 15px;
+	text-align: center;
+}
+
+.col2, .col3 {
+	display: none;
+}
+
+#title-link {
+	color: red;
+	text-decoration: none;
+}
+
+/* Collapsable items                         */
+/* See https://alligator.io/css/collapsible/ */
+
+.toggle {
+	display: none;
+}
+
+.lbl-toggle {
+	font-weight: bold;
+	font-family: monospace;
+	font-size: 24px;
+	padding-top: 6px;
+	border-radius: 7px;
+	transition: all 0.25s ease-out;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.lbl-toggle::before {
+	content: ' ';
+	display: inline-block;
+
+	border-top: 5px solid transparent;
+	border-bottom: 5px solid transparent;
+	border-left: 5px solid currentColor;
+
+	vertical-align: middle;
+	margin-right: .7rem;
+	transform: translateY(-2px);
+	transition: transform .2s ease-out;
+}
+
+.lbl-toggle > a, .dlLink > a {
+	font: inherit;
+	color: inherit;
+	text-decoration: inherit;
+}
+
+.collapsible-content .content-inner {
+	border-bottom: 1px solid rgba(250, 224, 66, .45);
+	border-bottom-left-radius: 7px;
+	border-bottom-right-radius: 7px;
+	margin: 9px 0 7px;
+}
+
+.collapsible-content {
+	max-height: 0px;
+	overflow: hidden;
+	transition: max-height .25s ease-in-out;
+}
+
+.toggle:checked + .lbl-toggle + .col2 + .col3 + .collapsible-content {
+	max-height: none;
+}
+
+.toggle:checked + .lbl-toggle::before {
+	transform: rotate(90deg) translateX(-3px);
+}
+
+.toggle:checked + .lbl-toggle {
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+	</style>
+</head>
+
+<body>
+	<!-- Keep all the div stuck like this -->
+	<div class="title">Simulation for <a href="#" id="title-link">...</a></div>
+	<div id="items"></div>
+
+	<script src="../scripts/npm/browser-polyfill.min.0.3.1.js"></script>
+	<script src="../scripts/mixed/commons.js"></script>
+	<script src="../scripts/mixed/i18n.js"></script>
+	<script src="../scripts/mixed/library.commons.js"></script>
+	<script src="../scripts/content/library.list.js"></script>
+	<script src="../scripts/content/list.js"></script>
+</body>
+
+</html>

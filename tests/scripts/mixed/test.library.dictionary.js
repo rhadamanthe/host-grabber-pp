@@ -215,12 +215,12 @@ describe('background => library.dictionary', function() {
     expect(obj.items[0].errors.length).to.eql(0);
 
     expect(obj.items[0].interceptors1.length).to.eql(2);
-    expect(obj.items[0].interceptors1[0]).to.eql({replace: 't', by: 'p'});
-    expect(obj.items[0].interceptors1[1]).to.eql({replace: 'p', by: 's'});
+    expect(obj.items[0].interceptors1[0]).to.eql({replace: 't', by: 'p', string: 'replace: \'t\', \'p\''});
+    expect(obj.items[0].interceptors1[1]).to.eql({replace: 'p', by: 's', string: 'replace: \'p\', \'s\''});
 
     expect(obj.items[0].interceptors2.length).to.eql(2);
-    expect(obj.items[0].interceptors2[0]).to.eql({replace: 's', by: 't'});
-    expect(obj.items[0].interceptors2[1]).to.eql({replace: 'q', by: 'a'});
+    expect(obj.items[0].interceptors2[0]).to.eql({replace: 's', by: 't', string: 'replace: \'s\', \'t\''});
+    expect(obj.items[0].interceptors2[1]).to.eql({replace: 'q', by: 'a', string: 'replace: \'q\', \'a\''});
     done();
   });
 
@@ -249,7 +249,7 @@ describe('background => library.dictionary', function() {
     expect(obj.items[0].errors.length).to.eql(0);
 
     expect(obj.items[0].interceptors1.length).to.eql(1);
-    expect(obj.items[0].interceptors1[0]).to.eql({replace: 't', by: 'p'});
+    expect(obj.items[0].interceptors1[0]).to.eql({replace: 't', by: 'p', string: 'replace: \'t\', \'p\''});
     expect(obj.items[0].interceptors2.length).to.eql(0);
     done();
   });
@@ -280,7 +280,7 @@ describe('background => library.dictionary', function() {
 
     expect(obj.items[0].interceptors1.length).to.eql(0);
     expect(obj.items[0].interceptors2.length).to.eql(1);
-    expect(obj.items[0].interceptors2[0]).to.eql({replace: 't', by: 'p'});
+    expect(obj.items[0].interceptors2[0]).to.eql({replace: 't', by: 'p', string: 'replace: \'t\', \'p\''});
     done();
   });
 
@@ -310,10 +310,10 @@ describe('background => library.dictionary', function() {
     expect(obj.items[0].errors.length).to.eql(0);
 
     expect(obj.items[0].interceptors1.length).to.eql(1);
-    expect(obj.items[0].interceptors1[0]).to.eql({replace: 's', by: 'a'});
+    expect(obj.items[0].interceptors1[0]).to.eql({replace: 's', by: 'a', string: 'replace: \'s\', \'a\''});
 
     expect(obj.items[0].interceptors2.length).to.eql(1);
-    expect(obj.items[0].interceptors2[0]).to.eql({replace: 't', by: 'p'});
+    expect(obj.items[0].interceptors2[0]).to.eql({replace: 't', by: 'p', string: 'replace: \'t\', \'p\''});
     done();
   });
 

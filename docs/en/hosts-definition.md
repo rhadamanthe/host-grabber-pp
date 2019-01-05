@@ -386,7 +386,7 @@ You can define several interceptors if necessary.
 
 ```xml
 <host id="pixhost-org">
-	<domain>pixhost.org</domain
+	<domain>pixhost.org</domain>
 	<path-pattern>show/.+</path-pattern>
 	
 	<!-- Explore another page that the one found in the current tab. -->

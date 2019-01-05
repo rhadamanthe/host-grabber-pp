@@ -1,5 +1,9 @@
 'use strict';
 
+const TITLE_DL_VIEW = 'HG ++';
+const TITLE_OPTIONS_VIEW = 'Options - HG ++';
+
+
 /* Fields */
 
 // Initialize the queue.
@@ -27,7 +31,7 @@ browser.contextMenus.create({
 browser.contextMenus.create({
   id: 'hg-menu-download',
   parentId: 'hg-menu',
-  title: 'Extract and Download',
+  title: browser.i18n.getMessage('menu_extractAndDownload'),
   contexts: ['all'],
   onclick: downloadContentFromCurrentTab
 });
@@ -43,7 +47,7 @@ browser.contextMenus.create({
 browser.contextMenus.create({
   id: 'hg-menu-show-dl-list',
   parentId: 'hg-menu',
-  title: 'Show Downloads List',
+  title: browser.i18n.getMessage('menu_showDownloadList'),
   contexts: ['all'],
   onclick: showDownloadsList
 });
@@ -51,9 +55,17 @@ browser.contextMenus.create({
 browser.contextMenus.create({
   id: 'hg-menu-options',
   parentId: 'hg-menu',
-  title: 'Show Options',
+  title: browser.i18n.getMessage('menu_showOptions'),
   contexts: ['all'],
   onclick: showOptionsPage
+});
+
+browser.contextMenus.create({
+  id: 'hg-menu-show-debug-panel',
+  parentId: 'hg-menu',
+  title: browser.i18n.getMessage('menu_showDebugPanel'),
+  contexts: ['all'],
+  onclick: showDebugPanel
 });
 
 
@@ -87,6 +99,9 @@ browser.runtime.onMessage.addListener(request => {
   } else if (request.req === 'clear-already-visited-urls') {
     alreadyVisitedUrls.list.length = 0;
     notifyOptionsPage({req: 'clear-already-visited-urls-cb'});
+
+  } else if (request.req === 'get-dictionary') {
+    sendDictionaryToSidebar();
   }
 });
 
@@ -135,6 +150,8 @@ function restoreDictionary() {
     browser.storage.local.get('automaticallyUpdateDictionary').then((res) => {
       if (!! res.automaticallyUpdateDictionary || defaultAutomaticallyUpdateDictionary) {
         downloadDictionary();
+      } else {
+        sendDictionaryToSidebar();
       }
     });
   });
@@ -199,6 +216,7 @@ function updateDictionary(newDictionary) {
     console.log('Upgrading the local dictionary to a new version...');
     dictionary = newDictionary;
     saveDictionary();
+    sendDictionaryToSidebar();
     notifyDictionaryReload('ok');
 
   } else {
@@ -224,7 +242,7 @@ function notifyDictionaryReload(status) {
  */
 function notifyOptionsPage(message) {
 
-  browser.tabs.query({ title: 'Options - HG ++' }).then( function(tabs) {
+  browser.tabs.query({ title: TITLE_OPTIONS_VIEW }).then( function(tabs) {
     tabs.forEach(function(tab) {
       browser.tabs.sendMessage(tab.id, message);
     });
@@ -238,7 +256,7 @@ function notifyOptionsPage(message) {
  * @returns {undefined}
  */
 function showDownloadsList() {
-  showTab('HG ++', '/src/html/download-list.html');
+  showTab(TITLE_DL_VIEW, '/src/html/download-list.html');
 }
 
 
@@ -309,11 +327,23 @@ function downloadContentFromText(sourceAsText, url) {
  * @returns {undefined}
  */
 function sendProcessorsToDownloadView(processors) {
+  sendProcessorsToTab(processors, TITLE_DL_VIEW);
+}
+
+
+/**
+ * Sends processors to the download view.
+ * @param {array} processors An array of processors.
+ * @param {string} tabTitle The tab's title.
+ * @param {object} options Various options.
+ * @returns {undefined}
+ */
+function sendProcessorsToTab(processors, tabTitle, options) {
 
   var clones = prepareProcessorsForMessaging(processors);
-  browser.tabs.query({ title: 'HG ++' }).then( function(tabs) {
+  browser.tabs.query({ title: tabTitle }).then( function(tabs) {
     if (tabs.length > 0) {
-      browser.tabs.sendMessage(tabs[0].id, {req: 'new-processors', obj: clones});
+      browser.tabs.sendMessage(tabs[0].id, {req: 'new-processors', obj: clones, options: options});
     }
   });
 }
@@ -325,13 +355,47 @@ function sendProcessorsToDownloadView(processors) {
  * @returns {undefined}
  */
 function updateProcessorInDownloadView(processor) {
+  updateProcessorInTab(processor, TITLE_DL_VIEW);
+}
+
+
+/**
+ * Updates a processor in the download view.
+ * @param {object} processor A processor.
+ * @param {string} tabTitle The tab's title.
+ * @returns {undefined}
+ */
+function updateProcessorInTab(processor, tabTitle) {
 
   var clone = prepareProcessorForMessaging(processor);
-  browser.tabs.query({ title: 'HG ++' }).then( function(tabs) {
+  browser.tabs.query({ title: tabTitle }).then( function(tabs) {
     if (tabs.length > 0) {
       browser.tabs.sendMessage(tabs[0].id, {req: 'update-processor', obj: clone});
     }
   });
+}
+
+
+/**
+ * Sends the dictionary, if it exists, to the side bar.
+ * @returns {undefined}
+ */
+function sendDictionaryToSidebar() {
+
+  if (!! dictionary && !! dictionary.documentElement) {
+    // We must parse the dictionary because Firefox cannot clone it
+    var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+    browser.runtime.sendMessage({req: 'this-dictionary', obj: dictionaryWrapper.items});
+  }
+}
+
+
+/**
+ * Shows the debug panel.
+ * @returns {undefined}
+ */
+function showDebugPanel() {
+  browser.sidebarAction.open();
 }
 
 

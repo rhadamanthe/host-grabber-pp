@@ -28,7 +28,7 @@ avec quelques différences:
 
 <img src="../assets/images/dl-view-4--v0.5.jpg" alt="La vue des téléchargements (menu de retentative)" class="screenshot" />
 
-<img src="../assets/images/dl-view-5--v0.5.jpg" alt="Le menu contextuel" class="screenshot" />
+<img src="../assets/images/dl-view-5--v0.7.jpg" alt="Le menu contextuel" class="screenshot" />
 
 <img src="../assets/images/options-view--v0.5.jpg" alt="La page d'options" class="screenshot" />
 
@@ -114,7 +114,21 @@ fera son apparition quelque part ailleurs.
 sur une page web.
 
 
-## Réutilisation par d'autres Extensions Web
+## Débogage
+
+<img src="../assets/images/debug-view--v0.7.jpg" alt="Le panneau de débogage (pour Firefox uniquement)" class="screenshot" />
+
+Dans Firefox, un panneau de débogage est disponible, pour créer, éditer et tester des
+règles de dictionnaire. Il est accessible au travers du menu **Host Grabber &gt; Panneau de Débogage**.
+
+Ce panneau reste ouvert quel que soit l'onglet.  
+Il suffit alors de charger une règle, puis de visiter une page sur laquelle la tester.
+En cliquant sur le bouton **Extraire les Liens**, la page est analysée au regard de cette
+unique règle. Les liens sont extraits, et affichés dans une vue à part, mais rien n'est téléchargé.
+Il s'agît de faciliter l'écriture de règles pour le dictionnaire. 
+
+
+## Réutilisation par d'Autres Extensions Web
 
 Le cas nominal d'utilisation de cette extension concerne une personne qui
 lance une exploration par clic droit ou raccourci clavier. Toutefois, HG ++
@@ -139,6 +153,7 @@ browser.runtime.sendMessage(
 
 Aucun ticket ne peut être créé pour le fichier **hosts.xml**.  
 Les bugs et demandes d'évolution pour l'extension elle-même, peuvent être reportés [ici](https://github.com/rhadamanthe/host-grabber-pp/issues)
+
 
 ## Liens
 

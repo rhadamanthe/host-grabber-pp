@@ -387,7 +387,7 @@ Il est aussi possible de définir plusieurs intercepteurs.
 
 ```xml
 <host id="pixhost-org">
-	<domain>pixhost.org</domain
+	<domain>pixhost.org</domain>
 	<path-pattern>show/.+</path-pattern>
 	
 	<!-- Explorer une autre page que celle découverte dans l'onglet courant. -->

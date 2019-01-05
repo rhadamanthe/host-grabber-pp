@@ -272,5 +272,75 @@
   "mixed": {
     "message": "Quelques échecs",
     "description": ""
+  },
+
+  "simulationPage_title": {
+    "message": "Simulation pour",
+    "description": "Le titre pour la page de simulation"
+  },
+
+  "debugPage_intro": {
+    "message": "Editer et évaluer un élément du dictionnaire.",
+    "description": "L'introduction de la page de débogage"
+  },
+
+  "debugPage_inputDomain": {
+    "message": "Domaine :",
+    "description": "L'étiquette pour cet élément (page de débogage)"
+  },
+
+  "debugPage_inputDomainOption": {
+    "message": "Le domaine est une expression régulière",
+    "description": "L'étiquette pour cet élément (page de débogage)"
+  },
+
+  "debugPage_inputInterceptor1": {
+    "message": "Intercepteur 1 :",
+    "description": "L'étiquette pour cet élément (page de débogage)"
+  },
+
+  "debugPage_inputInterceptor2": {
+    "message": "Intercepteur 2 :",
+    "description": "L'étiquette pour cet élément (page de débogage)"
+  },
+
+  "debugPage_inputPathPattern": {
+    "message": "Modèle de Chemin :",
+    "description": "L'étiquette pour cet élément (page de débogage)"
+  },
+
+  "debugPage_inputSearchPattern": {
+    "message": "Modèle de Recherche :",
+    "description": "L'étiquette pour cet élément (page de débogage)"
+  },
+
+  "debugPage_youCanAlso": {
+    "message": "Il est aussi possible de partir d'un élément du dictionnaire.",
+    "description": "L'étiquette pour la page de débogage"
+  },
+
+  "debugPage_simulateButton": {
+    "message": "Extraire les Liens",
+    "description": "L'étiquette pour cet élément (page de débogage)"
+  },
+
+  "menu_showDownloadList": {
+    "message": "Liste des Téléchargements",
+    "description": "L'étiquette pour ce menu"
+  },
+
+  "menu_showOptions": {
+    "message": "Options",
+    "description": "L'étiquette pour ce menu"
+  },
+
+  "menu_showDebugPanel": {
+    "message": "Panneau de débogage",
+    "description": "L'étiquette pour ce menu"
+  },
+
+  "menu_extractAndDownload": {
+    "message": "Analyser et Télécharger",
+    "description": "L'étiquette pour ce menu"
   }
 }

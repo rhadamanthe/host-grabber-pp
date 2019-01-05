@@ -13,7 +13,8 @@ function newQueue(handleProcessorFn) {
     append: append,
     reschedule: reschedule,
     processNextItem: processNextItem,
-    remove: remove
+    remove: remove,
+    handleProcessorFn: handleProcessorFn
   };
 
 
@@ -75,7 +76,7 @@ function newQueue(handleProcessorFn) {
 
     // Handle it, provided it exists
     if (!! processor) {
-      handleProcessorFn(processor);
+      queue.handleProcessorFn(processor);
     }
   }
 

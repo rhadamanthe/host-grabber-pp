@@ -114,18 +114,18 @@ function parseAndVerifyDictionaryItem(domElement) {
 
     // Interceptor
     else if (elt.tagName === 'interceptor') {
-      var interceptor = elt.textContent.trim();
+      var interceptorAsString = elt.textContent.trim();
       if (current !== 'interceptor1' && current !== 'interceptor2' && current !== 'search-pattern' && current !== 'path-pattern') {
         tempErrors.push('An interceptor was found at an invalid position.');
       }
 
-      if (!interceptor.match(ExtMethods.REPLACE.pattern)) {
-        tempErrors.push('Invalid interceptor: ' + interceptor);
+      if (!interceptorAsString.match(ExtMethods.REPLACE.pattern)) {
+        tempErrors.push('Invalid interceptor: ' + interceptorAsString);
       }
 
       if (tempErrors.length === 0) {
-        var match = ExtMethods.REPLACE.pattern.exec(interceptor);
-        var interceptor = {replace: match[1].trim(), by: match[2].trim()};
+        var match = ExtMethods.REPLACE.pattern.exec(interceptorAsString);
+        var interceptor = {replace: match[1].trim(), by: match[2].trim(), string: interceptorAsString};
         ExtMethods.REPLACE.pattern.lastIndex = 0;
 
         if (current === 'interceptor1' || current === 'path-pattern') {
