@@ -289,6 +289,9 @@ function buildDownloadOptions(linkObject, processor, strategy) {
 
   } else if (strategy === DL_STRATEGY_DIR_PER_TREE_DATE) {
     subDir = formatDateForDl(now, '/') + '/';
+
+  }  else if (strategy === DL_STRATEGY_DIR_PER_PAGE_TITLE) {
+    subDir = processor.pageTitle.replace(/\W+/g, '_').substring(0,90) + '/';
   }
 
   // When there is a sub-directory, we need to specify the file name

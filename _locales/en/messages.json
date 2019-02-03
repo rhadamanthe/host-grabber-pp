@@ -144,6 +144,11 @@
     "description": "The label for this option (options page)"
   },
 
+  "optionsPage_dlStrategyRadio_byPageTitle": {
+    "message": "By title: use sub-directories, based on the title of HTML pages",
+    "description": "The label for this option (options page)"
+  },
+
   "dlPage_elementToExploreColumn": {
     "message": "Elements to Explore / Download",
     "description": "The label for the 'element to explore' column (download page)"

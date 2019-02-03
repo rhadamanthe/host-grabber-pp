@@ -39,6 +39,9 @@ function restoreOptions() {
     case DL_STRATEGY_DIR_PER_TREE_DATE:
       document.querySelector('#dl-strategy-by-tree-date').checked = true;
       break;
+    case DL_STRATEGY_DIR_PER_PAGE_TITLE:
+      document.querySelector('#dl-strategy-by-page-title').checked = true;
+      break;
     default:
       document.querySelector('#dl-strategy-default').checked = true;
       break;

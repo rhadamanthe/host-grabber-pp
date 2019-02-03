@@ -20,6 +20,11 @@ const DL_STRATEGY_DIR_PER_ALPHA_DATE = 3;
  */
 const DL_STRATEGY_DIR_PER_TREE_DATE = 4;
 
+/**
+ * Dispatch downloads in sub-directories, one per page's title.
+ */
+const DL_STRATEGY_DIR_PER_PAGE_TITLE = 5;
+
 
 // Default values for preferences
 

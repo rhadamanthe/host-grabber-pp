@@ -144,6 +144,11 @@
     "description": "L'étiquette pour cette option (page d'options)"
   },
 
+  "optionsPage_dlStrategyRadio_byPageTitle": {
+    "message": "Par titre : utilisation de sous-répertoires, basés sur le titre des pages HTML",
+    "description": "L'étiquette pour cette option (page d'options)"
+  },
+
   "dlPage_elementToExploreColumn": {
     "message": "Éléments à Explorer / Télécharger",
     "description": "L'étiquette pour la colonne 'élément à explorer' (page de téléchargement)"

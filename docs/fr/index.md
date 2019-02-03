@@ -32,7 +32,7 @@ avec quelques différences:
 
 <img src="../assets/images/options-view--v0.5.jpg" alt="La page d'options" class="screenshot" />
 
-<img src="../assets/images/options-view--v0.7.jpg" alt="La page d'options (suite)" class="screenshot" />
+<img src="../assets/images/options-view--v0.8.jpg" alt="La page d'options (suite)" class="screenshot" />
 
 
 ## Installation
@@ -97,7 +97,7 @@ façon le nombre de connexions simultanées vers un même serveur (par défaut,
 * **Activer le cache de session** : cette option empêche un même fichier d'être téléchargé plusieurs fois
 lors d'une même session. Ce cache peut être vidé, et même désactivé.
 * **Répertoire de téléchargement** : par défaut, tout est téléchargé dans le même répertoire.
-Mais il est possible de répartir les fichiers dans des sous-dissiers (par domaine ou par date).
+Mais il est possible de répartir les fichiers dans des sous-dissiers (par domaine, par date ou par titre).
 
 
 ## Remarque
