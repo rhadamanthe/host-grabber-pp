@@ -15,7 +15,7 @@ browser.runtime.onMessage.addListener(request => {
 
 document.querySelector('#simulateButton').addEventListener('click', simulateAction);
 document.querySelector('#simulateButton').addEventListener('click', showFeedback);
-document.querySelector('#dictionary-items').addEventListener('click', fillInItemProperties);
+document.querySelector('#dictionary-items').addEventListener('change', fillInItemProperties);
 
 
 // Functions
