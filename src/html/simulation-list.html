@@ -27,8 +27,19 @@ body {
 	color: blue;
 }
 
-.dlLink:hover {
+.dlLink:hover, .debugLink:hover {
 	text-decoration: underline;
+}
+
+.debugLink {
+	margin-left: 17px;
+	cursor: pointer;
+	font-size: 24px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding: 4px;
+	color: green;
 }
 
 .title {
@@ -43,6 +54,10 @@ body {
 
 .col2, .col3 {
 	display: none;
+}
+
+.col4 {
+	display: inline-block;
 }
 
 #title-link {
@@ -83,7 +98,7 @@ body {
 	transition: transform .2s ease-out;
 }
 
-.lbl-toggle > a, .dlLink > a {
+.lbl-toggle > a, .dlLink > a, .debugLink > a {
 	font: inherit;
 	color: inherit;
 	text-decoration: inherit;

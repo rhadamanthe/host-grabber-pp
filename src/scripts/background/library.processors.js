@@ -14,6 +14,7 @@ function findWhatToProcess(sourceDocument, url, dictionaryWrappers) {
 
   // Handle cases where the path patterns leads to a non-document
   if (! sourceDocument) {
+    console.log('No document was found.');
     return processors;
   }
 
@@ -27,6 +28,7 @@ function findWhatToProcess(sourceDocument, url, dictionaryWrappers) {
 
   // Iterate over the dictionaries
   var source = sourceDocument.documentElement.innerHTML;
+  console.log(dictionaryWrappers)
   for (var index = 0; index < dictionaryWrappers.length; index ++) {
     dictionaryWrappers[index].items.forEach( function(item) {
 

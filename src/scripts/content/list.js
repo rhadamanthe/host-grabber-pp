@@ -202,7 +202,7 @@ function displayNewProcessors(processors) {
       return;
     }
 
-    // Create new elements
+    // Create the processor
     var items = document.getElementById('items');
     var collapsible = document.createElement('div');
     collapsible.className = 'wrap-collabsible';
@@ -258,6 +258,18 @@ function displayNewProcessors(processors) {
     subC2.id = processor.id + '-inner';
     subC1.appendChild(subC2);
 
+    // Add a link to the source document
+    p = document.createElement('p');
+    p.className = 'debugLink col11';
+    subC2.appendChild(p);
+
+    link = document.createElement('a');
+    link.textContent = 'Source code of the target page';
+    link.href = 'view-source:' + processor.matchingUrl;
+    link.setAttribute('target', '_blank');
+    p.appendChild(link);
+
+    // Add links
     processor.downloadLinks.forEach( function(dlLink) {
       displayNewLink(processor.id, dlLink);
     });
