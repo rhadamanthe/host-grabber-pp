@@ -126,8 +126,15 @@ dont le domaine correspond à l'expression régulière, et quelle que soit la pa
 
 ## Modèle de Chemin
 
-Le modèle de chemin (*path pattern*) est une [expression régulière](http://www.expreg.com)
-qui **permet d'identifier quoi explorer** sur un domaine donné.  
+Le modèle de chemin (*path pattern*) **permet d'identifier quoi explorer** sur un domaine donné.  
+Deux types de valeurs sont autorisées. 
+
+
+### Trouver des Liens à Explorer
+
+Dans le premier cas, il s'agît de trouver des pages à visiter
+depuis celle qui est ouverte. Le modèle de chemin doit alors être
+une [expression régulière](http://www.expreg.com).
 Quand vous visitez une page web et que vous activez Host Grabber, celui-ci analyse le code source
 de la page. Toutes les parties de texte qui correspondent au domaine et au modèle de chemin vont être
 mises de côté pour une analyse détaillée.
@@ -152,6 +159,16 @@ Il y a quelques règles à connaître pour la définition de cette propriété.
 * L'entité HTML `<` doit être écrite sous la forme `&lt;`.
 * L'entité HTML `>` doit être écrite sous la forme `&gt;`.
 * L'entité HTML `&` doit être écrite sous la forme `&amp;`.
+
+
+### Explorer la Page Actuelle Uniquement
+
+L'utilisation d'une expression régulière est réservée à la découverte
+de page à explorer. Mais parfois, seule le code source de la page actuelle
+devrait être exploré. La valeur `_$CURRENT$_` est alors la solution.
+
+Elle permet d'appliquer les modèles de recherche (XPath, *replace*, etc)
+sur la page courante.
 
 
 ## Modèle de Recherche

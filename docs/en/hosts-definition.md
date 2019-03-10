@@ -125,8 +125,15 @@ current web page.
 
 ## Path Pattern
 
-The path pattern is a [regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions)
-that **helps to find what to explore** on a given domain.  
+The path pattern **helps to find what to explore** on a given domain.  
+It accepts 2 kinds of values.
+
+
+### Find Links to Explore
+
+This includes the case where you want to find pages to explore
+from the current one. In this situation, the path pattern must be a
+[regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions).
 Basically, when you visit a web page and activates Host Grabber, it analyzes the source code.
 All the text parts that match the domain and path pattern will be kept for further analysis.
 
@@ -150,6 +157,15 @@ There are some rules to know when setting this property
 * The HTML entity for `<` must be written `&lt;`.
 * The HTML entity for `>` must be written `&gt;`.
 * The HTML entity for `&` must be written `&amp;`.
+
+
+### Explore the Current Page Only
+
+Using a regular expression allows to find what pages to explore.  
+But sometimes, you just want to exploire the current page.
+`_$CURRENT$_` is the solution then.
+
+It allows to apply search patterns (XPath, replace, etc) on the current page.
 
 
 ## Search Patterns
