@@ -88,6 +88,37 @@ describe('background => library.utilities', function() {
   });
 
 
+  // No "done "callback for this test.
+  // Instead, we return a promise. If it fails, it will fail the test.
+  it('should fail to load this invalid XML document (MIME type forced, like for dictionary download)', function() {
+
+    // Test resources are served by Karma
+    return loadRemoteDocument('http://localhost:9876/base/tests/resources/invalid-xml2.html', true, 'text/xml').then( function(xmlDoc) {
+      expect().fail('This function should not have been invoked!');
+
+    }, function(error) {
+      // The document was correctly download but is not a valid XML
+      expect(error.status).to.eql(200);
+      expect(error.statusText).to.eql('Invalid XML document.');
+    });
+  });
+
+
+  // No "done "callback for this test.
+  // Instead, we return a promise. If it fails, it will fail the test.
+  it('should fail to load this invalid XML document (no MIME type forced)', function() {
+
+    // Test resources are served by Karma
+    return loadRemoteDocument('http://localhost:9876/base/tests/resources/invalid-xml2.html').then( function(xmlDoc) {
+      // When the MIME type is not forced, the browser can repair
+      // invalid XML documents as HTML pages.
+
+    }, function(error) {
+      expect().fail('This function should not have been invoked!');
+    });
+  });
+
+
   it('should remove items from an array', function(done) {
 
     var arr = [{id: 1}, {id: 2}, {id: 1}];

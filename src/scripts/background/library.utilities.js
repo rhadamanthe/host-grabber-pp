@@ -12,6 +12,7 @@ function loadRemoteDocument(url, asDoc = true, mimeType) {
 
   return new Promise(function (resolve, reject) {
     var xhr = new XMLHttpRequest();
+    var customError = undefined;
     if (asDoc) {
       xhr.responseType = 'document';
     }
@@ -24,14 +25,19 @@ function loadRemoteDocument(url, asDoc = true, mimeType) {
     xhr.onerror = function () {
       reject({
         status: this.status,
-        statusText: this.statusText
+        statusText: customError || this.statusText
       });
     };
 
     xhr.onload = function () {
       var result = asDoc ? this.responseXML : this.responseText;
-      if (this.status >= 200 && this.status < 300) {
+      if (asDoc && ! result) {
+        customError = 'Invalid XML document.';
+        this.onerror();
+
+      } else if (this.status >= 200 && this.status < 300) {
         resolve(result);
+
       } else {
         this.onerror();
       }
