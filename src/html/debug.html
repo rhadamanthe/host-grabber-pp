@@ -57,6 +57,7 @@ button {
     font-size: 20px;
 	border-radius: 6px;
 	margin-top: 6px;
+	width: 90%;
 }
 
 #errors {
@@ -64,11 +65,44 @@ button {
 	font-weight: bold;
 }
 
+#exportSection {
+	display: none;
+}
+
+.xml-cdata {
+	color: red;
+	text-decoration: italic;
+}
+
+.xml-attribute {
+	color: red;
+}
+
+.xml-markup {
+	color: green;
+	font-weight: bold;
+}
+
+#xml-catalog {
+	border: solid black 1px;
+	padding: 10px;
+	background: white;
+	white-space: pre-wrap;
+	cursor: text !important;
+
+	-webkit-touch-callout: text !important;
+    -webkit-user-select: text !important;
+    -khtml-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+}
+
 	</style>
 </head>
 
 <body>
-	<div class="section">
+	<div class="section" id="formSection">
 		<span data-i18n="debugPage_intro"></span>
 
 		<br /><br />
@@ -101,9 +135,18 @@ button {
 
 		<br /><br />
 		<button id="simulateButton" data-i18n="debugPage_simulateButton"></button>
+		<button id="exportButton" data-i18n="debugPage_exportButton"></button>
 
 		<br /><br />
 		<pre id="errors"></pre>
+	</div>
+	
+	<div class="section" id="exportSection">
+		<span data-i18n="debugPage_intro"></span>
+		<br /><br />
+		<pre id="xml-catalog" onclick="selectDictionaryItem()"></pre>
+		<br /><br />
+		<button id="backButton" data-i18n="debugPage_backButton"></button>
 	</div>
 
 	<script src="../scripts/npm/browser-polyfill.min.0.3.1.js"></script>

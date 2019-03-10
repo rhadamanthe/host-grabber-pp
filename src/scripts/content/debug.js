@@ -15,10 +15,75 @@ browser.runtime.onMessage.addListener(request => {
 
 document.querySelector('#simulateButton').addEventListener('click', simulateAction);
 document.querySelector('#simulateButton').addEventListener('click', showFeedback);
+document.querySelector('#backButton').addEventListener('click', backToForm);
+document.querySelector('#exportButton').addEventListener('click', showExportSection);
 document.querySelector('#dictionary-items').addEventListener('change', fillInItemProperties);
 
 
 // Functions
+
+/**
+ * Brings the form back.
+ * @returns {undefined}
+ */
+function backToForm() {
+  document.querySelector('#exportSection').style.display = 'none';
+  document.querySelector('#formSection').style.display = 'block';
+}
+
+
+/**
+ * Shows the export section.
+ * @returns {undefined}
+ */
+function showExportSection() {
+
+  // Clear the previous stuff
+  var xmlCatalog = document.querySelector('#xml-catalog');
+  xmlCatalog.innerHTML = '';
+
+  // Build the dictionary item
+  var s = buildDictionaryItem();
+  s.split('\n').forEach( function( item, index ) {
+    var firstPos = item.indexOf('>');
+    var endPos = item.lastIndexOf('<');
+    if (index !== 0) {
+      xmlCatalog.appendChild( document.createElement('br'));
+    }
+
+    if (firstPos === item.length - 1) {
+      highlight(xmlCatalog, 'xml-markup', item.substring(0));
+    } else {
+      highlight(xmlCatalog, 'xml-markup', '  ' + item.substring(0, firstPos + 1));
+      xmlCatalog.appendChild( document.createElement('br'));
+      highlight(xmlCatalog, '', '  ' + item.substring(firstPos + 1, endPos));
+      xmlCatalog.appendChild( document.createElement('br'));
+      highlight(xmlCatalog, 'xml-markup', '  ' + item.substring(endPos));
+    }
+  });
+
+  // Update the display
+  document.querySelector('#formSection').style.display = 'none';
+  document.querySelector('#exportSection').style.display = 'block';
+}
+
+
+/**
+ * Highlights an element in the XML catalog.
+ * @param {object} xmlCatalog The HTML parent node.
+ * @param {string} className The class name.
+ * @param {string} content The content to display.
+ * @returns {undefined}
+ */
+function highlight(xmlCatalog, className, content) {
+
+  var markup = document.createElement('span');
+  xmlCatalog.appendChild(markup);
+  markup.className = className;
+  markup.textContent = content;
+}
+
+
 
 /**
  * Loads the current dictionary in the side bar.
@@ -124,21 +189,8 @@ function simulateAction() {
   // Extract the current item
   var dictionaryAsString = '<?xml version="1.0" encoding="UTF-8"?>\n'
     + '<root id="test" version="test" spec="1.0">\n'
-    + '<host id="report">\n';
-
-  var suffix = document.querySelector('#domain-is-regexp').checked ? '-pattern' : '';
-  dictionaryAsString += '<domain' + suffix + '>' + document.querySelector('#domain').value + '</domain' + suffix + '>\n';
-  dictionaryAsString += '<path-pattern><![CDATA[' + document.querySelector('#path-pattern').value + ']]></path-pattern>\n';
-  if (document.querySelector('#interceptor1').value.trim().length !== 0) {
-    dictionaryAsString += '<interceptor>' + document.querySelector('#interceptor1').value + '</interceptor>\n';
-  }
-
-  dictionaryAsString += '<search-pattern><![CDATA[' + document.querySelector('#search-pattern').value + ']]></search-pattern>\n';
-  if (document.querySelector('#interceptor2').value.trim().length !== 0) {
-    dictionaryAsString += '<interceptor>' + document.querySelector('#interceptor2').value + '</interceptor>\n';
-  }
-
-  dictionaryAsString += '</host>\n</root>';
+    + buildDictionaryItem()
+    + '\n</root>';
 
   // Validate
   var dictionaryDocument = new DOMParser().parseFromString(dictionaryAsString,'text/xml');
@@ -157,4 +209,28 @@ function simulateAction() {
 
     document.querySelector('#errors').textContent = errorMessage;
   }
+}
+
+
+/**
+ * Builds the dictionary item from the form.
+ * @returns {string} The dictionary item.
+ */
+function buildDictionaryItem() {
+
+  var dictionaryAsString = '<host id="report">';
+  var suffix = document.querySelector('#domain-is-regexp').checked ? '-pattern' : '';
+  dictionaryAsString += '\n<domain' + suffix + '>' + document.querySelector('#domain').value + '</domain' + suffix + '>';
+  dictionaryAsString += '\n<path-pattern><![CDATA[' + document.querySelector('#path-pattern').value + ']]></path-pattern>';
+  if (document.querySelector('#interceptor1').value.trim().length !== 0) {
+    dictionaryAsString += '\n<interceptor>' + document.querySelector('#interceptor1').value + '</interceptor>';
+  }
+
+  dictionaryAsString += '\n<search-pattern><![CDATA[' + document.querySelector('#search-pattern').value + ']]></search-pattern>';
+  if (document.querySelector('#interceptor2').value.trim().length !== 0) {
+    dictionaryAsString += '\n<interceptor>' + document.querySelector('#interceptor2').value + '</interceptor>';
+  }
+
+  dictionaryAsString += '\n</host>';
+  return dictionaryAsString;
 }

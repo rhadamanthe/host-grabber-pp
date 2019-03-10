@@ -341,7 +341,17 @@
 
   "debugPage_simulateButton": {
     "message": "Extraire les Liens",
-    "description": "L'étiquette pour cet élément (page de débogage)"
+    "description": "L'étiquette pour ce bouton (page de débogage)"
+  },
+
+  "debugPage_exportButton": {
+    "message": "Exporter pour le Catalogue",
+    "description": "L'étiquette pour ce bouton (page de débogage)"
+  },
+
+  "debugPage_backButton": {
+    "message": "Revenir au Formulaire",
+    "description": "L'étiquette pour ce bouton (page de débogage)"
   },
 
   "menu_showDownloadList": {

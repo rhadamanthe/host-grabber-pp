@@ -344,6 +344,16 @@
     "description": "The label for this element (debug page)"
   },
 
+  "debugPage_exportButton": {
+    "message": "Export for the Catalog",
+    "description": "The label for this element (debug page)"
+  },
+
+  "debugPage_backButton": {
+    "message": "Back to the Form",
+    "description": "The label for this element (debug page)"
+  },
+
   "menu_showDownloadList": {
     "message": "Show Downloads List",
     "description": "The label for this menu"
