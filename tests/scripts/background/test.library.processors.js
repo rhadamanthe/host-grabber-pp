@@ -1031,6 +1031,64 @@ describe('background => library.processors', function() {
   });
 
 
+  it('should handle direct images correctly', function(done) {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html>
+      <head>
+        <title>That's a serious thing!</title>
+      </head>
+      <body>
+        <a onclick="f(x)" href="http://host44.fr/gallery/t1_big.jpg" class="pom">
+          <img src="http://host44.fr/gallery/t1.jpg" class="img" />
+        </a>
+        <br />
+        <a href="http://host44.fr/gallery/m1_big.png">
+          <img src="http://host44.fr/gallery/m1.jpg" />
+        </a>
+        <img src="http://mimi.net/gallery/t2.jpg" />
+        <br />
+        <img src="http://host44.fr/gallery/t2.jpg" class="img" />
+        <img src="https://host44.fr/gallery/t1.jpg" class="img" />
+        <img src="http://www.host44.fr/gallery/dir/t45.jpg" class="img" />
+        <br />
+        <img src="http://bibi.com/path/to/this/image1.PNG" />
+
+        <a href="http://host44.fr/gallery/path/msqd_big.jpg?t=opfdglm">
+          <img src="http://host44.fr/gallery/msqd.jpg" />
+        </a>
+        <a href="http://host_not_the_same.fr/gallery/path/msqb_big_800x600.jpg">
+          <img src="http://host44.fr/gallery/msqb.jpg" />
+        </a>
+    </body></html>
+    `;
+
+    // Parse the dictionary
+    var dictionaryWrapper = buildDictionaryWrapperForDirectImages();
+
+    // Extract links
+    var processors = findWhatToProcess(sourceDocument, 'https://host44.fr/here/it/is.php', dictionaryWrapper);
+    expect(processors.length).to.eql(1);
+
+    var idleFn = function() {};
+    var extractorFn = extractor();
+    var queue = {
+      processNextItem: function() {}
+    };
+
+    var p = processors[0];
+    handleProcessor(p, extractorFn, queue, idleFn, idleFn, newAlreadyVisitedUrls());
+
+    expect(p.pageTitle).to.eql('That\'s a serious thing!');
+    expect(p.downloadLinks.length).to.eql(4);
+    expect(p.downloadLinks[0].link).to.eql('http://host44.fr/gallery/t1_big.jpg');
+    expect(p.downloadLinks[1].link).to.eql('http://host44.fr/gallery/m1_big.png');
+    expect(p.downloadLinks[2].link).to.eql('http://host44.fr/gallery/path/msqd_big.jpg');
+    expect(p.downloadLinks[3].link).to.eql('http://host_not_the_same.fr/gallery/path/msqb_big.jpg');
+    done();
+  });
+
+
   /**
    * A utility promise that waits for a given time.
    * @param {integer} ms The number of milliseconds to wait.

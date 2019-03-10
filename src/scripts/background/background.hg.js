@@ -37,6 +37,14 @@ browser.contextMenus.create({
 });
 
 browser.contextMenus.create({
+  id: 'hg-menu-donwload-direct-images',
+  parentId: 'hg-menu',
+  title: browser.i18n.getMessage('menu_downloadDirectImages'),
+  contexts: ['all'],
+  onclick: downloadDirectImages
+});
+
+browser.contextMenus.create({
   id: 'separator-1',
   parentId: 'hg-menu',
   type: 'separator',
@@ -253,18 +261,28 @@ function showDownloadsList() {
 
 /**
  * Downloads the content by analyzing the source code of the current tab.
+ * @param {object} dictionaryWrapperToUse A dictionary wrapper (optional).
  * @returns {undefined}
  */
-function downloadContentFromCurrentTab() {
+function downloadContentFromCurrentTab(dictionaryWrapperToUse) {
 
   // Get the page's source code.
   // Background scripts cannot directly get it, so we ask it to our content
   // script (in the currently active tab). So we have to go through the tab API.
   browser.tabs.query({active: true, currentWindow: true}).then( tabs => {
     browser.tabs.sendMessage( tabs[0].id, {req: 'source-code'}).then( sourceAsText => {
-      downloadContentFromText(sourceAsText, tabs[0].url);
+      downloadContentFromText(sourceAsText, tabs[0].url, dictionaryWrapperToUse);
     });
   });
+}
+
+
+/**
+ * Downloads direct images in the current tab.
+ * @returns {undefined}
+ */
+function downloadDirectImages() {
+  downloadContentFromCurrentTab( buildDictionaryWrapperForDirectImages());
 }
 
 
@@ -288,16 +306,18 @@ function downloadContentFromURL(url) {
  * Downloads the content by analyzing a given source code.
  * @param {string} sourceAsText The source code to analyze.
  * @param {string} url The URL of the page.
+ * @param {object} dictionaryWrapperToUse A dictionary wrapper (optional).
  * @returns {undefined}
  */
-function downloadContentFromText(sourceAsText, url) {
+function downloadContentFromText(sourceAsText, url, dictionaryWrapperToUse) {
 
   // Open the download tab
   showDownloadsList();
 
   // Parse the source code and find the links
+  var dw = dictionaryWrapperToUse || dictionaryWrapper;
   var sourceDocument = new DOMParser().parseFromString(sourceAsText,'text/html');
-  var processors = findWhatToProcess(sourceDocument, url, dictionaryWrapper);
+  var processors = findWhatToProcess(sourceDocument, url, dw);
 
   // We get link candidates to process and/or explore
   processors.forEach(function(processor) {

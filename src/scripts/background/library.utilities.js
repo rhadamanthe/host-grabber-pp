@@ -353,3 +353,34 @@ function verifyDownloadedItem(downloadItem) {
 
   return error;
 }
+
+
+/**
+ * Builds a dictionary to download direct images.
+ * <p>
+ * Links to thumbnails (that end with _<code>width</code>x<code>height</code>)
+ * are replaced to target full-size images.
+ * </p>
+ * @returns {object} A dictionary wrapper.
+ */
+function buildDictionaryWrapperForDirectImages() {
+
+  // Search <a> links that end with jpg, png or gif.
+  // Also consider image names that are completed by "?something".
+  // Eventually, consider Wordpress images (that are often resized
+  // and contain WIDTHxHEIGHT before the extension).
+  var dictionaryAsString = `<?xml version="1.0" encoding="UTF-8"?>
+    <root id="direct_images" version="built-in" spec="1.0">
+    <host id="direct_images">
+      <domain-pattern>.*</domain-pattern>
+      <path-pattern>_$CURRENT$_</path-pattern>
+      <search-pattern><![CDATA[expreg: <a\\s+[^>]*href="([^"]+\\.(jpg|gif|png))(\\?[^"]*)?"[^>]*>\\s*<img]]></search-pattern>
+      <interceptor>replace: '_\\d+x\\d+\\.(jpg|png|gif)', '.$1'</interceptor>
+    </host>
+    </root>
+    `;
+
+  // Validate
+  var dictionaryDocument = new DOMParser().parseFromString(dictionaryAsString,'text/xml');
+  return parseAndVerifyDictionary(dictionaryDocument);
+}

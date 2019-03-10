@@ -23,7 +23,6 @@ extension, but unlike it, it is not restricted to downloading images.
 **Short-term**
 
 * Add a way to manage a dictionary locally (add, remove, enable, disable rules).
-* Add a separate menu to download direct images.
 
 
 ## Development

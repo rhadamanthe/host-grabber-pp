@@ -464,7 +464,6 @@ describe('background => library.utilities', function() {
   });
 
 
-
   it('should be able to verify download items', function(done) {
 
     var downloadItem = {};
@@ -496,6 +495,14 @@ describe('background => library.utilities', function() {
     downloadItem.fileSize = -1;
     analysisResult = verifyDownloadedItem(downloadItem);
     expect(analysisResult.code).to.eql(0);
+    done();
+  });
+
+
+  it('should build a valid dictionary for direct images', function(done) {
+
+    var dictionaryWrapper = buildDictionaryWrapperForDirectImages();
+    expect(dictionaryWrapper.errors.length).to.eql(0);
     done();
   });
 });
