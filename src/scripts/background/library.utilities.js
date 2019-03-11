@@ -31,7 +31,7 @@ function loadRemoteDocument(url, asDoc = true, mimeType) {
 
     xhr.onload = function () {
       var result = asDoc ? this.responseXML : this.responseText;
-      if (asDoc && ! result) {
+      if (asDoc && !! mimeType && ! result) {
         customError = 'Invalid XML document.';
         this.onerror();
 
