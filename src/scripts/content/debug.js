@@ -218,7 +218,7 @@ function simulateAction() {
  */
 function buildDictionaryItem() {
 
-  var dictionaryAsString = '<host id="report">';
+  var dictionaryAsString = '<host id="x">';
   var suffix = document.querySelector('#domain-is-regexp').checked ? '-pattern' : '';
   dictionaryAsString += '\n<domain' + suffix + '>' + document.querySelector('#domain').value + '</domain' + suffix + '>';
   dictionaryAsString += '\n<path-pattern><![CDATA[' + document.querySelector('#path-pattern').value + ']]></path-pattern>';

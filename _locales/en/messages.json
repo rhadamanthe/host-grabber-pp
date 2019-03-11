@@ -373,7 +373,7 @@
     "message": "Extract and Download",
     "description": "The label for this menu"
   },
-  
+
   "menu_downloadDirectImages": {
     "message": "Download Direct Images",
     "description": "The label for this menu"

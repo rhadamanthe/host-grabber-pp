@@ -4,6 +4,145 @@
 const globalDomainPattern = /^\w[-\w\.]*\w$/;
 const globalCurrent = '_$CURRENT$_';
 
+// i18n is defined in this file
+const i18n = {
+  dictionary_err_1: {
+    fr: 'L\'élément \'dictionary\' doit avoir un attribut \'version\'.',
+    en: 'The dictionary element must have a \'version\' attribute.'
+  },
+
+  dictionary_err_2: {
+    fr: 'L\'élément \'dictionary\' doit avoir un attribut \'spec\'.',
+    en: 'The dictionary element must have a \'spec\' attribute.'
+  },
+
+  dictionary_err_3: {
+    fr: 'L\'élément \'dictionary\' doit avoir un attribut \'ID\'.',
+    en: 'The dictionary element must have an \'ID\' attribute.'
+  },
+
+  dictionary_err_4: {
+    fr: 'Une balise inconnue a été trouvée dans le dictionnaire : {0}',
+    en: 'An unknown tag was found in the dictionary: {0}'
+  },
+
+  dictionary_err_5: {
+    fr: 'Un hôte sans identifiant a été trouvé.',
+    en: 'A host without an ID was found.'
+  },
+
+  dictionary_err_6: {
+    fr: 'Cet identifiant est utilisé par plusieurs éléments du dictionnaire : {0}',
+    en: 'A same ID is used by several hosts in the dictionary: {0}'
+  },
+
+  dictionary_err_7: {
+    fr: 'Une balise \'domain\' a été trouvée à un mauvais endroit.',
+    en: 'A domain was found at an invalid position.'
+  },
+
+  dictionary_err_8: {
+    fr: 'Domaine invalide : {0}',
+    en: 'Invalid domain: {0}'
+  },
+
+  dictionary_err_9: {
+    fr: 'Une balise \'domain-pattern\' a été trouvée à un mauvais endroit.',
+    en: 'A domain pattern was found at an invalid position.'
+  },
+
+  dictionary_err_10: {
+    fr: 'Un interceptor a été trouvé à un mauvais endroit.',
+    en: 'An interceptor was found at an invalid position.'
+  },
+
+  dictionary_err_11: {
+    fr: 'Intercepteur invalide : {0}',
+    en: 'Invalid interceptor: {0}'
+  },
+
+  dictionary_err_12: {
+    fr: 'Une balise \'path-pattern\' a été trouvée à un mauvais endroit.',
+    en: 'A path pattern was found at an invalid position.'
+  },
+
+  dictionary_err_13: {
+    fr: 'Un modèle de chemin ne peut pas commencer par \'/\'.',
+    en: 'A path pattern cannot start with \'/\'.'
+  },
+
+  dictionary_err_14: {
+    fr: 'Un modèle de chemin ne peut pas commencer par \'^\'.',
+    en: 'A path pattern cannot start with \'^\'.'
+  },
+
+  dictionary_err_15: {
+    fr: 'Un modèle de chemin ne peut pas finir par \'$\'.',
+    en: 'A path pattern cannot end with \'$\'.'
+  },
+
+  dictionary_err_16: {
+    fr: 'Une balise \'search-pattern\' a été trouvée à un mauvais endroit.',
+    en: 'A search pattern was found at an invalid position.'
+  },
+
+  dictionary_err_17: {
+    fr: 'Modèle de recherche invalide, stratégie inconnue.',
+    en: 'Invalid search pattern. Unrecognized strategy.'
+  },
+
+  dictionary_err_18: {
+    fr: 'Une balise inconnue a été trouvée : {0}',
+    en: 'An unknown tag was found: {0}'
+  },
+
+  dictionary_err_19: {
+    fr: 'Une balise \'domain\' ou \'domain-pattern\' était attendue.',
+    en: 'A domain or a domain pattern was expected.'
+  },
+
+  dictionary_err_20: {
+    fr: 'Une balise \'path-pattern\' était attendue.',
+    en: 'A path-pattern was expected.'
+  },
+
+  dictionary_err_21: {
+    fr: 'Une balise \'search-pattern\' était attendue.',
+    en: 'A search-pattern was expected.'
+  }
+};
+
+
+var theLocale = 'en';
+if (typeof browser !== 'undefined'
+      && typeof browser.i18n  !== 'undefined') {
+
+  browser.i18n.getAcceptLanguages().then( function(langs) {
+    var index = langs[0].indexOf('_');
+    if (index !== -1) {
+      theLocale = langs[0].subString(0, index);
+    } else {
+      theLocale = langs[0];
+    }
+  })
+}
+
+
+/**
+ * Resolves the translation for a given error code.
+ * @param {array} params An array of parameters.
+ * @returns {string} An error message.
+ */
+function resolveI18n(params) {
+
+  var s = i18n[params[0]][theLocale];
+  for (var i=1; i<params.length; i++) {
+    s = s.replace( '{' + (i-1) + '}', params[i]);
+  }
+
+  return s;
+}
+
 
 /**
  * Parses and verifies the dictionary.
@@ -18,33 +157,33 @@ function parseAndVerifyDictionary(dictionaryDocument) {
 
   // Verify the root element
   if (!dictionaryDocument.documentElement.getAttribute('version')) {
-    result.errors.push('The dictionary element must have a \'version\' attribute.');
+    result.errors.push( resolveI18n(['dictionary_err_1']));
   }
 
   if (!dictionaryDocument.documentElement.getAttribute('spec')) {
-    result.errors.push('The dictionary element must have a \'spec\' attribute.');
+    result.errors.push( resolveI18n(['dictionary_err_2']));
   }
 
   if (!dictionaryDocument.documentElement.getAttribute('id')) {
-    result.errors.push('The dictionary element must have an \'ID\' attribute.');
+    result.errors.push( resolveI18n(['dictionary_err_3']));
   }
 
   // Verify hosts
   var foundIds = [];
   getElementChildren(dictionaryDocument.documentElement).forEach( function(elt) {
     if (elt.tagName !== 'host') {
-      result.errors.push('An unknown tag was found in the dictionary: ' + elt.tagName);
+      result.errors.push( resolveI18n(['dictionary_err_4', elt.tagName]));
       return;
     }
 
     if (!elt.getAttribute('id')) {
-      result.errors.push('A host without an ID was found.');
+      result.errors.push( resolveI18n(['dictionary_err_5']));
       return;
     }
 
     var id = elt.getAttribute('id');
     if (foundIds.indexOf(id) !== -1) {
-      result.errors.push('A same ID is used by several hosts in the dictionary: ' + id);
+      result.errors.push( resolveI18n(['dictionary_err_6', id]));
       return;
     }
 
@@ -78,22 +217,22 @@ function parseAndVerifyDictionaryItem(domElement) {
   var current = '';
   var loopCount = 0;
   getElementChildren(domElement).forEach( function(elt) {
-    var tempErrors = [];
+    var tempErrorCodes = [];
 
     // Domain
     if (elt.tagName === 'domain') {
       var domain = elt.textContent.trim();
       if (loopCount !== 0) {
-        tempErrors.push('A domain was found at an invalid position.');
+        tempErrorCodes.push(['dictionary_err_7']);
       }
 
       var matchRes = domain.match(globalDomainPattern);
       if (domain !== globalCurrent &&
             (! matchRes || matchRes.length === 0)) {
-        tempErrors.push('Invalid domain: ' + domain);
+        tempErrorCodes.push(['dictionary_err_8', domain]);
       }
 
-      if (tempErrors.length === 0) {
+      if (tempErrorCodes.length === 0) {
         result.domain = domain;
         current = 'domain';
       }
@@ -103,10 +242,10 @@ function parseAndVerifyDictionaryItem(domElement) {
     else if (elt.tagName === 'domain-pattern') {
       var domainP = elt.textContent.trim();
       if (loopCount !== 0) {
-        tempErrors.push('A domain pattern was found at an invalid position.');
+        tempErrorCodes.push(['dictionary_err_9']);
       }
 
-      if (tempErrors.length === 0) {
+      if (tempErrorCodes.length === 0) {
         result.domain = new RegExp(domainP);
         current = 'domain';
       }
@@ -116,14 +255,14 @@ function parseAndVerifyDictionaryItem(domElement) {
     else if (elt.tagName === 'interceptor') {
       var interceptorAsString = elt.textContent.trim();
       if (current !== 'interceptor1' && current !== 'interceptor2' && current !== 'search-pattern' && current !== 'path-pattern') {
-        tempErrors.push('An interceptor was found at an invalid position.');
+        tempErrorCodes.push(['dictionary_err_10']);
       }
 
       if (!interceptorAsString.match(ExtMethods.REPLACE.pattern)) {
-        tempErrors.push('Invalid interceptor: ' + interceptorAsString);
+        tempErrorCodes.push(['dictionary_err_11', interceptorAsString]);
       }
 
-      if (tempErrors.length === 0) {
+      if (tempErrorCodes.length === 0) {
         var match = ExtMethods.REPLACE.pattern.exec(interceptorAsString);
         var interceptor = {replace: match[1].trim(), by: match[2].trim(), string: interceptorAsString};
         ExtMethods.REPLACE.pattern.lastIndex = 0;
@@ -142,22 +281,22 @@ function parseAndVerifyDictionaryItem(domElement) {
     else if (elt.tagName === 'path-pattern') {
       var pathPattern = elt.textContent.trim();
       if (current !== 'domain') {
-        tempErrors.push('A path pattern was found at an invalid position.');
+        tempErrorCodes.push(['dictionary_err_12']);
       }
 
       if (pathPattern.startsWith('/')) {
-        tempErrors.push('A path pattern cannot start with \'/\'.');
+        tempErrorCodes.push(['dictionary_err_13']);
       }
 
       if (pathPattern.startsWith('^')) {
-        tempErrors.push('A path pattern cannot start with \'^\'.');
+        tempErrorCodes.push(['dictionary_err_14']);
       }
 
       if (pathPattern.endsWith('$')) {
-        tempErrors.push('A path pattern cannot end with \'$\'.');
+        tempErrorCodes.push(['dictionary_err_15']);
       }
 
-      if (tempErrors.length === 0) {
+      if (tempErrorCodes.length === 0) {
         result.pathPattern = pathPattern;
         current = 'path-pattern';
       }
@@ -169,14 +308,14 @@ function parseAndVerifyDictionaryItem(domElement) {
       var fixedSearchPattern = removeCDataMarkups(searchPattern);
 
       if (current !== 'path-pattern' && current !== 'interceptor1') {
-        tempErrors.push('A search pattern was found at an invalid position.');
+        tempErrorCodes.push(['dictionary_err_16']);
       }
 
       if (findExtractionMethod(fixedSearchPattern) === 0) {
-        tempErrors.push('Invalid search pattern. Unrecognized strategy.');
+        tempErrorCodes.push(['dictionary_err_17']);
       }
 
-      if (tempErrors.length === 0) {
+      if (tempErrorCodes.length === 0) {
         result.searchPattern = fixedSearchPattern;
         current = 'search-pattern';
       }
@@ -184,13 +323,14 @@ function parseAndVerifyDictionaryItem(domElement) {
 
     // Unrecognized tag
     else {
-      tempErrors.push('An unknown tag was found: ' + elt.tagName);
+      tempErrorCodes.push(['dictionary_err_18', elt.tagName]);
       loopCount --;
     }
 
     // Add errors
-    tempErrors.forEach( function(error) {
-      result.errors.push(error);
+    tempErrorCodes.forEach( function(error) {
+      var msg = resolveI18n(error);
+      result.errors.push(msg);
     });
 
     // End of the loop
@@ -199,15 +339,15 @@ function parseAndVerifyDictionaryItem(domElement) {
 
   // Validate the object
   if (!result.domain) {
-    result.errors.push('A domain or a domain pattern was expected.');
+    result.errors.push( resolveI18n(['dictionary_err_19']));
   }
 
   if (!result.pathPattern) {
-    result.errors.push('A path-pattern was expected.');
+    result.errors.push( resolveI18n(['dictionary_err_20']));
   }
 
   if (!result.searchPattern) {
-    result.errors.push('A search-pattern was expected.');
+    result.errors.push( resolveI18n(['dictionary_err_21']));
   }
 
   return result;
