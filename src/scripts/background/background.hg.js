@@ -273,7 +273,6 @@ function downloadContentFromCurrentTab(dictionaryWrapperToUse) {
   // Get the page's source code.
   // Background scripts cannot directly get it, so we ask it to our content
   // script (in the currently active tab). So we have to go through the tab API.
-  console.log(dictionaryWrapperToUse)
   browser.tabs.query({active: true, currentWindow: true}).then( tabs => {
     browser.tabs.sendMessage( tabs[0].id, {req: 'source-code'}).then( sourceAsText => {
       console.log(dictionaryWrapperToUse)
