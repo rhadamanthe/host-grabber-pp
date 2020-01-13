@@ -53,10 +53,10 @@ function findWhatToProcess(sourceDocument, url, dictionaryWrappers) {
       // Otherwise, find links to explore
       else {
         urlPatternWrappers = buildUrlPatterns(
-            url,
-            item.domain,
-            item.pathPattern,
-            item.id
+          url,
+          item.domain,
+          item.pathPattern,
+          item.id
         );
       }
 

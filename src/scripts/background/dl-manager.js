@@ -99,7 +99,7 @@ function newDlManager(queue) {
     // Process a new item?
     // No need to wait for the search promise to complete.
     if (dlManager.downloadIdToLinkObject.delete(downloadDelta.id)) {
-       // One download stopped
+      // One download stopped
       dlManager.ongoingDownloadsCpt --;
 
       // Process the next one, if there is one

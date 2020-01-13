@@ -35,12 +35,6 @@ module.exports = function(config) {
       }
     ],
 
-    // The tests below are intended to be run from inside the WebExtension itself,
-    // not from the Karma test suite.
-/*    exclude: [
-      'addon/tests',
-    ],
-*/
     client: {
       mocha: {
         // change Karma's debug.html to the mocha web reporter

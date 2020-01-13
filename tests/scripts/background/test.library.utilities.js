@@ -461,10 +461,10 @@ describe('background => library.utilities', function() {
   it('should verify the building of download options (by page title)', function(done) {
 
     var p = newProcessor(
-        'http://this.is.the/matching/url',
-        'APPEARANCE - Someone famous - Entertainment Weekly Pre-SAG Party in Los Angeles! - 01/26/19 | Art Forum',
-        'search-pattern1',
-        'https://www.origin.url/dir');
+      'http://this.is.the/matching/url',
+      'APPEARANCE - Someone famous - Entertainment Weekly Pre-SAG Party in Los Angeles! - 01/26/19 | Art Forum',
+      'search-pattern1',
+      'https://www.origin.url/dir');
 
     var dlLink = {
       id: p.id + '-1',

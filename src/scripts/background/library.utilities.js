@@ -202,13 +202,13 @@ function buildUrlPatterns(pageUrl, domain, pathPattern, hostId) {
     // The base pattern covers HTTP, HTTPS, www. and sub-domains URLs
     var basePattern = buildDomainPattern(domain);
     var extraPathPattern = pathPattern
-        .replace(/\.\+/, esc + '+')
-        .replace(/\.\*/, esc + '*')
-        .replace(/\.(\{\d+(,\d*)?\})/, esc + '$1')
-        .replace('&dot;', '.')
-        .replace('&lt;', '<')
-        .replace('&gt;', '>')
-        .replace('&amp;', '&');
+      .replace(/\.\+/, esc + '+')
+      .replace(/\.\*/, esc + '*')
+      .replace(/\.(\{\d+(,\d*)?\})/, esc + '$1')
+      .replace('&dot;', '.')
+      .replace('&lt;', '<')
+      .replace('&gt;', '>')
+      .replace('&amp;', '&');
 
     res.push({ pattern: '"(' + basePattern + '/' + extraPathPattern + ')"', excludeHost: false});
 
