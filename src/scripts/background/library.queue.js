@@ -45,6 +45,8 @@ function newQueue(handleProcessorFn) {
       }
 
       queue.processNextItem();
+    } else {
+      console.log('No processor was found for this ID: ' + processorId);
     }
   }
 

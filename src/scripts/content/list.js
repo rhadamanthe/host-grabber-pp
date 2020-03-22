@@ -487,7 +487,8 @@ function retryDownloads(selectedOnly) {
     }
 
     // Notify the background it should process this item once again
-    browser.runtime.sendMessage({req: 'restart-download', obj: processorId});
+    var processor = allProcessors.get(processorId)
+    browser.runtime.sendMessage({req: 'restart-download', obj: processor});
     item.checked = false;
   });
 }

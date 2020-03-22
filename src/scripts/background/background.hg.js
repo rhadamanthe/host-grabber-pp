@@ -95,10 +95,10 @@ browser.runtime.onMessage.addListener(request => {
 
   } else if (request.req === 'restart-download') {
     request.obj.downloadLinks.forEach( function(dlLink) {
-      removeFromArray(alreadyVisitedUrls, dlLink);
+      removeFromArray(alreadyVisitedUrls.list, dlLink.link);
     });
 
-    queue.reschedule(request.obj);
+    queue.reschedule(request.obj.id);
 
   } else if (request.req === 'clear-already-visited-urls') {
     alreadyVisitedUrls.list.length = 0;
@@ -275,7 +275,6 @@ function downloadContentFromCurrentTab(dictionaryWrapperToUse) {
   // script (in the currently active tab). So we have to go through the tab API.
   browser.tabs.query({active: true, currentWindow: true}).then( tabs => {
     browser.tabs.sendMessage( tabs[0].id, {req: 'source-code'}).then( sourceAsText => {
-      console.log(dictionaryWrapperToUse)
       downloadContentFromText(sourceAsText, tabs[0].url, dictionaryWrapperToUse);
     });
   });
