@@ -24,12 +24,6 @@
   	"open_in_tab": true
   },
 
-  "browser_action": {
-    "default_icon": "icons/logo_x48.png",
-    "default_title": "__MSG_extensionBrowserAction_Extract__",
-    "browser_style": true
-  },
-
   "background": {
 	"scripts": [
 	  "src/scripts/npm/browser-polyfill.min.0.3.1.js",
