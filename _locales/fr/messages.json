@@ -34,6 +34,11 @@
     "description": "L'étiquette pour l'action 'enregister l'URL du Dictionnaire' (page d'options)"
   },
 
+  "optionsPage_saveDlPatternButton": {
+    "message": "Enregister le Modèle Personnalisé",
+    "description": "L'étiquette pour l'action 'enregister le modèle personnalisé' (page d'options)"
+  },
+
   "optionsPage_downloadSettingsSection": {
     "message": "Paramètres de Téléchargement",
     "description": "L'étiquette pour la section 'paramètres de Téléchargement' (page d'options)"
@@ -126,6 +131,16 @@
 
   "optionsPage_dlStrategyRadio_default": {
     "message": "Défaut : tout sauvegarder dans le même répertoire de téléchargement",
+    "description": "L'étiquette pour cette option (page d'options)"
+  },
+
+  "optionsPage_dlStrategyRadio_custom": {
+  	"message": "Utiliser un modèle personnalisé pour le nom du dossier",
+    "description": "L'étiquette pour cette option (page d'options)"
+  },
+
+  "optionsPage_dlStrategyRadio_promptUser": {
+    "message": "Demander le nom du dossier à chaque fois",
     "description": "L'étiquette pour cette option (page d'options)"
   },
 

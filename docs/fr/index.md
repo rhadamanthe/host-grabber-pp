@@ -30,9 +30,9 @@ avec quelques différences:
 
 <img src="../assets/images/dl-view-5--v0.7.jpg" alt="Le menu contextuel" class="screenshot" />
 
-<img src="../assets/images/options-view--v0.5.jpg" alt="La page d'options" class="screenshot" />
+<img src="../assets/images/options-view-p1--v0.9.jpg" alt="La page d'options" class="screenshot" />
 
-<img src="../assets/images/options-view--v0.8.jpg" alt="La page d'options (suite)" class="screenshot" />
+<img src="../assets/images/options-view-p2--v0.9.jpg" alt="La page d'options (suite)" class="screenshot" />
 
 
 ## Installation
@@ -97,7 +97,22 @@ façon le nombre de connexions simultanées vers un même serveur (par défaut,
 * **Activer le cache de session** : cette option empêche un même fichier d'être téléchargé plusieurs fois
 lors d'une même session. Ce cache peut être vidé, et même désactivé.
 * **Répertoire de téléchargement** : par défaut, tout est téléchargé dans le même répertoire.
-Mais il est possible de répartir les fichiers dans des sous-dissiers (par domaine, par date ou par titre).
+Mais il est possible de répartir les fichiers dans des sous-dissiers (par domaine, date, titre ou même personnalisé).
+
+**Valeurs disponibles pour la personnalisation des sous-répertoires :**
+
+| Valeur     | Description                                    |
+| ---------- | ---------------------------------------------- |
+| `%year%`   | Remplacée par l'année courante (4 chiffres).   |
+| `%month%`  | Remplacée par le mois courant (2 chiffres).    |
+| `%day%`    | Remplacée par le jour courant (2 chiffres).    |
+| `%hour%`   | Remplacée par l'heure actuelle (2 chiffres).   |
+| `%minute%` | Remplacée par la minute actuelle (2 chiffres). |
+| `%domain%` | Remplacée par le nom de domaine de la page.    |
+| `%title%`  | Remplacée par le titre de la page.             |
+
+Exemple de nom personnalisé pour un sous-répertoire : `firefox/%year%-%month%/`  
+Le nom ou chemin résultant sera toujours tronqué pour ne pas dépasser 160 caractères.
 
 
 ## Remarque
@@ -119,7 +134,7 @@ sur une page web.
 
 ## Débogage
 
-<img src="../assets/images/debug-view--v0.7.jpg" alt="Le panneau de débogage (pour Firefox uniquement)" class="screenshot" />
+<img src="../assets/images/debug-view--v0.9.jpg" alt="Le panneau de débogage (pour Firefox uniquement)" class="screenshot" />
 
 Dans Firefox, un panneau de débogage est disponible, pour créer, éditer et tester des
 règles de dictionnaire. Il est accessible au travers du menu **Host Grabber &gt; Panneau de Débogage**.

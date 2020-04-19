@@ -25,6 +25,54 @@ const DL_STRATEGY_DIR_PER_TREE_DATE = 4;
  */
 const DL_STRATEGY_DIR_PER_PAGE_TITLE = 5;
 
+/**
+ * Dispatch downloads in sub-directories, using a custom pattern.
+ */
+const DL_STRATEGY_CUSTOM = 6;
+
+/**
+ * Dispatch downloads in sub-directories, ask the name to the user.
+ */
+const DL_STRATEGY_PROMPT_USER = 7;
+
+
+// Download directories constants
+
+/**
+ * Replace this value by the page's domain.
+ */
+const DL_DIR_PAGE_DOMAIN = '%domain%';
+
+/**
+ * Replace this value by the page's title.
+ */
+const DL_DIR_PAGE_TITLE = '%title%';
+
+/**
+ * Replace this value by the current year.
+ */
+const DL_DIR_DATE_YEAR = '%year%';
+
+/**
+ * Replace this value by the current month.
+ */
+const DL_DIR_DATE_MONTH = '%month%';
+
+/**
+ * Replace this value by the current day.
+ */
+const DL_DIR_DATE_DAY = '%day%';
+
+/**
+ * Replace this value by the current hour.
+ */
+const DL_DIR_DATE_HOUR = '%hour%';
+
+/**
+ * Replace this value by the current minute.
+ */
+const DL_DIR_DATE_MINUTE = '%minute%';
+
 
 // Default values for preferences
 
@@ -38,6 +86,7 @@ const defaultAutomaticallyUpdateDictionary = true;
 const defaultDlCacheDownloadLinks = true;
 const defaultHideSuccessfulDownloadItems = true;
 const defaultDlStrategy = DL_STRATEGY_DEFAULT;
+const defaultDlStrategyCustomPattern = '';
 
 
 // Other constants

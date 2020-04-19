@@ -31,9 +31,9 @@ options that existed before.
 
 <img src="../assets/images/dl-view-5--v0.7.jpg" alt="The menu" class="screenshot" />
 
-<img src="../assets/images/options-view--v0.5.jpg" alt="The options page" class="screenshot" />
+<img src="../assets/images/options-view-p1--v0.9.jpg" alt="The options page" class="screenshot" />
 
-<img src="../assets/images/options-view--v0.8.jpg" alt="The options page (following)" class="screenshot" />
+<img src="../assets/images/options-view-p2--v0.9.jpg" alt="The options page (following)" class="screenshot" />
 
 
 ## Installation
@@ -96,7 +96,22 @@ of active connections towards a same server (by default,
 * **Cache download links during sessions**: this option prevents a same file from being downloaded
 several times during a same session. The cache can be cleared or even disabled.
 * **Download directory**: by default, everything is downloaded in the same directory.
-But it is also possible to dispatch files in sub-directories (by domain, by date or by title).
+But it is also possible to dispatch files in sub-directories (by domain, date, title or even custom pattern).
+
+**Available tags for custom sub-directory paths:**
+
+| Tag        | Description                                 |
+| ---------- | ------------------------------------------- |
+| `%year%`   | Replaced by the current year (4 digits).    |
+| `%month%`  | Replaced by the current month (2 digits).   |
+| `%day%`    | Replaced by the current day (2 digits).     |
+| `%hour%`   | Replaced by the current hour (2 digits).    |
+| `%minute%` | Replaced by the current minutes (2 digits). |
+| `%domain%` | Replaced by the page's URL domain.          |
+| `%title%`  | Replaced by the page's title.               |
+
+Example of custom pattern for a sub-directory: `firefox/%year%-%month%/`  
+The resulting name or path will always be truncated to not exceed 160 characters.
 
 
 ## Notice
@@ -117,7 +132,7 @@ a better list of hosts appears somewhere else.
 
 ## Debugging
 
-<img src="../assets/images/debug-view--v0.7.jpg" alt="The debug panel (for Firefox only)" class="screenshot" />
+<img src="../assets/images/debug-view--v0.9.jpg" alt="The debug panel (for Firefox only)" class="screenshot" />
 
 In Firefox, there is a debugging panel to create, edit and test dictionary rules.
 You can access it with a right-click menu and by selecting **Host Grabber &gt; Show Debug Panel**.

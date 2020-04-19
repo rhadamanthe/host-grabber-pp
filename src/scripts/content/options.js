@@ -9,6 +9,7 @@ function restoreOptions() {
 
   browser.storage.local.get().then((res) => {
     document.querySelector('#dictionary-url').value = res.dictionaryUrl || defaultDictionaryUrl;
+    document.querySelector('#dl-strategy-custom-pattern').value = res.dlStrategyCustomPattern || defaultDlStrategyCustomPattern;
     document.querySelector('#dl-max-parallel').value = res.dlMaxParallel || defaultDlMaxParallel;
     document.querySelector('#dl-clear-completed').checked =
       res.hasOwnProperty('dlClearCompleted') ? res.dlClearCompleted : defaultDlClearCompleted;
@@ -42,6 +43,12 @@ function restoreOptions() {
     case DL_STRATEGY_DIR_PER_PAGE_TITLE:
       document.querySelector('#dl-strategy-by-page-title').checked = true;
       break;
+    case DL_STRATEGY_CUSTOM:
+      document.querySelector('#dl-strategy-custom').checked = true;
+      break;
+    case DL_STRATEGY_PROMPT_USER:
+      document.querySelector('#dl-strategy-prompt-user').checked = true;
+      break;
     default:
       document.querySelector('#dl-strategy-default').checked = true;
       break;
@@ -71,6 +78,7 @@ var defaultListener = function() {
   });
 }
 
+// Callbacks
 document.querySelector('#dl-max-parallel').addEventListener('change', defaultListener);
 document.querySelector('#dl-clear-completed').addEventListener('change', defaultListener);
 document.querySelector('#dl-show-view-when-dl-starts').addEventListener('change', defaultListener);
@@ -82,8 +90,16 @@ document.querySelectorAll('input[name="dl-strategy"]').forEach(function(radioBut
   radioButton.addEventListener('change', defaultListener);
 });
 
+document.querySelector('#save-dl-pattern-btn').addEventListener('click', function() {
+  browser.storage.local.set({
+    dlStrategyCustomPattern: document.querySelector('#dl-strategy-custom-pattern').value
+  });
 
-// Callbacks
+  document.querySelector('#save-dl-pattern-btn').className = 'updated-ok';
+  setTimeout( function() {
+    document.querySelector('#save-dl-pattern-btn').className = '';
+  }, 3000);
+});
 
 /**
  * Asks the background content to reload the dictionary.

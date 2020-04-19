@@ -274,9 +274,10 @@ function pageUrlMatches(pageUrl, domainPattern) {
  * @param {object} linkObject A link object.
  * @param {object} processor A processor object.
  * @param {integer} strategy The download strategy.
+ * @param {string} dlCustomPattern The pattern for the custom download strategy.
  * @returns {object} The download options, as an object.
  */
-function buildDownloadOptions(linkObject, processor, strategy) {
+function buildDownloadOptions(linkObject, processor, strategy, dlCustomPattern) {
 
   var options = {
     conflictAction: 'uniquify',
@@ -285,20 +286,32 @@ function buildDownloadOptions(linkObject, processor, strategy) {
   };
 
   // The real question is whether we download in a sub-directory
-  var subDir = '';
-  var now = new Date();
+  var subDirPattern = '';
   if (strategy === DL_STRATEGY_DIR_PER_DOMAIN ) {
-    subDir = new URL(processor.originUrl).hostname.replace('www.', '') + '/';
+    subDirPattern = DL_DIR_PAGE_DOMAIN;
 
   } else if (strategy === DL_STRATEGY_DIR_PER_ALPHA_DATE) {
-    subDir = formatDateForDl(now, '-') + '/';
+    subDirPattern = DL_DIR_DATE_YEAR + '-' + DL_DIR_DATE_MONTH + '-' + DL_DIR_DATE_DAY;
 
   } else if (strategy === DL_STRATEGY_DIR_PER_TREE_DATE) {
-    subDir = formatDateForDl(now, '/') + '/';
+    subDirPattern = DL_DIR_DATE_YEAR + '/' + DL_DIR_DATE_MONTH + '/' + DL_DIR_DATE_DAY;
 
   }  else if (strategy === DL_STRATEGY_DIR_PER_PAGE_TITLE) {
-    subDir = processor.pageTitle.replace(/\W+/g, '_').substring(0,90) + '/';
+    subDirPattern = DL_DIR_PAGE_TITLE;
+
+  }  else if (strategy === DL_STRATEGY_PROMPT_USER) {
+    subDirPattern = processor.promptedDirectoryName || '';
+
+  } else if (strategy === DL_STRATEGY_CUSTOM) {
+    subDirPattern = dlCustomPattern || '';
   }
+
+  if( subDirPattern.length > 0 && ! subDirPattern.endsWith( '/' )) {
+    subDirPattern += '/';
+  }
+
+  // Replace mark-ups in the sub-directory pattern
+  var subDir = buildDlDirectoryFromPattern(new Date(), subDirPattern, processor);
 
   // When there is a sub-directory, we need to specify the file name
   if (subDir !== '') {
@@ -311,26 +324,30 @@ function buildDownloadOptions(linkObject, processor, strategy) {
 
 
 /**
- * Formats a date nicely for download directories.
- * @param {object} date A date.
- * @param {string} separator A separator to insert around the month number.
- * @returns {string} A formatted date.
+ * Builds the download directory from a pattern.
+ * @param {object} date The current date.
+ * @param {string} subDirPattern The pattern to build the sub-directory path.
+ * @param {object} processor The associated processor.
+ * @returns {string} The full sub-directory path.
  */
-function formatDateForDl(date, separator) {
+function buildDlDirectoryFromPattern(date, subDirPattern, processor) {
 
-  var res = date.getFullYear() + separator;
-  var temp = (date.getMonth() + 1);
-  if (temp < 10) {
-    res += '0';
-  }
+  var res = subDirPattern;
+  res = res.replace(
+    DL_DIR_PAGE_DOMAIN,
+    new URL(processor.originUrl).hostname.replace('www.', ''));
 
-  res += temp + separator;
-  temp = date.getDate();
-  if (temp < 10) {
-    res += '0';
-  }
+  res = res.replace(
+    DL_DIR_PAGE_TITLE,
+    processor.pageTitle.replace(/\W+/g, '_'));
 
-  res += temp;
+  res = res.replace( DL_DIR_DATE_YEAR, date.getFullYear());
+  res = res.replace( DL_DIR_DATE_MONTH, ('0' + (1 + date.getMonth())).slice(-2));
+  res = res.replace( DL_DIR_DATE_HOUR, ('0' + (1 + date.getHours())).slice(-2));
+  res = res.replace( DL_DIR_DATE_DAY, ('0' + date.getDate()).slice(-2));
+  res = res.replace( DL_DIR_DATE_MINUTE, ('0' + date.getMinutes()).slice(-2));
+
+  res = res.substring(0, 160);
   return res;
 }
 

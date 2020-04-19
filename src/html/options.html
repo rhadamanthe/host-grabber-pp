@@ -11,7 +11,7 @@
 }
 
 body {
-	padding: 20px;
+	padding: 0 20px;
 	font-size: 1.1em;
 }
 
@@ -40,6 +40,13 @@ input[type=radio] {
 	margin-bottom: 6px;
 }
 
+input[type=number] {
+    margin-left: 6px;
+    width: 140px;
+    text-align: center;
+    padding: 2px 0;
+}
+
 .updated-ok {
 	background-color: green;
 	color: white;
@@ -58,15 +65,12 @@ input[type=radio] {
 	font-weight: bold;
 }
 
-#dictionary-url {
-	transition: background-color 2s ease-out;
+.indented_under_radio {
+	margin-left: 26px;
 }
 
-input[type=number] {
-    margin-left: 6px;
-    width: 140px;
-    text-align: center;
-    padding: 2px 0;
+#dictionary-url {
+	transition: background-color 2s ease-out;
 }
 
 form > label {
@@ -93,14 +97,15 @@ button {
 
 #options {
 	position: absolute;
-	left: 200px;
-	right: 10px;
-	top: 20px;
+	top: 120px;
+	left: 20px;
+	right: 20px;
 }
 
 #logo {
-	position: fixed;
-}
+	float: right;
+	clear: both;
+} 
 
 p.block {
 	display: inline-block;
@@ -115,7 +120,7 @@ p.warning {
 </head>
 
 <body>
-	<img src="/icons/logo_x144.png" alt="Host Grabber ++" id="logo" />
+	<img src="/icons/options-header.png" alt="Host Grabber ++" id="logo" />
 	<div id="options">
 		<form>
 			<label for="dictionary-url" data-i18n="optionsPage_dictionaryUrlProperty"></label><br />
@@ -211,7 +216,17 @@ p.warning {
 				<br />
 				<input type="radio" name="dl-strategy" id="dl-strategy-by-page-title" value="5" />
 				<label for="dl-strategy-by-page-title" data-i18n="optionsPage_dlStrategyRadio_byPageTitle"></label>
+				<br />
+				<input type="radio" name="dl-strategy" id="dl-strategy-prompt-user" value="7" />
+				<label for="dl-strategy-prompt-user" data-i18n="optionsPage_dlStrategyRadio_promptUser"></label>
+				<br /><br />
+
+				<input type="radio" name="dl-strategy" id="dl-strategy-custom" value="6" />
+				<label for="dl-strategy-custom" data-i18n="optionsPage_dlStrategyRadio_custom"></label>
 				</p>
+
+				<input name="dl-strategy-custom-pattern" id="dl-strategy-custom-pattern" type="text" />
+				<button type="button" id="save-dl-pattern-btn" data-i18n="optionsPage_saveDlPatternButton"></button>
 			</fieldset>
 			<br /><br />
 		</form>

@@ -18,6 +18,9 @@ var dlManager = newDlManager(queue);
 // Already visited URLs
 var alreadyVisitedUrls = newAlreadyVisitedUrls();
 
+// In case we have to prompt the user about the directory name.
+var promptedDirectoryName = '';
+
 
 /* Default actions */
 
@@ -33,11 +36,7 @@ browser.contextMenus.create({
   parentId: 'hg-menu',
   title: browser.i18n.getMessage('menu_extractAndDownload'),
   contexts: ['all'],
-  // Important: do not remove the 'function() {' part.
-  // downloadContentFromCurrentTab takes arguments
-  // and writing it directly results in errors
-  // (an argument is set automatically while none should be set).
-  onclick: function() { downloadContentFromCurrentTab(); }
+  onclick: function() { interactiveDownload(false); }
 });
 
 browser.contextMenus.create({
@@ -45,7 +44,7 @@ browser.contextMenus.create({
   parentId: 'hg-menu',
   title: browser.i18n.getMessage('menu_downloadDirectImages'),
   contexts: ['all'],
-  onclick: downloadDirectImages
+  onclick: function() { interactiveDownload(true); }
 });
 
 browser.contextMenus.create({
@@ -70,14 +69,6 @@ browser.contextMenus.create({
   title: browser.i18n.getMessage('menu_showOptions'),
   contexts: ['all'],
   onclick: showOptionsPage
-});
-
-
-// Commands
-browser.commands.onCommand.addListener((command) => {
-  if (command === 'dl') {
-    downloadContentFromCurrentTab();
-  }
 });
 
 
@@ -106,6 +97,9 @@ browser.runtime.onMessage.addListener(request => {
   }
 });
 
+// For external extensions.
+// We do not prompt users for the download directory, even if it the
+// selected option. We will use the default directory instead.
 browser.runtime.onMessageExternal.addListener(request => {
   if (request.req === 'explore-page' && typeof request.page === 'string') {
     downloadContentFromURL(request.page);
@@ -264,6 +258,65 @@ function showDownloadsList() {
 
 
 /**
+ * Determines whether we should prompt the user for values before processing the page.
+ * @param {boolean} directImages True to download direct images, false otherwise.
+ * @returns {undefined}
+ */
+function interactiveDownload(directImages) {
+
+  // If we have to prompt the user about something, here it is.
+  // As the prompt is asynchronous, and because all the page objects
+  // should end in the same directory, we intercept the download request here.
+  //
+  // The prompted location is stored globally in this file, and then attached
+  // to every processor. This way, the queue can dispatch files in different folders.
+  browser.storage.local.get('dlStrategy').then((res) => {
+
+    // Need to prompt?
+    if (res.dlStrategy === DL_STRATEGY_PROMPT_USER) {
+      browser.tabs.query({active: true, currentWindow: true}).then( function(tabs) {
+        if (tabs.length < 1) {
+          return;
+        }
+
+        var request = {
+          req: 'prompt-for-dl-directory',
+          lastPrompted: promptedDirectoryName
+        };
+
+        browser.tabs.sendMessage(tabs[0].id, request).then( directoryName => {
+          // The user may have clicked 'cancel'
+          if (!! directoryName) {
+            promptedDirectoryName = directoryName;
+            interactiveDownloadCallback(directImages);
+          }
+        });
+      });
+    }
+
+    // Otherwise, directly proceed
+    else {
+      interactiveDownloadCallback(directImages);
+    }
+  });
+}
+
+
+/**
+ * Starts the page processing after interactive and non-interactive actions.
+ * @param {boolean} directImages True to download direct images, false otherwise.
+ * @returns {undefined}
+ */
+function interactiveDownloadCallback(directImages) {
+  if (directImages) {
+    downloadDirectImages();
+  } else {
+    downloadContentFromCurrentTab();
+  }
+}
+
+
+/**
  * Downloads the content by analyzing the source code of the current tab.
  * @param {object} dictionaryWrapperToUse A dictionary wrapper (optional).
  * @returns {undefined}
@@ -325,6 +378,10 @@ function downloadContentFromText(sourceAsText, url, dictionaryWrapperToUse) {
 
   // We get link candidates to process and/or explore
   processors.forEach(function(processor) {
+    if (!! promptedDirectoryName) {
+      processor.promptedDirectoryName = promptedDirectoryName;
+    }
+
     queue.append(processor);
   });
 

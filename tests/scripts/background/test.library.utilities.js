@@ -432,7 +432,13 @@ describe('background => library.utilities', function() {
     expect(options.saveAs).to.eql(false);
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
-    expect(options.filename).to.be(formatDateForDl(now, '-') + '/index.php');
+
+    var expectedDate = now.getFullYear() +
+      '-' + ('0' + (now.getMonth() + 1)).slice(-2) +
+      '-' + now.getDate();
+
+    var expected = buildDlDirectoryFromPattern(now, expectedDate, p);
+    expect(options.filename).to.be(expected + '/index.php');
 
     done();
   });
@@ -452,7 +458,13 @@ describe('background => library.utilities', function() {
     expect(options.saveAs).to.eql(false);
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
-    expect(options.filename).to.be(formatDateForDl(now, '/') + '/index.php');
+
+    var expectedDate = now.getFullYear() +
+      '/' + ('0' + (now.getMonth() + 1)).slice(-2) +
+      '/' + now.getDate();
+
+    var expected = buildDlDirectoryFromPattern(now, expectedDate, p);
+    expect(options.filename).to.be(expected + '/index.php');
 
     done();
   });
@@ -476,21 +488,97 @@ describe('background => library.utilities', function() {
     expect(options.saveAs).to.eql(false);
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/file.jpg');
-    expect(options.filename).to.be('APPEARANCE_Someone_famous_Entertainment_Weekly_Pre_SAG_Party_in_Los_Angeles_01_26_19_Art_F/file.jpg');
+    expect(options.filename).to.be('APPEARANCE_Someone_famous_Entertainment_Weekly_Pre_SAG_Party_in_Los_Angeles_01_26_19_Art_Forum/file.jpg');
 
     done();
   });
 
 
-  it('should verify the formatting of dates for Downloads', function(done) {
+  it('should verify the building of download options (custom pattern)', function(done) {
 
-    var date = new Date(2018, 10, 30);
-    var fDate = formatDateForDl(date, '/');
-    expect(fDate).to.eql('2018/11/30');
+    var now = new Date();
+    var p = newProcessor('http://this.is.the/matching/url', 'page title', 'search-pattern1', 'https://www.origin.url/dir');
+    var dlLink = {
+      id: p.id + '-1',
+      link: 'https://web.host.net/directory/index.php?file.jpg#anchor',
+      status: DlStatus.WAITING
+    };
 
-    date = new Date(2016, 0, 2);
-    fDate = formatDateForDl(date, '**');
-    expect(fDate).to.eql('2016**01**02');
+    var options = buildDownloadOptions(dlLink, p, DL_STRATEGY_CUSTOM, '%year%');
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
+    expect(options.filename).to.be(now.getFullYear() + '/index.php');
+
+    options = buildDownloadOptions(dlLink, p, DL_STRATEGY_CUSTOM, '%year%/%day%/');
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
+    expect(options.filename).to.be(now.getFullYear() + '/' + now.getDate() + '/index.php');
+
+    options = buildDownloadOptions(dlLink, p, DL_STRATEGY_CUSTOM, '%year%/fix/%domain%/');
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
+    expect(options.filename).to.be(now.getFullYear() + '/fix/origin.url/index.php');
+
+    done();
+  });
+
+
+  it('should verify the building of download options (user prompt)', function(done) {
+
+    var now = new Date();
+    var p = newProcessor('http://this.is.the/matching/url', 'page title', 'search-pattern1', 'https://www.origin.url/dir');
+    var dlLink = {
+      id: p.id + '-1',
+      link: 'https://web.host.net/directory/index.php?file.jpg#anchor',
+      status: DlStatus.WAITING
+    };
+
+    p.promptedDirectoryName = 'something-personal';
+    var options = buildDownloadOptions(dlLink, p, DL_STRATEGY_CUSTOM, 'not-using-prompt');
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
+    expect(options.filename).to.be('not-using-prompt/index.php');
+
+    options = buildDownloadOptions(dlLink, p, DL_STRATEGY_PROMPT_USER, 'not-using-prompt');
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
+    expect(options.filename).to.be('something-personal/index.php');
+
+    p.promptedDirectoryName = '%year%--something-personal';
+    options = buildDownloadOptions(dlLink, p, DL_STRATEGY_PROMPT_USER, 'not-using-prompt');
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
+    expect(options.filename).to.be(now.getFullYear() + '--something-personal/index.php');
+
+    done();
+  });
+
+
+  it('should verify the construction of the sub-directory path for downloads', function(done) {
+
+    var date = new Date(2018, 10, 30, 17, 21);
+    var p = newProcessor(
+      'http://this.is.the/matching/url',
+      'page title',
+      'search-pattern1',
+      'https://www.origin.url/dir');
+
+    expect(buildDlDirectoryFromPattern(date, DL_DIR_DATE_YEAR, p)).to.eql('2018');
+    expect(buildDlDirectoryFromPattern(date, DL_DIR_DATE_MONTH, p)).to.eql('11');
+    expect(buildDlDirectoryFromPattern(date, DL_DIR_DATE_DAY, p)).to.eql('30');
+    expect(buildDlDirectoryFromPattern(date, DL_DIR_DATE_HOUR, p)).to.eql('18');
+    expect(buildDlDirectoryFromPattern(date, DL_DIR_DATE_MINUTE, p)).to.eql('21');
+    expect(buildDlDirectoryFromPattern(date, DL_DIR_PAGE_TITLE, p)).to.eql('page_title');
+    expect(buildDlDirectoryFromPattern(date, DL_DIR_PAGE_DOMAIN, p)).to.eql('origin.url');
+    expect(buildDlDirectoryFromPattern(date, 'my/constant', p)).to.eql('my/constant');
+    expect(buildDlDirectoryFromPattern(date, 'my/ct-' + DL_DIR_DATE_DAY, p)).to.eql('my/ct-30');
+
     done();
   });
 

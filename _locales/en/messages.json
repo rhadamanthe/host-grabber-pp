@@ -34,6 +34,11 @@
     "description": "The label for the 'save dictionary URL' action (options page)"
   },
 
+  "optionsPage_saveDlPatternButton": {
+    "message": "Save Custom Pattern",
+    "description": "The label for the 'save custom pattern' action (options page)"
+  },
+
   "optionsPage_downloadSettingsSection": {
     "message": "Download Settings",
     "description": "The label for the 'download settings' section (options page)"
@@ -126,6 +131,16 @@
 
   "optionsPage_dlStrategyRadio_default": {
     "message": "Default: save everything in the same directory",
+    "description": "The label for this option (options page)"
+  },
+
+  "optionsPage_dlStrategyRadio_custom": {
+    "message": "Custom pattern for the directory name",
+    "description": "The label for this option (options page)"
+  },
+
+  "optionsPage_dlStrategyRadio_promptUser": {
+    "message": "Prompt for the directory name every time",
     "description": "The label for this option (options page)"
   },
 
