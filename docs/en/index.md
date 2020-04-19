@@ -2,8 +2,6 @@
 locale: "en"
 ---
 
-# Host Grabber ++
-
 Host Grabber is a web extension to find and download media files from a web page.
 
 It was originally designed for [Mozilla Firefox](https://www.mozilla.org/firefox/new/).

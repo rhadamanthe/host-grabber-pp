@@ -2,8 +2,6 @@
 locale: "fr"
 ---
 
-# Host Grabber ++
-
 Host Grabber est une extension web qui extrait et télécharge des fichiers média depuis une page web en cours de visite.
 
 Elle a été conçue à la base pour [Mozilla Firefox](https://www.mozilla.org/firefox/new/).

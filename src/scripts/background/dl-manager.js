@@ -26,12 +26,11 @@ function newDlManager(queue) {
     'dlStrategy',
     'dlStrategyCustomPattern']).then((res) => {
 
-      dlManager.maxDownloadLimit = res.dlMaxParallel || defaultDlMaxParallel;
-      dlManager.hideSuccessfulDownloadItems = res.hideSuccessfulDownloadItems || defaultHideSuccessfulDownloadItems;
-      dlManager.dlStrategy = res.dlStrategy || defaultDlStrategy;
-      dlStrategyCustomPattern = res.dlStrategyCustomPattern || defaultDlStrategyCustomPattern;
-    }
-  );
+    dlManager.maxDownloadLimit = res.dlMaxParallel || defaultDlMaxParallel;
+    dlManager.hideSuccessfulDownloadItems = res.hideSuccessfulDownloadItems || defaultHideSuccessfulDownloadItems;
+    dlManager.dlStrategy = res.dlStrategy || defaultDlStrategy;
+    dlStrategyCustomPattern = res.dlStrategyCustomPattern || defaultDlStrategyCustomPattern;
+  });
 
   // Listen to changes for these preferences
   browser.storage.onChanged.addListener(function(changes, area) {

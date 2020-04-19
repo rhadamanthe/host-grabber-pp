@@ -9,9 +9,9 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   else if( request.req === 'prompt-for-dl-directory' ) {
     response = prompt(
-        'Enter the directory name or path.\n' +
-        'It can contain \'/\' and the tags supported by the extension (e.g. %domain%).',
-        request.lastPrompted);
+      'Enter the directory name or path.\n' +
+      'It can contain \'/\' and the tags supported by the extension (e.g. %domain%).',
+      request.lastPrompted);
   }
 
   // On Chrome, it only works in tabs loaded AFTER the extension.
