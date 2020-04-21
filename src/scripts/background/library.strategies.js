@@ -9,7 +9,8 @@ function extractor() {
     expreg: expreg,
     replace: replace,
     self: self,
-    xpath: xpath
+    xpath: xpath,
+    cssQuery: cssQuery
   };
 
 
@@ -41,7 +42,7 @@ function extractor() {
    * Finds the matches in the web page with a XPath expression
    * @param {object} sourceDocument The source page as a DOM document.
    * @param {string} expr A XPath expression.
- * @returns {array} A non-null array of URLs.
+   * @returns {array} A non-null array of URLs.
    */
   function xpath(sourceDocument, expr) {
 
@@ -71,6 +72,25 @@ function extractor() {
       var url = !! match[1] ? match[1] : match[0];
       links.add(url);
     };
+
+    return Array.from(links);
+  }
+
+
+  /**
+   * Finds the matches in the web page with a CSS Query.
+   * @param {object} sourceDocument The source page as a DOM document.
+   * @param {string} query A CSS query to select DOM elements.
+   * @param {string} property The attribute to get on the found nodes.
+   * @returns {array} A non-null array of URLs.
+   */
+  function cssQuery(sourceDocument, query, property) {
+    query = query.replace( '&gt;', '>' );
+
+    var links = new Set();
+    sourceDocument.querySelectorAll(query).forEach( function(node) {
+      links.add(node.getAttribute(property));
+    });
 
     return Array.from(links);
   }

@@ -180,6 +180,7 @@ And there are several strategies. Some are more greedy than others. Let's take a
 * [Class](#class)
 * [XPath](#xpath)
 * [Expreg](#expreg)
+* [CSS Query](#css-query)
 
 
 ### SELF
@@ -266,7 +267,7 @@ It considers the link found by the URL pattern must be downloaded and analyzed.
 As an example, if the URL pattern identified a link to *my-image-host*, then Host Grabber
 follows the link and downloads the page. It then analyzes it to extract the information. Here,
 the link is found by searching an image whose HTML class is the one given in the search pattern.
-All the elements with the specified class will be downloaded.
+All the **img** elements with the specified class will be downloaded.
 
 **Reference syntax:** `Class: the html class` (case-insensitive)  
 **Example:** many web image hosts.
@@ -345,6 +346,34 @@ Here, it will only keep JPG images located in the **big** directory.
 
 > You might have notice a CDATA section in these last examples.  
 > There are used to prevent invalid characters in XML.
+
+
+### CSS Query
+
+CSS Query is a greedy-strategy.  
+It considers the link found by the URL pattern must be downloaded and analyzed.
+
+> Except if the [path pattern points to the current tab](#current-page).
+
+As an example, if the URL pattern identified a link to *my-image-host*, then Host Grabber
+follows the link and downloads the page. It then analyzes it to extract the information. Here,
+links are found by searching **img** elements with a [CSS query](https://www.w3schools.com/cssref/css_selectors.asp).
+
+**Reference syntax:** `CSS query: a CSS query` (case-insensitive)  
+**Example:** many web image hosts.
+
+```xml
+<domain>my-image-host.com</domain>
+<path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
+<search-pattern>CSS query: div.col-md-12 img</search-pattern>
+```
+
+Assuming this URL pattern finds a set of links that look like `http://my-image-host.com/view.php?01.jpg`,
+Host Grabber will follow all of them, download the pages and analyze them. The download links will be found
+by searching an **img** mark-up, located under a **div** with the **col-md-12** class.
+
+To use the `>` selector in a CSS query, it must be replaced by `&gt;`.  
+Example: `div.col-md-12 &gt; img` will be interpreted as `div.col-md-12 > img`
 
 
 ### Current Page

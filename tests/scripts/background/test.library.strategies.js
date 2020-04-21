@@ -24,7 +24,7 @@ describe('background => library.strategies', function() {
   });
 
 
-  it('should verify the XPath function with a several results', function(done) {
+  it('should verify the XPath function with several results', function(done) {
 
     var sourceDocument = document.implementation.createHTMLDocument('');
     sourceDocument.documentElement.innerHTML = `<html><body>
@@ -44,6 +44,91 @@ describe('background => library.strategies', function() {
       'http://titi.fr/gallery/t1.jpg',
       'http://titi.fr/gallery/t2.jpg',
       'http://titi.fr/gallery/t4.jpg']);
+
+    done();
+  });
+
+
+  it('should verify the CSS Query function with a single result', function(done) {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = '<html><body><img src="http://titi.fr/gallery/t.jpg" class="paf" /></body></html>';
+
+    var ext = extractor();
+    var res = ext.cssQuery(sourceDocument, 'img.paf', 'src');
+    expect(res).to.eql(['http://titi.fr/gallery/t.jpg']);
+    done();
+  });
+
+
+  it('should verify the CSS Query function with several results', function(done) {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html><body>
+      <img src="http://titi.fr/gallery/t1.jpg" class="paf" />
+      <br />
+      <img src="http://titi.fr/gallery/t2.jpg" class="paf" />
+      <br />
+      <img src="http://titi.fr/gallery/t1.jpg" class="paf" />
+      <br />
+      <img src="http://titi.fr/gallery/t4.jpg" class="paf" />
+    </body></html>
+    `;
+
+    var ext = extractor();
+    var res = ext.cssQuery(sourceDocument, 'img.paf', 'src');
+    expect(res).to.eql([
+      'http://titi.fr/gallery/t1.jpg',
+      'http://titi.fr/gallery/t2.jpg',
+      'http://titi.fr/gallery/t4.jpg']);
+
+    done();
+  });
+
+
+  it('should verify the CSS Query function with several results and complex queries', function(done) {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html><body>
+      <div class="ct">
+        <img src="http://titi.fr/gallery/t1.jpg" />
+        <img src="http://titi.fr/gallery/t2.jpg" />
+        <div>
+          <img src="http://titi.fr/gallery/t3.jpg" />
+        </div>
+      </div>
+      <br />
+      <img src="http://titi.fr/gallery/t2.jpg" />
+      <br />
+      <div class="not-ct">
+        <img src="http://titi.fr/gallery/t1.jpg" />
+      </div>
+      <div class="ct">
+        <img src="http://toto.fr/gallery/t1147.jpg" class="pag" />
+      </div>
+      <img src="http://titi.fr/gallery/t4.jpg" />
+    </body></html>
+    `;
+
+    var ext = extractor();
+    var res = ext.cssQuery(sourceDocument, 'div.ct > img', 'src');
+    expect(res).to.eql([
+      'http://titi.fr/gallery/t1.jpg',
+      'http://titi.fr/gallery/t2.jpg',
+      'http://toto.fr/gallery/t1147.jpg']);
+
+    res = ext.cssQuery(sourceDocument, 'div.ct &gt; img', 'src');
+    expect(res).to.eql([
+      'http://titi.fr/gallery/t1.jpg',
+      'http://titi.fr/gallery/t2.jpg',
+      'http://toto.fr/gallery/t1147.jpg']);
+
+    res = ext.cssQuery(sourceDocument, 'div.ct img', 'src');
+    expect(res).to.eql([
+      'http://titi.fr/gallery/t1.jpg',
+      'http://titi.fr/gallery/t2.jpg',
+      'http://titi.fr/gallery/t3.jpg',
+      'http://toto.fr/gallery/t1147.jpg']);
 
     done();
   });

@@ -50,4 +50,10 @@
 	<search-pattern>CLASS: img</search-pattern>
 </host>
 
+<host id="c91-23">
+	<domain>c91-23.ca</domain>
+	<path-pattern>.+\.(jpg|png|gif)</path-pattern>
+	<search-pattern>CSS query: div.ct &gt; img</search-pattern>
+</host>
+
 </root>

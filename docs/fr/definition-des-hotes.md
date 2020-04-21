@@ -183,6 +183,7 @@ Plusieurs stratégies sont disponibles. Certaines sont gourmandes en ressources,
 * [Class](#class)
 * [XPath](#xpath)
 * [Expreg](#expreg)
+* [CSS Query](#css-query)
 
 
 ### SELF
@@ -268,7 +269,7 @@ Elle implique de télécharger les pages pointées par les liens trouvés lors d
 
 Par exemple, si le modèle d'URL a permis d'identifier un lien vers *mon-hebergeur*, alors Host Grabber
 va le suivre, télécharger la page et l'analyser pour en extraire les médias à téléchager. Dans ce cas précis,
-les liens de téléchargement sont trouvés en cherchant un élément HTML dont la classe est spécifiée dans le modèle de recherche.
+les liens de téléchargement sont trouvés en cherchant les éléments **img** dont la classe est spécifiée dans le modèle de recherche.
 
 **Syntaxe de Référence :** `Class: la classe html` (insensible à la casse)  
 **Exemple :** plusieurs hébergeurs d'images.
@@ -286,7 +287,7 @@ Host Grabber les suivraient tous, téléchargerait les pages cibles et les analy
 
 ### XPath
 
-ID est une stratégie gourmande.  
+XPath est une stratégie gourmande.  
 Elle implique de télécharger les pages pointées par les liens trouvés lors de l'exploration.
 
 > A moins que le [modèle de chemin ne pointe vers la page actuelle](#page-actuelle).
@@ -347,6 +348,34 @@ Ici, seules les images localisées dans le répertoire **grandes** seront télé
 
 > Vous avez dû remarquer l'utilisation de sections CDATA dans ces derniers exemples.  
 > Elles sont utilisées pour prévenir des erreurs au niveau XML.
+
+
+### CSS Query
+
+CSS Query est une stratégie gourmande.  
+Elle implique de télécharger les pages pointées par les liens trouvés lors de l'exploration.
+
+> A moins que le [modèle de chemin ne pointe vers la page actuelle](#page-actuelle).
+
+Par exemple, si le modèle d'URL a permis d'identifier un lien vers *mon-hebergeur*, alors Host Grabber
+va le suivre, télécharger la page et l'analyser pour en extraire les médias à téléchager. Dans ce cas précis,
+les liens de téléchargement sont trouvés en cherchant un élément **img** grâce à une [requête CSS](https://www.w3schools.com/cssref/css_selectors.asp).
+
+**Syntaxe de Référence :** `CSS query: une requête CSS` (insensible à la casse)  
+**Exemple :** plusieurs hébergeurs d'images.
+
+```xml
+<domain>mon-hebergeur.com</domain>
+<path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
+<search-pattern>CSS query: div.col-md-12 img</search-pattern>
+```
+
+En supposant que ce modèle d'URL mène à des liens du genre `http://mon-hebergeur.com/view.php?01.jpg`,
+Host Grabber les suivraient tous, téléchargerait les pages cibles et les analyserait. Les liens de téléchargement
+seraient trouvés en cherchant une balise **img**, située sous une balise **div** ayant **col-md-12** comme classe.
+
+Pour utiliser le sélecteur `>` dans une requête CSS, il faut le remplacer par `&gt;`.  
+Exemple : `div.col-md-12 &gt; img` sera interprété comme `div.col-md-12 > img`
 
 
 ### Page Actuelle

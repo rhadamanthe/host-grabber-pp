@@ -69,6 +69,9 @@ describe('background => library.dictionary', function() {
     expect(findExtractionMethod('expReg: (http://mimi\.[^"]*\.(jpg|gif|png))')).to.eql(ExtMethods.EXPREG.id);
     expect(findExtractionMethod(' expreg : (http://mimi\.[^"]*\.(jpg|gif|png)) ')).to.eql(ExtMethods.EXPREG.id);
 
+    expect(findExtractionMethod('CSS query: div.col-md-12 img')).to.eql(ExtMethods.CSS_QUERY.id);
+    expect(findExtractionMethod(' css query : div.col-md-12 img')).to.eql(ExtMethods.CSS_QUERY.id);
+
     expect(findExtractionMethod('invalid')).to.eql(0);
     expect(findExtractionMethod(null)).to.eql(0);
     expect(findExtractionMethod(undefined)).to.eql(0);
@@ -642,4 +645,3 @@ describe('background => library.dictionary', function() {
     return verifyDictionary('host.bug-49.xml');
   });
 });
-

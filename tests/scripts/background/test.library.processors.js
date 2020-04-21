@@ -108,7 +108,23 @@ describe('background => library.processors', function() {
       <img src="http://titi.fr/gallery/view.php?img=t4.jpg" class="paf" />
       <br />
       <img src="http://bibi.com/path/to/this/image1.PNG" />
+      <div class="ct">
+        <img src="http://c91-23.ca/to/this/image3.jpg" />
+        <img src="http://c91-23.ca/to/this/image4.jpg" />
+        <img src="http://c91-23.ca/to/this/image3.jpg" />
+        <div>
+          <img src="http://c91-23.ca/it/should/not/be/ignored.jpg" />
+        </div>
+      </div>
+      
       <img src="http://bibi.com/path/to/this/image3.jpg" />
+      <div class="not-ct">
+        <img src="http://c91-23.ca/it/should/not/be/ignored/either.jpg" />
+      </div>
+      <div class="ct">
+        <img src="http://c91-23.ca/to/image5.jpg" />
+      </div>
+
       <img src="http://bibi.com/path/to/this/image2.svg" />
     </body></html>
     `;
@@ -124,7 +140,7 @@ describe('background => library.processors', function() {
       var res = findWhatToProcess(sourceDocument, 'http://titi.fr/some-folder/at-second-level/some-web-page.html', dictionaryWrapper);
 
       // Verify we got them all
-      expect(res.length).to.eql(11);
+      expect(res.length).to.eql(16);
 
       expect(res[0].matchingUrl).to.eql('http://mimi.net/gallery/t2.jpg');
       expect(res[0].extMethod).to.eql(ExtMethods.EXPREG.id);
@@ -167,6 +183,21 @@ describe('background => library.processors', function() {
       // (two dictionary items that target the same domain).
       expect(res[10].matchingUrl).to.eql('http://bibi.com/path/to/this/image3.jpg');
       expect(res[10].extMethod).to.eql(ExtMethods.SELF.id);
+
+      expect(res[11].matchingUrl).to.eql('http://c91-23.ca/to/this/image3.jpg');
+      expect(res[11].extMethod).to.eql(ExtMethods.CSS_QUERY.id);
+
+      expect(res[12].matchingUrl).to.eql('http://c91-23.ca/to/this/image4.jpg');
+      expect(res[12].extMethod).to.eql(ExtMethods.CSS_QUERY.id);
+
+      expect(res[13].matchingUrl).to.eql('http://c91-23.ca/it/should/not/be/ignored.jpg');
+      expect(res[13].extMethod).to.eql(ExtMethods.CSS_QUERY.id);
+
+      expect(res[14].matchingUrl).to.eql('http://c91-23.ca/it/should/not/be/ignored/either.jpg');
+      expect(res[14].extMethod).to.eql(ExtMethods.CSS_QUERY.id);
+
+      expect(res[15].matchingUrl).to.eql('http://c91-23.ca/to/image5.jpg');
+      expect(res[15].extMethod).to.eql(ExtMethods.CSS_QUERY.id);
     });
   });
 
@@ -196,6 +227,10 @@ describe('background => library.processors', function() {
       <br />
       <img src="http://bibi.com/path/to/this/image1.PNG" />
       <img src="http://bibi.com/path/to/this/image2.svg" />
+
+      <div class="ct">
+        <img src="http://c91-23.ca/to/image5.jpg" />
+      </div>
     </body></html>
     `;
 
@@ -210,7 +245,7 @@ describe('background => library.processors', function() {
       var res = findWhatToProcess(sourceDocument, 'http://sub-p1.titi.fr/some-folder/at-second-level/some-web-page.html', dictionaryWrapper);
 
       // Verify we got them all
-      expect(res.length).to.eql(10);
+      expect(res.length).to.eql(11);
 
       expect(res[0].matchingUrl).to.eql('http://mimi.net/gallery/t2.jpg');
       expect(res[0].extMethod).to.eql(ExtMethods.EXPREG.id);
@@ -249,6 +284,9 @@ describe('background => library.processors', function() {
 
       expect(res[9].matchingUrl).to.eql('http://bibi.com/path/to/this/image1.PNG');
       expect(res[9].extMethod).to.eql(ExtMethods.SELF.id);
+
+      expect(res[10].matchingUrl).to.eql('http://c91-23.ca/to/image5.jpg');
+      expect(res[10].extMethod).to.eql(ExtMethods.CSS_QUERY.id);
     });
   });
 
@@ -1362,6 +1400,53 @@ describe('background => library.processors', function() {
     var extractor = {
       invoked: false,
       xpath: function(doc, xpathExpr) {
+        this.invoked = true;
+        // Put some duplicate here => unified in the resulting array
+        return ['test1', 'test2'];
+      }
+    };
+
+    var cache = newAlreadyVisitedUrls();
+    cache.enabled = false;
+    cache.list.push('http://localhost:9876/base/tests/resources/test2');
+
+    // Execute the test
+    expect(p.downloadLinks.length).to.eql(0);
+    handleProcessor(p, extractor, queue, idleFn, idleFn, cache);
+
+    // In this case, processing is asynchronous.
+    return sleep(1000).then(function() {
+      expect(extractor.invoked).to.be(true);
+      expect(p.status).to.eql(ProcessorStatus.GOT_LINKS);
+      expect(p.downloadLinks.length).to.eql(2);
+
+      expect(p.downloadLinks[0].link).to.eql('http://localhost:9876/base/tests/resources/test1');
+      expect(p.downloadLinks[0].status).to.eql(DlStatus.WAITING);
+      expect(p.downloadLinks[1].link).to.eql('http://localhost:9876/base/tests/resources/test2');
+      expect(p.downloadLinks[1].status).to.eql(DlStatus.WAITING);
+      expect(queue.modified).to.eql(false);
+    });
+  });
+
+
+  // No "done "callback for this test.
+  // Instead, we return a promise. If it fails, it will fail the test.
+  it('should handle processors correctly (CSS Query and no cache for visited URLs)', function() {
+
+    var p = newProcessor('test', 'page title2', 'css query: div.ct &gt; img', 'origin url');
+    p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
+
+    var idleFn = function() {};
+    var queue = {
+      modified: false,
+      processNextItem: function() {
+        this.modified = true;
+      }
+    };
+
+    var extractor = {
+      invoked: false,
+      cssQuery: function(doc, query, property) {
         this.invoked = true;
         // Put some duplicate here => unified in the resulting array
         return ['test1', 'test2'];

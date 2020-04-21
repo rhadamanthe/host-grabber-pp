@@ -276,6 +276,12 @@ function processDocument(processor, xmlDoc, extractor) {
     links = extractor.xpath(xmlDoc, match[1].trim());
     ExtMethods.XPATH.pattern.lastIndex = 0;
 
+  } else if (ExtMethods.CSS_QUERY.id === processor.extMethod) {
+
+    var match = ExtMethods.CSS_QUERY.pattern.exec(processor.searchPattern);
+    links = extractor.cssQuery(xmlDoc, match[1].trim(), 'src');
+    ExtMethods.CSS_QUERY.pattern.lastIndex = 0;
+
   } else if (ExtMethods.EXPREG.id === processor.extMethod) {
     var match = ExtMethods.EXPREG.pattern.exec(processor.searchPattern);
     links = extractor.expreg(xmlDoc, match[1].trim());
