@@ -621,6 +621,35 @@ describe('background => library.dictionary', function() {
   });
 
 
+  it('should validate a dictionary item even when the DL strategy is unknown', function(done) {
+
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
+      <host id="titi">
+        <domain>titi.fr</domain>
+        <path-pattern>.+\\.jpg</path-pattern>
+        <search-pattern>nawak</search-pattern>
+      </host>
+    `;
+
+    var obj = parseAndVerifyDictionary(dictionary);
+    expect(obj.errors.length).to.eql(2);
+    expect(obj.errors[0]).to.eql('[titi] Invalid search pattern. Unrecognized strategy.');
+    expect(obj.errors[1]).to.eql('[titi] A search-pattern was expected.');
+
+    expect(obj.items.length).to.eql(1);
+    expect(obj.items[0].domain).to.eql('titi.fr');
+    expect(obj.items[0].pathPattern).to.eql('.+\\.jpg');
+    expect(obj.items[0].searchPattern).to.eql(undefined);
+    expect(obj.items[0].interceptors1.length).to.eql(0);
+    expect(obj.items[0].interceptors2.length).to.eql(0);
+    done();
+  });
+
+
   it('should validate test dictionaries - 1', function() {
     return verifyDictionary('host.background.library.test.xml');
   });

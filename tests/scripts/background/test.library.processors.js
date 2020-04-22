@@ -650,6 +650,64 @@ describe('background => library.processors', function() {
   });
 
 
+  it('should find something to process (even when there are unknown DL strategies)', function(done) {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html><body>
+      <img src="http://titi.fr/gallery/view.php?img=t1.jpg" class="paf" />
+      <br />
+      <img src="http://mimi.net/gallery/t2.jpg" />
+      <br />
+      <img src="http://titi.fr/gallery/view.php?img=t5.gif" />
+      <br />
+      <img src="http://google.com/images/view.php?img=http://titi.fr/gallery/view.php?img=t7.gif" class="g" />
+      <br />
+      <img src="http://titi.fr/gallery/view.php?img=t4.jpg" class="paf" />
+      <br />
+      <img src="http://bibi.com/path/to/this/image1.PNG" />
+      <img src="http://bibi.com/path/to/this/image2.svg" />
+    </body></html>
+    `;
+
+    // Test resources are served by Karma
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
+        <host id="titi">
+          <domain>titi.fr</domain>
+          <path-pattern>[^ "]+</path-pattern>
+          <search-pattern>expreg: src="(.*\\.jpg)"</search-pattern>
+        </host>
+        <host id="toto">
+          <domain>toto.fr</domain>
+          <path-pattern>[^ "]+</path-pattern>
+          <search-pattern>unknown-strategy</search-pattern>
+        </host>
+    `;
+
+    // Parse the dictionary
+    var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
+    // Extract links
+    var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionaryWrapper);
+
+    // Verify we got them all
+    expect(res.length).to.eql(3);
+
+    expect(res[0].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t1.jpg');
+    expect(res[0].extMethod).to.eql(ExtMethods.EXPREG.id);
+
+    expect(res[1].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t5.gif');
+    expect(res[1].extMethod).to.eql(ExtMethods.EXPREG.id);
+
+    expect(res[2].matchingUrl).to.eql('http://titi.fr/gallery/view.php?img=t4.jpg');
+    expect(res[2].extMethod).to.eql(ExtMethods.EXPREG.id);
+    done();
+  });
+
+
   it('should find something to process with an interceptor after path-pattern', function(done) {
 
     var sourceDocument = document.implementation.createHTMLDocument('');

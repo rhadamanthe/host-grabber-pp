@@ -139,7 +139,7 @@ browser.runtime.onMessage.addListener(request => {
     }, 5000);
   }
 
-  else if(request.req === 'clear-already-visited-urls-cb') {
+  else if (request.req === 'clear-already-visited-urls-cb') {
     document.querySelector('#clear-cache-btn').className = 'updated-ok';
     setTimeout( function() {
       document.querySelector('#clear-cache-btn').className = '';
