@@ -112,8 +112,16 @@ p.block {
 	margin-top: 12px;
 }
 
-p.warning {
+.warning {
 	font-style: italic;
+}
+
+.radio-padded {
+	padding-left: 24px;
+}
+
+a:visited {
+	color: blue;
 }
 
 	</style>
@@ -223,6 +231,14 @@ p.warning {
 
 				<input type="radio" name="dl-strategy" id="dl-strategy-custom" value="6" />
 				<label for="dl-strategy-custom" data-i18n="optionsPage_dlStrategyRadio_custom"></label>
+				<br />
+				<span class="block warning">
+					<a href="#" 
+						class="radio-padded"
+						data-i18n-href="optionsPage_dlStrategyRadio_custom_link"
+						data-i18n="optionsPage_dlStrategyRadio_custom_linkText">
+					</a>
+				</span>
 				</p>
 
 				<input name="dl-strategy-custom-pattern" id="dl-strategy-custom-pattern" type="text" />

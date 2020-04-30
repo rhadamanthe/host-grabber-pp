@@ -139,6 +139,16 @@
     "description": "The label for this option (options page)"
   },
 
+    "optionsPage_dlStrategyRadio_custom_link": {
+    "message": "https://rhadamanthe.github.io/host-grabber-pp/en/index.html#custom-sub-directory-paths",
+    "description": "The URL for this link (options page)"
+  },
+
+  "optionsPage_dlStrategyRadio_custom_linkText": {
+    "message": "You will find help on the extension's web site.",
+    "description": "The label for this element (options page)"
+  },
+
   "optionsPage_dlStrategyRadio_promptUser": {
     "message": "Prompt for the directory name every time",
     "description": "The label for this option (options page)"

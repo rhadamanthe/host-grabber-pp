@@ -20,6 +20,13 @@ function showI18nMessage() {
       item.title = findAndVerifyValue(key);
     }
   });
+
+  document.querySelectorAll('[data-i18n-href]').forEach( function(item) {
+    var key = item.getAttribute('data-i18n-href');
+    if (!! key) {
+      item.href = findAndVerifyValue(key);
+    }
+  });
 }
 
 

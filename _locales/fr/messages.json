@@ -139,6 +139,16 @@
     "description": "L'étiquette pour cette option (page d'options)"
   },
 
+  "optionsPage_dlStrategyRadio_custom_link": {
+    "message": "https://rhadamanthe.github.io/host-grabber-pp/fr/index.html#personnalisation-des-sous-repertoires",
+    "description": "L'URL pour ce lien (page d'options)"
+  },
+
+  "optionsPage_dlStrategyRadio_custom_linkText": {
+    "message": "Vous trouverez de l'aide sur le site web de l'extension.",
+    "description": "L'étiquette pour cet élément (page d'options)"
+  },
+
   "optionsPage_dlStrategyRadio_promptUser": {
     "message": "Demander le nom du dossier à chaque fois",
     "description": "L'étiquette pour cette option (page d'options)"

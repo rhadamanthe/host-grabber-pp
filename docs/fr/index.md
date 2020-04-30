@@ -97,7 +97,11 @@ lors d'une même session. Ce cache peut être vidé, et même désactivé.
 * **Répertoire de téléchargement** : par défaut, tout est téléchargé dans le même répertoire.
 Mais il est possible de répartir les fichiers dans des sous-dissiers (par domaine, date, titre ou même personnalisé).
 
-**Valeurs disponibles pour la personnalisation des sous-répertoires :**
+### Personnalisation des Sous-Répertoires
+
+Voici les valeurs utilisables pour personnaliser le nom du répertoire
+de téléchargement. Vous pouvez mêler ces valeurs avec des constantes pour constituer
+le chemin que vous souhaitez.
 
 | Valeur     | Description                                    |
 | ---------- | ---------------------------------------------- |

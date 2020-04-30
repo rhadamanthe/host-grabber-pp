@@ -96,7 +96,10 @@ several times during a same session. The cache can be cleared or even disabled.
 * **Download directory**: by default, everything is downloaded in the same directory.
 But it is also possible to dispatch files in sub-directories (by domain, date, title or even custom pattern).
 
-**Available tags for custom sub-directory paths:**
+### Custom Sub-Directory Paths
+
+Here are the available tags if you want to customize the download directory.
+You can mix these tags with constant values to build path.
 
 | Tag        | Description                                 |
 | ---------- | ------------------------------------------- |
