@@ -239,7 +239,7 @@ function notifyDictionaryReload(status) {
  */
 function notifyOptionsPage(message) {
 
-  browser.tabs.query({ title: TITLE_OPTIONS_VIEW }).then( function(tabs) {
+  browser.tabs.query({title: TITLE_OPTIONS_VIEW, currentWindow: true}).then( function(tabs) {
     tabs.forEach(function(tab) {
       browser.tabs.sendMessage(tab.id, message);
     });
@@ -413,7 +413,7 @@ function sendProcessorsToDownloadView(processors) {
 function sendProcessorsToTab(processors, tabTitle, options) {
 
   var clones = prepareProcessorsForMessaging(processors);
-  browser.tabs.query({ title: tabTitle }).then( function(tabs) {
+  browser.tabs.query({title: tabTitle, currentWindow: true}).then( function(tabs) {
     if (tabs.length > 0) {
       browser.tabs.sendMessage(tabs[0].id, {req: 'new-processors', obj: clones, options: options});
     }
@@ -440,7 +440,7 @@ function updateProcessorInDownloadView(processor) {
 function updateProcessorInTab(processor, tabTitle) {
 
   var clone = prepareProcessorForMessaging(processor);
-  browser.tabs.query({ title: tabTitle }).then( function(tabs) {
+  browser.tabs.query({title: tabTitle, currentWindow: true}).then( function(tabs) {
     if (tabs.length > 0) {
       browser.tabs.sendMessage(tabs[0].id, {req: 'update-processor', obj: clone});
     }
