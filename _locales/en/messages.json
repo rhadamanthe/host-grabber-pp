@@ -402,5 +402,15 @@
   "menu_downloadDirectImages": {
     "message": "Download Direct Images",
     "description": "The label for this menu"
+  },
+
+  "menu_extractAndDownloadSelection": {
+    "message": "Extract and Download the Selection",
+    "description": "The label for this menu"
+  },
+
+  "menu_downloadDirectImagesFromSelection": {
+    "message": "Download Direct Images from the Selection",
+    "description": "The label for this menu"
   }
 }

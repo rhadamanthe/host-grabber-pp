@@ -17,8 +17,6 @@ options that existed before.
 
 ## Screenshots
 
-> The project is still in **beta** version.
-
 <img src="../assets/images/dl-view-1--v0.5.jpg" alt="The download view" class="screenshot" />
 
 <img src="../assets/images/dl-view-2--v0.5.jpg" alt="The download view (selection menu)" class="screenshot" />
@@ -64,13 +62,15 @@ folder, and Chrome should not ask for the download location.
 ## Usage
 
 Simply browse a web page and right-click anywhere.  
-Then, click **Host Grabber &gt; Extract**.
+Then, click **Host Grabber &gt; Extract and Download**.
 
 Host Grabber will then analyze the source code, explore its content
 and finds download links. Once this step is complete, downloading starts.
-
 The analysis is performed against a dictionary that defines what and how to
 find download links.
+
+It is also possible to download direct image links and download
+images from a selection on the page.
 
 
 ## Preferences

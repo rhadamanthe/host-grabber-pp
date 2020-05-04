@@ -7,6 +7,17 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     response = document.documentElement.innerHTML;
   }
 
+  else if (request.req === 'selection-source-code') {
+    var selection = document.getSelection();
+    var partialDoc = document.implementation.createHTMLDocument('hg++ copy');
+    for (var i = 0; i < selection.rangeCount; i++) {
+      partialDoc.documentElement.append(selection.getRangeAt(i).cloneContents());
+    }
+
+    // We cannot directly pass the DOM document
+    response = partialDoc.documentElement.innerHTML;
+  }
+
   else if( request.req === 'prompt-for-dl-directory' ) {
     response = prompt(
       'Enter the directory name or path.\n' +

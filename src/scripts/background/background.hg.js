@@ -3,6 +3,11 @@
 const TITLE_DL_VIEW = 'HG ++';
 const TITLE_OPTIONS_VIEW = 'Options - HG ++';
 
+const DL_ALL = 'all';
+const DL_DIRECT = 'direct';
+const DL_SELECTION = 'selection';
+const DL_DIRECT_SELECTION = 'direct-selection';
+
 
 /* Fields */
 
@@ -36,7 +41,7 @@ browser.contextMenus.create({
   parentId: 'hg-menu',
   title: browser.i18n.getMessage('menu_extractAndDownload'),
   contexts: ['all'],
-  onclick: function() { interactiveDownload(false); }
+  onclick: function() { interactiveDownload(DL_ALL); }
 });
 
 browser.contextMenus.create({
@@ -44,11 +49,34 @@ browser.contextMenus.create({
   parentId: 'hg-menu',
   title: browser.i18n.getMessage('menu_downloadDirectImages'),
   contexts: ['all'],
-  onclick: function() { interactiveDownload(true); }
+  onclick: function() { interactiveDownload(DL_DIRECT); }
 });
 
 browser.contextMenus.create({
   id: 'separator-1',
+  parentId: 'hg-menu',
+  type: 'separator',
+  contexts: ['all']
+});
+
+browser.contextMenus.create({
+  id: 'hg-menu-donwload-selection',
+  parentId: 'hg-menu',
+  title: browser.i18n.getMessage('menu_extractAndDownloadSelection'),
+  contexts: ['selection'],
+  onclick: function() { interactiveDownload(DL_SELECTION); }
+});
+
+browser.contextMenus.create({
+  id: 'hg-menu-donwload-direct-selection',
+  parentId: 'hg-menu',
+  title: browser.i18n.getMessage('menu_downloadDirectImagesFromSelection'),
+  contexts: ['selection'],
+  onclick: function() { interactiveDownload(DL_DIRECT_SELECTION); }
+});
+
+browser.contextMenus.create({
+  id: 'separator-2',
   parentId: 'hg-menu',
   type: 'separator',
   contexts: ['all']
@@ -259,10 +287,10 @@ function showDownloadsList() {
 
 /**
  * Determines whether we should prompt the user for values before processing the page.
- * @param {boolean} directImages True to download direct images, false otherwise.
+ * @param {string} dlScope One of the DL_ constants defined at the top of this script.
  * @returns {undefined}
  */
-function interactiveDownload(directImages) {
+function interactiveDownload(dlScope) {
 
   // If we have to prompt the user about something, here it is.
   // As the prompt is asynchronous, and because all the page objects
@@ -288,7 +316,7 @@ function interactiveDownload(directImages) {
           // The user may have clicked 'cancel'
           if (!! directoryName) {
             promptedDirectoryName = directoryName;
-            interactiveDownloadCallback(directImages);
+            interactiveDownloadCallback(dlScope);
           }
         });
       });
@@ -296,7 +324,7 @@ function interactiveDownload(directImages) {
 
     // Otherwise, directly proceed
     else {
-      interactiveDownloadCallback(directImages);
+      interactiveDownloadCallback(dlScope);
     }
   });
 }
@@ -304,42 +332,49 @@ function interactiveDownload(directImages) {
 
 /**
  * Starts the page processing after interactive and non-interactive actions.
- * @param {boolean} directImages True to download direct images, false otherwise.
+ * @param {string} dlScope One of the DL_ constants defined at the top of this script.
  * @returns {undefined}
  */
-function interactiveDownloadCallback(directImages) {
-  if (directImages) {
-    downloadDirectImages();
-  } else {
+function interactiveDownloadCallback(dlScope) {
+  if (dlScope === DL_DIRECT) {
+    downloadContentFromCurrentTab({
+      dictionaryWrapperToUse: buildDictionaryWrapperForDirectImages()
+    });
+
+  } else if (dlScope === DL_ALL) {
     downloadContentFromCurrentTab();
+
+  } else if (dlScope === DL_DIRECT_SELECTION) {
+    downloadContentFromCurrentTab({
+      sourceScope: 'selection-source-code',
+      dictionaryWrapperToUse: buildDictionaryWrapperForDirectImages()
+    });
+
+  } else {
+    downloadContentFromCurrentTab({
+      sourceScope: 'selection-source-code'
+    });
   }
 }
 
 
 /**
  * Downloads the content by analyzing the source code of the current tab.
- * @param {object} dictionaryWrapperToUse A dictionary wrapper (optional).
+ * @param {{sourceScope: string, dictionaryWrapperToUse: object}} dlConfig
+ * The download configuration for this function (all its properties are optional).
  * @returns {undefined}
  */
-function downloadContentFromCurrentTab(dictionaryWrapperToUse) {
+function downloadContentFromCurrentTab(dlConfig = {}) {
+  var sourceScope = dlConfig.sourceScope || 'source-code';
 
-  // Get the page's source code.
+  // Get the page or selection's source code.
   // Background scripts cannot directly get it, so we ask it to our content
   // script (in the currently active tab). So we have to go through the tab API.
   browser.tabs.query({active: true, currentWindow: true}).then( tabs => {
-    browser.tabs.sendMessage( tabs[0].id, {req: 'source-code'}).then( sourceAsText => {
-      downloadContentFromText(sourceAsText, tabs[0].url, dictionaryWrapperToUse);
+    browser.tabs.sendMessage( tabs[0].id, {req: sourceScope}).then( sourceAsText => {
+      downloadContentFromText(sourceAsText, tabs[0].url, dlConfig.dictionaryWrapperToUse);
     });
   });
-}
-
-
-/**
- * Downloads direct images in the current tab.
- * @returns {undefined}
- */
-function downloadDirectImages() {
-  downloadContentFromCurrentTab( buildDictionaryWrapperForDirectImages());
 }
 
 

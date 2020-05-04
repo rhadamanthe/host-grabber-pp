@@ -16,8 +16,6 @@ avec quelques différences:
 
 ## Captures d'Écran
 
-> Le projet est en version **beta**.
-
 <img src="../assets/images/dl-view-1--v0.5.jpg" alt="La vue des téléchargements" class="screenshot" />
 
 <img src="../assets/images/dl-view-2--v0.5.jpg" alt="La vue des téléchargements (menu de sélection)" class="screenshot" />
@@ -67,10 +65,12 @@ cela pourrait accélérer sa résolution.
 Visitez la page web de votre choix, and faîtes un clic droit n'importe où.  
 Puis cliquez sur **Host Grabber &gt; Extraire**.
 
-Host Grabber analyse alors le code source de la page, explore son contenu and extrait les liens
-de téléchargement. Les fichiers sont ensuite téléchargés.
+Host Grabber analyse alors le code source de la page, explore son contenu and
+extrait les liens de téléchargement. Les fichiers sont ensuite téléchargés. L'analyse
+effectuée s'appuie sur un catalogue qui précise comment trouver les liens de téléchargement.
 
-L'analyse effectuée s'appuie sur un catalogue qui précise comment trouver les liens de téléchargement.
+Il est également possible de télécharger les liens directs vers des images,
+ainsi que de n'analyser qu'une portion sélectionnée de la page.
 
 
 ## Préférences

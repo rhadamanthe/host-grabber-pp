@@ -433,9 +433,10 @@ describe('background => library.utilities', function() {
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
 
+    var day = ('0' + now.getDate()).slice(-2);
     var expectedDate = now.getFullYear() +
       '-' + ('0' + (now.getMonth() + 1)).slice(-2) +
-      '-' + now.getDate();
+      '-' + day;
 
     var expected = buildDlDirectoryFromPattern(now, expectedDate, p);
     expect(options.filename).to.be(expected + '/index.php');
@@ -459,9 +460,10 @@ describe('background => library.utilities', function() {
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
 
+    var day = ('0' + now.getDate()).slice(-2);
     var expectedDate = now.getFullYear() +
       '/' + ('0' + (now.getMonth() + 1)).slice(-2) +
-      '/' + now.getDate();
+      '/' + day;
 
     var expected = buildDlDirectoryFromPattern(now, expectedDate, p);
     expect(options.filename).to.be(expected + '/index.php');
@@ -511,10 +513,12 @@ describe('background => library.utilities', function() {
     expect(options.filename).to.be(now.getFullYear() + '/index.php');
 
     options = buildDownloadOptions(dlLink, p, DL_STRATEGY_CUSTOM, '%year%/%day%/');
+    var day = ('0' + now.getDate()).slice(-2);
+
     expect(options.saveAs).to.eql(false);
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
-    expect(options.filename).to.be(now.getFullYear() + '/' + now.getDate() + '/index.php');
+    expect(options.filename).to.be(now.getFullYear() + '/' + day + '/index.php');
 
     options = buildDownloadOptions(dlLink, p, DL_STRATEGY_CUSTOM, '%year%/fix/%domain%/');
     expect(options.saveAs).to.eql(false);
