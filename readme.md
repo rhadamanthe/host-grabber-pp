@@ -5,6 +5,7 @@
 [![Join the chat at https://gitter.im/host-grabber-pp/Lobby](https://badges.gitter.im/host-grabber-pp/Lobby.svg)](https://gitter.im/host-grabber-pp/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Download on Mozilla's web site](https://img.shields.io/badge/install%20from-mozilla-%23ffd935.svg)](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/)
 &nbsp; ![Firefox](docs/assets/images/firefox_x24.png)
+![Chrome](docs/assets/images/chrome_x24.png)
 
 A web extension that allows to find and download media files from various hosts.  
 It was originally designed for Mozilla Firefox but might be adapted to other web browsers.
@@ -12,8 +13,10 @@ It was originally designed for Mozilla Firefox but might be adapted to other web
 It works like the former [Image Host Grabber](https://addons.mozilla.org/fr/firefox/addon/imagehost-grabber/)
 extension, but unlike it, it is not restricted to downloading images.
 
-> Notice: the list of hosts has been seriously purged.  
-> And the current list is not always up-to-date.
+> Notices:  
+> * IHG's catalog is not compatible with this extension.
+> * The list of hosts is different.
+> * The current list is not guaranteed to be up-to-date. Feel free to contribute.
 
 
 ## Roadmap

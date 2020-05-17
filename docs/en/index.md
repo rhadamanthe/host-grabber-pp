@@ -32,7 +32,7 @@ options that existed before.
 <img src="../assets/images/options-view-p2--v0.9.jpg" alt="The options page (following)" class="screenshot" />
 
 
-## Install on Firefox
+## Install on Firefox &nbsp; <img src="../assets/images/firefox_x24.png" alt="Firefox logo" />
 
 You can install it from [addons.mozilla.org](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/).  
 From the version 0.7, a side-panel shows up the first time.
@@ -40,7 +40,7 @@ You can close it without worrying about it. By default, Firefox opens the side-p
 of every newly-installed extension that has one.
 
 
-## Install on Chrome / Chromium
+## Install on Chrome / Chromium &nbsp; <img src="../assets/images/chrome_x24.png" alt="Chrome logo" />
 
 **This extension is in alpha version for Chrome / Chromium.**  
 **The debug panel is only available on Firefox.**
