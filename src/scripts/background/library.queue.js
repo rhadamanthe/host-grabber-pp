@@ -14,7 +14,9 @@ function newQueue(handleProcessorFn) {
     reschedule: reschedule,
     processNextItem: processNextItem,
     remove: remove,
-    handleProcessorFn: handleProcessorFn
+    handleProcessorFn: handleProcessorFn,
+    paused: false,
+    togglePausedStatus: togglePausedStatus
   };
 
 
@@ -73,12 +75,35 @@ function newQueue(handleProcessorFn) {
    */
   function processNextItem() {
 
+    // Is it paused?
+    if (!! queue.paused) {
+      return;
+    }
+
     // Get an item to process
     var processor = queue.processingQueue.shift();
 
     // Handle it, provided it exists
     if (!! processor) {
       queue.handleProcessorFn(processor);
+    }
+  }
+
+  /**
+   * Toggles the pause status of the queue.
+   * <p>
+   * If the queue becomes active again (i.e. NOT paused),
+   * then it picks the next item in the queue. At first,
+   * only 1 item will be processed, but it will increase
+   * until the maximum number of parallel downloads.
+   * </p>
+   *
+   * @returns {undefined}
+   */
+  function togglePausedStatus() {
+    queue.paused = ! queue.paused;
+    if (! queue.paused) {
+      processNextItem();
     }
   }
 

@@ -112,6 +112,9 @@ browser.runtime.onMessage.addListener(request => {
   } else if (request.req === 'remove-processor') {
     queue.remove(request.obj);
 
+  } else if (request.req === 'toggleQueueStatus') {
+    queue.togglePausedStatus();
+
   } else if (request.req === 'restart-download') {
     request.obj.downloadLinks.forEach( function(dlLink) {
       removeFromArray(alreadyVisitedUrls.list, dlLink.link);

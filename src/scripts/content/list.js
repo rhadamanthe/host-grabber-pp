@@ -33,6 +33,8 @@ if ((!! document.getElementById('options'))) {
   document.getElementById('unselect-all').onclick = unselectAll;
   document.getElementById('retry-selected').onclick = retrySelected;
   document.getElementById('retry-all').onclick = retryAll;
+  document.getElementById('pause').onclick = pause;
+  document.getElementById('resume').onclick = resume;
 }
 
 document.querySelectorAll('.dropdown > button').forEach( function(item) {
@@ -514,4 +516,26 @@ function showSubMenu() {
   if (contents.length > 0) {
     contents[0].classList.toggle('dropdown-content-show');
   }
+}
+
+
+/**
+ * Handles the pause for downloads.
+ * @returns {undefined}
+ */
+function pause() {
+  browser.runtime.sendMessage({req: 'toggleQueueStatus'});
+  document.getElementById('pause').className = 'hidden';
+  document.getElementById('resume').className = '';
+}
+
+
+/**
+ * Handles the resume for downloads.
+ * @returns {undefined}
+ */
+function resume() {
+  browser.runtime.sendMessage({req: 'toggleQueueStatus'});
+  document.getElementById('pause').className = '';
+  document.getElementById('resume').className = 'hidden';
 }

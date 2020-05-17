@@ -39,7 +39,7 @@ describe('background => library.queue', function() {
   });
 
 
-  it('should process items', function(done) {
+  it('should process items correctly', function(done) {
     callbackInvoked = false;
 
     // Create the queue
@@ -67,6 +67,48 @@ describe('background => library.queue', function() {
     expect(queue.processingQueue.length).to.eql(2);
     expect(callbackInvoked).to.eql(true);
 
+    queue.processNextItem();
+    expect(queue.processingQueue.length).to.eql(1);
+    expect(queue.processingHistory.size).to.eql(3);
+    expect(queue.processingQueue[0]).to.eql(p3);
+    done();
+  });
+
+
+  it('should handle pauses and resumes correctly', function(done) {
+    callbackInvoked = false;
+
+    // Create the queue
+    var queue = newQueue(handleProcessorTestFn);
+
+    // Submit some stuff
+    queue.append({downloadLinks: [], id: 1});
+    queue.append({downloadLinks: [], id: 2});
+
+    var p3 = {downloadLinks: [], id: 3};
+    queue.append(p3);
+
+    expect(queue.processingQueue.length).to.eql(3);
+    expect(queue.processingHistory.size).to.eql(3);
+    expect(queue.paused).to.eql(false);
+
+    // Pause it
+    queue.togglePausedStatus();
+    expect(queue.paused).to.eql(true);
+
+    queue.processNextItem();
+    expect(queue.processingQueue.length).to.eql(3);
+    expect(callbackInvoked).to.eql(false);
+
+    // Resume
+    queue.togglePausedStatus();
+    expect(queue.paused).to.eql(false);
+
+    // queue.processNextItem() should have been called
+    expect(queue.processingQueue.length).to.eql(2);
+    expect(callbackInvoked).to.eql(true);
+
+    // Verify it works correctly after
     queue.processNextItem();
     expect(queue.processingQueue.length).to.eql(1);
     expect(queue.processingHistory.size).to.eql(3);

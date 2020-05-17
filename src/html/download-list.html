@@ -87,6 +87,12 @@ body {
 	display: inline-block;
 }
 
+@media screen and (max-width: 960px) {
+	.col1 {
+		width: 60%;
+	}
+}
+
 .col11 {
 	width: 69%;
 	padding-right: 20px;
@@ -251,13 +257,17 @@ button {
 	background-color: #333;
     border: none;
     color: white;
-    padding: 10px 32px;
+    padding: 10px 1.2em;
     text-align: center;
     font-weight: bold;
     display: inline-block;
-    font-size: 20px;
+    font-size: 1.1em;
 	border-radius: 6px;
 	margin-top: 6px;
+}
+
+button.hidden {
+	display: none;
 }
 
 .right-button {
@@ -321,6 +331,9 @@ button {
 				<button id="retry-all" data-i18n="dlPage_retryAllDownloadsAction" data-i18n-tooltip="dlPage_retryAllDownloadsTooltip"></button>
 			</div>
 		</div>
+
+		<button id="pause" data-i18n="dlPage_pauseDlAction" data-i18n-tooltip="dlPage_pauseDlTooltip"></button>
+		<button id="resume" class="hidden" data-i18n="dlPage_resumeDlAction" data-i18n-tooltip="dlPage_resumeDlTooltip"></button>
 
 		<button id="options" class="right-button" data-i18n="dlPage_openOptionsPageAction" data-i18n-tooltip="dlPage_openOptionsPageTooltip"></button>
 	</div>

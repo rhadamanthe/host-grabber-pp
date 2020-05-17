@@ -214,6 +214,26 @@
     "description": "The label for the 'remove selected items' tooltip (download page)"
   },
 
+  "dlPage_resumeDlAction": {
+    "message": "Resume",
+    "description": "The label for the 'resume' action (download page)"
+  },
+
+  "dlPage_resumeDlTooltip": {
+    "message": "Resume downloads",
+    "description": "The label for the 'resume' tooltip (download page)"
+  },
+
+  "dlPage_pauseDlAction": {
+    "message": "Pause",
+    "description": "The label for the 'pause' action (download page)"
+  },
+
+  "dlPage_pauseDlTooltip": {
+    "message": "Pause downloads",
+    "description": "The label for the 'pause' tooltip (download page)"
+  },
+
   "dlPage_removeAllAction": {
     "message": "Remove All",
     "description": "The label for the 'remove all' action (download page)"

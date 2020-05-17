@@ -214,6 +214,26 @@
     "description": "L'étiquette pour l'info-bulle de l'action 'supprimer les items selectionnés' (page de téléchargement)"
   },
 
+  "dlPage_resumeDlAction": {
+    "message": "Reprendre",
+    "description": "L'étiquette pour l'action 'reprendre' (page de téléchargement)"
+  },
+
+  "dlPage_resumeDlTooltip": {
+    "message": "Reprendre les téléchargements",
+    "description": "L'étiquette pour l'info-bulle de l'action 'reprendre' (page de téléchargement)"
+  },
+  
+  "dlPage_pauseDlAction": {
+    "message": "Pause",
+    "description": "L'étiquette pour l'action 'pause' (page de téléchargement)"
+  },
+
+  "dlPage_pauseDlTooltip": {
+    "message": "Stopper les téléchargements",
+    "description": "L'étiquette pour l'info-bulle de l'action 'pause' (page de téléchargement)"
+  },
+
   "dlPage_removeAllAction": {
     "message": "Tout Supprimer",
     "description": "L'étiquette pour l'action 'supprimer les items selectionnés' (page de téléchargement)"
