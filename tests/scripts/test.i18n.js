@@ -47,4 +47,27 @@ describe('i18n', function() {
       });
     });
   });
+
+
+  // No "done "callback for this test.
+  // Instead, we return a promise. If it fails, it will fail the test.
+  it('should verify FR (and EN) have no "-" character in key names', function() {
+
+    return loadRemoteDocument('http://localhost:9876/base/_locales/en/messages.json', false).then( function(jsonAsText) {
+      var en = JSON.parse(jsonAsText);
+      return loadRemoteDocument('http://localhost:9876/base/_locales/fr/messages.json', false).then( function(jsonAsText) {
+
+        var fr = JSON.parse(jsonAsText);
+        var keysObj1 = Object.keys(fr);
+        var keysWithHyphen = keysObj1.filter( function(key) {
+          return key.includes('-');
+        }).map( function(key) {
+          console.log('Found invalid key name: ' + key);
+          return key;
+        });
+
+        expect(keysWithHyphen.length).to.eql(0);
+      });
+    });
+  });
 });

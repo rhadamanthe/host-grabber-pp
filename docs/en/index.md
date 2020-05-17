@@ -32,7 +32,7 @@ options that existed before.
 <img src="../assets/images/options-view-p2--v0.9.jpg" alt="The options page (following)" class="screenshot" />
 
 
-## Installation
+## Install on Firefox
 
 You can install it from [addons.mozilla.org](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/).  
 From the version 0.7, a side-panel shows up the first time.
@@ -40,21 +40,32 @@ You can close it without worrying about it. By default, Firefox opens the side-p
 of every newly-installed extension that has one.
 
 
-## Known Problems
+## Install on Chrome / Chromium
 
-**With Firefox:**
+**This extension is alpha version for Chrome / Chromium.**  
+**The debug panel is only available on Firefox.**
 
-* No known problem.
+> This extension is NOT available on the Chrome store.  
+> The reason is that the developper does not accept to pay fees to Google
+> to distribute the extension. It is not the amount of money (5$) but a matter
+> of principle. This extension is free, it is not acceptable to pay Google to
+> distribute it.
 
-**With Chrome:**
+To install the extension on Chrome, download
+[the last release](https://github.com/rhadamanthe/host-grabber-pp/releases),
+open a new tab in Chrome in and type `chrome://extensions` in the address bar,
+followed by **Enter**.
+
+Then, drag and drop the ZIP file in the tab.  
+That's it.
 
 * Once this extension has been installed or upgraded, it is necessary to restart
 Chrome, or to reload all the existing tabs (with the F5 key) that would need it.
-Unlike firefox, Chrome does not reinject some scripts in already-loaded pages.
+Unlike Firefox, Chrome does not reinject some scripts in already-loaded pages.
 
 * In order to use this extension in good conditions with Chrome, it is necessary
 to update the download preferences. All the files should be saved in the same
-folder, and Chrome should not ask for the download location.
+folder, and **Chrome should not ask for the download location**.
 [A bug was reported to the Chrome team](https://bugs.chromium.org/p/chromium/issues/detail?id=417112).
  Feel free to vote for it, it may speed up its resolution.
 

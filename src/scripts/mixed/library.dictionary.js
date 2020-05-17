@@ -5,7 +5,7 @@ const globalDomainPattern = /^\w[-\w\.]*\w$/;
 const globalCurrent = '_$CURRENT$_';
 
 // i18n is defined in this file
-const i18n = {
+const i18nLocal = {
   dictionary_err_1: {
     fr: 'L\'élément \'dictionary\' doit avoir un attribut \'version\'.',
     en: 'The dictionary element must have a \'version\' attribute.'
@@ -124,7 +124,11 @@ if (typeof browser !== 'undefined'
     } else {
       theLocale = langs[0];
     }
-  })
+  });
+
+  if (['en', 'fr'].indexOf(theLocale) === -1) {
+    theLocale = 'en';
+  }
 }
 
 
@@ -135,7 +139,7 @@ if (typeof browser !== 'undefined'
  */
 function resolveI18n(params) {
 
-  var s = i18n[params[0]][theLocale];
+  var s = i18nLocal[params[0]][theLocale];
   for (var i=1; i<params.length; i++) {
     s = s.replace( '{' + (i-1) + '}', params[i]);
   }

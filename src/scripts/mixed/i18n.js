@@ -37,9 +37,11 @@ function showI18nMessage() {
  */
 function findAndVerifyValue(key) {
 
-  var value = browser.i18n.getMessage(key);
+  // Keys cannot contain "-" with Chrome
+  var fixedKey = key.replace('-', '_');
+  var value = browser.i18n.getMessage(fixedKey);
   if (! value) {
-    console.log('No value was set for i18n key "' + key + '".')
+    console.log('No value was set for i18n key "' + fixedKey + '".')
   }
 
   return value;

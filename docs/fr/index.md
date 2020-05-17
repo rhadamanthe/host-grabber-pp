@@ -31,7 +31,7 @@ avec quelques différences:
 <img src="../assets/images/options-view-p2--v0.9.jpg" alt="La page d'options (suite)" class="screenshot" />
 
 
-## Installation
+## Installation sur Firefox
 
 Vous pouvez installer cette extension depuis [addons.mozilla.org](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/).    
 A partir de la version 0.7, un panneau latéral s'ouvre la première fois.
@@ -39,13 +39,24 @@ Vous pouvez le fermer sans inquiétude. Par défaut, Firefox ouvre le panneau la
 toute extension nouvellement installée qui en aurait un.
 
 
-## Problèmes Connus
+## Installation sur Chrome / Chromium
 
-**Avec Firefox :**
+**Cette extension est en version alpha pour Chrome / Chromium.**  
+**Le panneau de débogage n'est disponible qu'avec Firefox.**
 
-* Aucun problème connu.
+> Cette extension n'est PAS disponible sur le Chrome store.  
+> La raison à cela est que le développeur du projet n'a pas l'intention de payer
+> les frais d'inscription demandés par Google. Il ne s'agît pas la somme (dérisoire :
+> 5$), mais d'une question de principe. Cette extension est gratuite, il n'est
+> pas question de payer Google pour la distribuer.
 
-**Avec Chrome :**
+Pour installer cette extension sur Chrome, téléchargez
+[la dernière version](https://github.com/rhadamanthe/host-grabber-pp/releases),
+ouvrez un nouvel onglet et tapez `chrome://extensions` dans la barre d'adresse,
+puis finissez en tapant la touche **Entrée**.
+
+Pour finir, faîtes glisser l'archive ZIP téléchargée dans cet onglet.  
+Elle devrait être marquée comme installée.
 
 * Après installation ou mise à jour de l'extension, il faut soit redémarrer Chrome,
 soit rafraîchir les onglets existants (via F5) afin que l'extension fonctionne avec
@@ -54,7 +65,8 @@ contrairement à Firefox.
 
 * Pour que cette extension fonctionne dans de bonnes conditions avec Chrome,
 il faut modifier les préférences de téléchargement, afin que Chrome sauvegarde
-les fichiers téléchargés dans un même dossier.
+les fichiers téléchargés dans un même dossier, et surtout, que le téléchargement
+se fasse automatiquement, **sans demander où sauvegarder les fichiers**.
 [Un bug a été reporté auprès de l'équipe de Chrome](https://bugs.chromium.org/p/chromium/issues/detail?id=417112),
 qui permettrait de contourner cette obligation. N'hésitez pas à voter pour ce ticket,
 cela pourrait accélérer sa résolution. 

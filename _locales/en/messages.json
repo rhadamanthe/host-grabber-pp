@@ -324,17 +324,17 @@
     "description": ""
   },
 
-  "invalid-mime-type": {
+  "invalid_mime_type": {
     "message": "Invalid MIME type",
     "description": ""
   },
 
-  "already-downloaded": {
+  "already_downloaded": {
     "message": "Already found / downloaded",
     "description": ""
   },
 
-  "unexpected-small-size": {
+  "unexpected_small_size": {
     "message": "Unexpected small size",
     "description": ""
   },
