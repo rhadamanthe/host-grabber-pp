@@ -42,7 +42,7 @@ of every newly-installed extension that has one.
 
 ## Install on Chrome / Chromium
 
-**This extension is alpha version for Chrome / Chromium.**  
+**This extension is in alpha version for Chrome / Chromium.**  
 **The debug panel is only available on Firefox.**
 
 > This extension is NOT available on the Chrome store.  
