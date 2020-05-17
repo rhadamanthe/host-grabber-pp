@@ -673,7 +673,7 @@ describe('background => library.dictionary', function() {
   it('should validate test dictionaries - bug 49', function() {
     return verifyDictionary('host.bug-49.xml');
   });
-  
+
 
   it('should verify i18n for the dictionary', function(done) {
     var keys = Object.keys(i18nLocal);
@@ -684,11 +684,11 @@ describe('background => library.dictionary', function() {
       console.log('Invalid i18n key in the dictionary: ' + key);
       return key;
     });
-    
+
     expect(invalidKeys.length).to.eql(0);
     done();
   });
-  
+
 
   it('should verify resolveI18n works correctly', function(done) {
     var key = 'dictionary_err_8';

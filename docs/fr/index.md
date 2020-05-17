@@ -31,7 +31,7 @@ avec quelques différences:
 <img src="../assets/images/options-view-p2--v0.9.jpg" alt="La page d'options (suite)" class="screenshot" />
 
 
-## Installation sur Firefox &nbsp; <img src="../assets/images/firefox_x24.png" alt="Logo de Firefox" />
+## Installation sur Firefox &nbsp; <img src="../assets/images/firefox_x24.png" alt="Logo de Firefox" class="browser" />
 
 Vous pouvez installer cette extension depuis [addons.mozilla.org](https://addons.mozilla.org/fr/firefox/addon/host-grabber-pp/).    
 A partir de la version 0.7, un panneau latéral s'ouvre la première fois.
@@ -39,7 +39,7 @@ Vous pouvez le fermer sans inquiétude. Par défaut, Firefox ouvre le panneau la
 toute extension nouvellement installée qui en aurait un.
 
 
-## Installation sur Chrome / Chromium &nbsp; <img src="../assets/images/chrome_x24.png" alt="Logo de Chrome" />
+## Installation sur Chrome / Chromium &nbsp; <img src="../assets/images/chrome_x24.png" alt="Logo de Chrome" class="browser" />
 
 **Cette extension est en version alpha pour Chrome / Chromium.**  
 **Le panneau de débogage n'est disponible qu'avec Firefox.**
