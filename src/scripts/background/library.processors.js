@@ -45,7 +45,7 @@ function findWhatToProcess(sourceDocument, url, dictionaryWrappers) {
       if (item.pathPattern === globalCurrent
             && pageUrlMatches(url, domainPattern)) {
 
-        var p = newProcessor(url, pageTitle, item.searchPattern, url, item.interceptors2);
+        var p = newProcessor(url, pageTitle, item, url);
         p.xmlDoc = sourceDocument;
         processors.push(p);
       }
@@ -85,8 +85,7 @@ function findWhatToProcess(sourceDocument, url, dictionaryWrappers) {
 
           // Save the processor
           preventDuplicatesForOneDictionaryItem.push(fixedLink);
-          var p = newProcessor(fixedLink, pageTitle, item.searchPattern, url, item.interceptors2);
-          processors.push(p);
+          processors.push( newProcessor(fixedLink, pageTitle, item, url));
         }
       });
     });
@@ -100,21 +99,23 @@ function findWhatToProcess(sourceDocument, url, dictionaryWrappers) {
  * Builds a new processor.
  * @param {string} matchingUrl The URL of the link that was found.
  * @param {string} pageTitle The page's title.
- * @param {string} searchPattern The search pattern associated.
+ * @param {object} item The dictionary item.
  * @param {string} originUrl The URL of the page that was explored.
- * @param {array} interceptors An array of interceptors to update found URLs.
  * @returns {object} A new processor.
  */
-function newProcessor(matchingUrl, pageTitle, searchPattern, originUrl, interceptors) {
+function newProcessor(matchingUrl, pageTitle, item, originUrl) {
   return {
     id: uuid(),
     matchingUrl: matchingUrl,
     originUrl: originUrl,
     pageTitle: pageTitle,
-    searchPattern: searchPattern,
-    extMethod: findExtractionMethod(searchPattern),
+    searchPattern: item.searchPattern,
+    extMethod: findExtractionMethod(item.searchPattern),
     status: ProcessorStatus.WAITING,
-    interceptors: interceptors || [],
+    fileNameAttribute: item.fileNameAttribute,
+    linkAttribute: item.linkAttribute,
+    interceptorsForLinks: item.interceptors2 || [],
+    interceptorsForFileNames: item.interceptors3 || [],
     downloadLinks: []
   };
 }
@@ -183,7 +184,7 @@ function handleProcessor(processor, extractor, queue, startDownloadFn, updatePro
 /**
  * Performs what is necessary when links were found (synchronously or asynchronously).
  * @param {object} processor The Processor to associated with the links.
- * @param {object} links The found links.
+ * @param {map} links A map whose keys are links and values (optional) are file names.
  * @param {object} queue The queue, to process the next item if no link was found.
  * @param {function} startDownloadFn The function that triggers the real download action.
  * @param {function} updateProcessorInDownloadView The function that updates the download view when links were found.
@@ -193,31 +194,33 @@ function handleProcessor(processor, extractor, queue, startDownloadFn, updatePro
 function onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorInDownloadView, alreadyVisitedUrls) {
 
   // If we have links, let things go on
-  if (!! links && links.length > 0) {
+  if (!! links && links.size > 0) {
     var avoidDuplicatesInThisProcessor = [];
-    links.forEach( function(link, index) {
+    var index = -1;
+    for (const [link, optionalName] of links) {
+      index ++;
 
       // A found link might be relative.
       // So, make it absolute.
-      var fixedLink = fixRelativeLinks(link, processor.matchingUrl);
+      let fixedLink = fixRelativeLinks(link, processor.matchingUrl);
 
       // Do we need to intercept the link?
-      processor.interceptors.forEach( function(interceptor) {
-        var interceptorRegex = new RegExp(interceptor.replace, 'ig');
+      processor.interceptorsForLinks.forEach( function(interceptor) {
+        let interceptorRegex = new RegExp(interceptor.replace, 'ig');
         fixedLink = fixedLink.replace(interceptorRegex, interceptor.by);
       });
 
       // Did we already find it in this processor?
       // Stop here.
       if (avoidDuplicatesInThisProcessor.indexOf(fixedLink) !== -1) {
-        return;
+        continue;
       }
 
       avoidDuplicatesInThisProcessor.push(fixedLink);
 
       // Was the link already downloaded or found in another processor?
       // Keep it and mark it, so that the user understands.
-      var already = false;
+      let already = false;
       if (alreadyVisitedUrls.enabled) {
         already = alreadyVisitedUrls.list.indexOf(fixedLink) !== -1;
         if (! already) {
@@ -225,12 +228,17 @@ function onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorI
         }
       }
 
+      // Prepare the file name
+      let fileName = findFileName(fixedLink, optionalName, processor.interceptorsForFileNames);
+
+      // Update the processor links
       processor.downloadLinks.push({
         id: processor.id + '-' + index,
         link: fixedLink,
+        fileName: fileName,
         status: already ? DlStatus.ALREADY_DOWNLOADED : DlStatus.WAITING
       });
-    });
+    }
 
     // Show the links
     updateProcessorInDownloadView(processor);
@@ -256,30 +264,32 @@ function onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorI
  * @param {object} processor The processor.
  * @param {object} xmlDoc The XML / HTML document that was downloaded.
  * @param {object} extractor The extractor.
- * @returns {array} The found links (can be empty).
+ * @returns {map} A (possibly) empty map with links as keys and optional names as values.
  */
 function processDocument(processor, xmlDoc, extractor) {
 
-  var links = [];
+  var links = new Map();
+  const linkAttr = processor.linkAttribute || 'src';
+  const fileNameAttr = processor.fileNameAttribute || '';
+
   if (ExtMethods.CLASS.id === processor.extMethod) {
     var match = ExtMethods.CLASS.pattern.exec(processor.searchPattern);
-    links = extractor.xpath(xmlDoc, '//img[@class=\'' + match[1].trim() + '\']/@src');
+    links = extractor.xpath(xmlDoc, '//*[@class=\'' + match[1].trim() + '\']', linkAttr, fileNameAttr);
     ExtMethods.CLASS.pattern.lastIndex = 0;
 
   } else if (ExtMethods.ID.id === processor.extMethod) {
     var match = ExtMethods.ID.pattern.exec(processor.searchPattern);
-    links = extractor.xpath(xmlDoc, '//img[@id=\'' + match[1].trim() + '\']/@src');
+    links = extractor.xpath(xmlDoc, '//*[@id=\'' + match[1].trim() + '\']', linkAttr, fileNameAttr);
     ExtMethods.ID.pattern.lastIndex = 0;
 
   } else if (ExtMethods.XPATH.id === processor.extMethod) {
     var match = ExtMethods.XPATH.pattern.exec(processor.searchPattern);
-    links = extractor.xpath(xmlDoc, match[1].trim());
+    links = extractor.xpath(xmlDoc, match[1].trim(), linkAttr, fileNameAttr);
     ExtMethods.XPATH.pattern.lastIndex = 0;
 
   } else if (ExtMethods.CSS_QUERY.id === processor.extMethod) {
-
     var match = ExtMethods.CSS_QUERY.pattern.exec(processor.searchPattern);
-    links = extractor.cssQuery(xmlDoc, match[1].trim(), 'src');
+    links = extractor.cssQuery(xmlDoc, match[1].trim(), linkAttr, fileNameAttr);
     ExtMethods.CSS_QUERY.pattern.lastIndex = 0;
 
   } else if (ExtMethods.EXPREG.id === processor.extMethod) {

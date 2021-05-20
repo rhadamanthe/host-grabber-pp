@@ -84,6 +84,11 @@
     "description": "The label for this option (options page)"
   },
 
+  "optionsPage_prefixFilenamesWithCounter": {
+    "message": "Prefix file names with a counter",
+    "description": "The label for this option (options page)"
+  },
+
   "optionsPage_alwaysShowViewWhenDlStarts": {
     "message": "Always open the download view when a download starts",
     "description": "The label for this option (options page)"

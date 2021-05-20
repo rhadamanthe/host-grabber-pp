@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root id="test" version="test" spec="1.0">
+
+<host id="mimi">
+	<domain>mimi.net</domain>
+	<path-pattern>[^/]+/[^"]*</path-pattern>
+	<link-search-pattern>expreg: (http://mimi\.[^"]*\.(jpg|gif|png))</link-search-pattern>
+</host>
+
+<host id="titi">
+	<domain>titi.fr</domain>
+	<path-pattern>[^"]*</path-pattern>
+	<link-search-pattern>replace: 'view\.php\?img=', 'images/'</link-search-pattern>
+</host>
+
+<host id="bibi">
+	<domain>bibi.com</domain>
+	<path-pattern>[^"]*\.(jpg|gif)</path-pattern>
+	<link-search-pattern>self</link-search-pattern>
+</host>
+
+<host id="bibi2">
+	<domain>bibi.com</domain>
+	<path-pattern>[^"]*\.(jpg|png)</path-pattern>
+	<link-search-pattern>self</link-search-pattern>
+</host>
+
+<host id="host1">
+	<domain>host1.com</domain>
+	<path-pattern>.+\.(jpg|png|gif)</path-pattern>
+	<interceptor>replace: 'host1', 'host_1'</interceptor>
+	<link-search-pattern>self</link-search-pattern>
+</host>
+
+<host id="host2">
+	<domain>host2.com</domain>
+	<path-pattern>.+\.(jpg|png|gif)</path-pattern>
+	<link-search-pattern>self</link-search-pattern>
+</host>
+
+<host id="host3">
+	<domain>host3.com</domain>
+	<path-pattern>.+\.(jpg|png|gif)</path-pattern>
+	<link-search-pattern>self</link-search-pattern>
+</host>
+
+<host id="host44">
+	<domain>host44.fr</domain>
+	<path-pattern>_$CURRENT$_</path-pattern>
+	<link-search-pattern>CLASS: img</link-search-pattern>
+</host>
+
+<host id="c91-23">
+	<domain>c91-23.ca</domain>
+	<path-pattern>.+\.(jpg|png|gif)</path-pattern>
+	<link-search-pattern>CSS query: div.ct &gt; img</link-search-pattern>
+</host>
+
+</root>

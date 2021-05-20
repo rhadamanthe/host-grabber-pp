@@ -37,7 +37,7 @@ describe('background => library.processors', function() {
     `;
 
     // Test resources are served by Karma
-    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml');
+    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test_spec_1.1.xml');
     return dictionaryP.then( function(dictionary) {
 
       // Parse the dictionary
@@ -77,7 +77,7 @@ describe('background => library.processors', function() {
   it('should find nothing to process when the source document is null', function() {
 
     // Test resources are served by Karma
-    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml');
+    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test_spec_1.1.xml');
     return dictionaryP.then( function(dictionary) {
       var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
       var res = findWhatToProcess(null, 'http://titi.fr/page.html', dictionaryWrapper);
@@ -130,7 +130,7 @@ describe('background => library.processors', function() {
     `;
 
     // Test resources are served by Karma
-    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml');
+    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test_spec_1.1.xml');
     return dictionaryP.then( function(dictionary) {
 
       // Parse the dictionary
@@ -235,7 +235,7 @@ describe('background => library.processors', function() {
     `;
 
     // Test resources are served by Karma
-    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml');
+    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test_spec_1.1.xml');
     return dictionaryP.then( function(dictionary) {
 
       // Parse the dictionary
@@ -356,7 +356,7 @@ describe('background => library.processors', function() {
     `;
 
     // Test resources are served by Karma
-    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml');
+    var dictionaryP = loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test_spec_1.1.xml');
     return dictionaryP.then( function(dictionary) {
 
       // Parse the dictionary
@@ -548,7 +548,7 @@ describe('background => library.processors', function() {
     // Extract links
     var res = findWhatToProcess(sourceDocument, 'http://web.page.url.com/we/do/not/care/here', dictionaryWrapper);
 
-    // Verify we got them all
+    // Verify we got nothing
     expect(res.length).to.eql(0);
     done();
   });
@@ -765,7 +765,11 @@ describe('background => library.processors', function() {
 
   it('should create new processors correctly', function(done) {
 
-    var np = newProcessor('the url', 'page title', 'the search pattern', 'originUrl');
+    var item = {
+      searchPattern: 'the search pattern'
+    };
+
+    var np = newProcessor('the url', 'page title', item, 'originUrl');
     expect(np.matchingUrl).to.eql('the url');
     expect(np.originUrl).to.eql('originUrl');
     expect(np.pageTitle).to.eql('page title');
@@ -774,9 +778,16 @@ describe('background => library.processors', function() {
     expect(np.status).to.eql(ProcessorStatus.WAITING);
     expect(np.downloadLinks).to.eql([]);
     expect(!! np.id).to.be(true);
-    expect(np.interceptors).to.eql([]);
+    expect(np.interceptorsForLinks).to.eql([]);
+    expect(np.interceptorsForFileNames).to.eql([]);
 
-    np = newProcessor('the url', 'page title', 'Self', 'origin Url', [{replace: 'ok', by: 'that'}]);
+    item = {
+      searchPattern: 'Self',
+      interceptors2: [{replace: 'ok', by: 'that'}],
+      interceptors3: [{replace: 'ko', by: 'this'}]
+    };
+
+    np = newProcessor('the url', 'page title', item, 'origin Url');
     expect(np.matchingUrl).to.eql('the url');
     expect(np.originUrl).to.eql('origin Url');
     expect(np.pageTitle).to.eql('page title');
@@ -785,8 +796,10 @@ describe('background => library.processors', function() {
     expect(np.status).to.eql(ProcessorStatus.WAITING);
     expect(np.downloadLinks).to.eql([]);
     expect(!! np.id).to.be(true);
-    expect(np.interceptors.length).to.eql(1);
-    expect(np.interceptors[0]).to.eql({replace: 'ok', by: 'that'});
+    expect(np.interceptorsForLinks.length).to.eql(1);
+    expect(np.interceptorsForLinks[0]).to.eql({replace: 'ok', by: 'that'});
+    expect(np.interceptorsForFileNames.length).to.eql(1);
+    expect(np.interceptorsForFileNames[0]).to.eql({replace: 'ko', by: 'this'});
 
     done();
   });
@@ -845,7 +858,11 @@ describe('background => library.processors', function() {
 
   it('should handle processors correctly (SELF)', function(done) {
 
-    var p = newProcessor('http://tutu.com/some-image.jpg', 'page title', 'self', 'origin url');
+    var item = {
+      searchPattern: 'self'
+    };
+
+    var p = newProcessor('http://tutu.com/some-image.jpg', 'page title', item, 'origin url');
     var idleFn = function() {};
     var queue = {
       modified: false,
@@ -859,7 +876,7 @@ describe('background => library.processors', function() {
       self: function(url) {
         this.invoked = true;
         expect(url).to.eql('http://tutu.com/some-image.jpg');
-        return [url];
+        return new Map([[url, '']]);
       }
     };
 
@@ -878,7 +895,11 @@ describe('background => library.processors', function() {
 
   it('should handle processors correctly (REPLACE)', function(done) {
 
-    var p = newProcessor('http://tutu.com/some-page.html', 'page title', 'replace: \'html\', \'jpg\'', 'origin url');
+    var item = {
+      searchPattern: 'replace: \'html\', \'jpg\''
+    };
+
+    var p = newProcessor('http://tutu.com/some-page.html', 'page title', item, 'origin url');
     var idleFn = function() {};
     var queue = {
       modified: false,
@@ -892,7 +913,7 @@ describe('background => library.processors', function() {
       replace: function(url, xmlSearchPattern) {
         this.invoked = true;
         expect(url).to.eql('http://tutu.com/some-page.html');
-        return ['http://tutu.com/some-page.jpg'];
+        return new Map([['http://tutu.com/some-page.jpg', '']]);
       }
     };
 
@@ -1061,7 +1082,7 @@ describe('background => library.processors', function() {
   });
 
 
-  it('should handle processors correctly on the current page (WITH the right URL)', function(done) {
+  it('should handle processors correctly on the current page (WITH the right URL and class strategy)', function(done) {
 
     var sourceDocument = document.implementation.createHTMLDocument('');
     sourceDocument.documentElement.innerHTML = `<html>
@@ -1123,6 +1144,56 @@ describe('background => library.processors', function() {
 
     // Yes, this one is expected too. The "class" attribute makes no difference.
     expect(p.downloadLinks[4].link).to.eql('http://bibi.com/path/to/this/image2.svg');
+    done();
+  });
+
+
+  it('should handle processors correctly on the current page (WITH the right URL and ID strategy)', function(done) {
+
+    var sourceDocument = document.implementation.createHTMLDocument('');
+    sourceDocument.documentElement.innerHTML = `<html>
+      <head>
+        <title>That's a serious thing</title>
+      </head>
+      <body>
+      <img src="http://host44.fr/gallery/t1.jpg" class="img" />
+      <br />
+      <img src="http://host44.fr/gallery/t2.jpg" id="my-img" />
+    </body></html>
+    `;
+
+    // Test resources are served by Karma
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
+        <host id="host44">
+          <domain>host44.fr</domain>
+          <path-pattern>_$CURRENT$_</path-pattern>
+          <search-pattern>ID: my-img</search-pattern>
+        </host>
+    `;
+
+    // Parse the dictionary
+    var dictionaryWrapper = parseAndVerifyDictionary(dictionary);
+
+    // Extract links
+    var processors = findWhatToProcess(sourceDocument, 'https://host44.fr/here/it/is.php', dictionaryWrapper);
+    expect(processors.length).to.eql(1);
+
+    var idleFn = function() {};
+    var extractorFn = extractor();
+    var queue = {
+      processNextItem: function() {}
+    };
+
+    var p = processors[0];
+    handleProcessor(p, extractorFn, queue, idleFn, idleFn, newAlreadyVisitedUrls());
+
+    expect(p.pageTitle).to.eql('That\'s a serious thing');
+    expect(p.downloadLinks.length).to.eql(1);
+    expect(p.downloadLinks[0].link).to.eql('http://host44.fr/gallery/t2.jpg');
     done();
   });
 
@@ -1199,7 +1270,11 @@ describe('background => library.processors', function() {
   // Instead, we return a promise. If it fails, it will fail the test.
   it('should handle processors correctly (CLASS)', function() {
 
-    var p = newProcessor('test', 'page title2', 'class: toto', 'origin url');
+    var item = {
+      searchPattern: 'class: toto'
+    };
+
+    var p = newProcessor('test', 'page title2', item, 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
 
     var idleFn = function() {};
@@ -1212,9 +1287,9 @@ describe('background => library.processors', function() {
 
     var extractor = {
       invoked: false,
-      xpath: function(doc, xpathExpr) {
+      xpath: function(doc, xpathExpr, linkAttr, fileNameAttr) {
         this.invoked = true;
-        return ['http://toto.fr/test1', 'test2'];
+        return new Map([['http://toto.fr/test1', ''], ['test2', '']]);
       }
     };
 
@@ -1242,7 +1317,11 @@ describe('background => library.processors', function() {
   // Instead, we return a promise. If it fails, it will fail the test.
   it('should handle processors correctly (CLASS with unreachable remote page)', function() {
 
-    var p = newProcessor('test', 'page title2', 'class: toto', 'origin url');
+    var item = {
+      searchPattern: 'class: toto'
+    };
+
+    var p = newProcessor('test', 'page title2', item, 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/it.does.not.exist.html';
 
     var idleFn = function() {};
@@ -1255,9 +1334,9 @@ describe('background => library.processors', function() {
 
     var extractor = {
       invoked: false,
-      xpath: function(doc, xpathExpr) {
+      xpath: function(doc, xpathExpr, linkAttr, fileNameAttr) {
         this.invoked = true;
-        return [];
+        return new Map();
       }
     };
 
@@ -1279,7 +1358,11 @@ describe('background => library.processors', function() {
   // Instead, we return a promise. If it fails, it will fail the test.
   it('should handle processors correctly (CLASS with no found link)', function() {
 
-    var p = newProcessor('test', 'page title2', 'class: toto', 'origin url');
+    var item = {
+      searchPattern: 'class: toto'
+    };
+
+    var p = newProcessor('test', 'page title2', item, 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
 
     var idleFn = function() {};
@@ -1292,9 +1375,9 @@ describe('background => library.processors', function() {
 
     var extractor = {
       invoked: true,
-      xpath: function(doc, xpathExpr) {
+      xpath: function(doc, xpathExpr, linkAttr, fileNameAttr) {
         this.invoked = true;
-        return [];
+        return new Map();
       }
     };
 
@@ -1316,7 +1399,11 @@ describe('background => library.processors', function() {
   // Instead, we return a promise. If it fails, it will fail the test.
   it('should handle processors correctly (ID)', function() {
 
-    var p = newProcessor('test', 'page title2', 'id: toto', 'origin url');
+    var item = {
+      searchPattern: 'id: toto'
+    };
+
+    var p = newProcessor('test', 'page title2', item, 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
 
     var idleFn = function() {};
@@ -1329,9 +1416,9 @@ describe('background => library.processors', function() {
 
     var extractor = {
       invoked: false,
-      xpath: function(doc, xpathExpr) {
+      xpath: function(doc, xpathExpr, linkAttr, fileNameAttr) {
         this.invoked = true;
-        return ['https://toto.net/v/test3'];
+        return new Map([['https://toto.net/v/test3', '']]);
       }
     };
 
@@ -1356,7 +1443,11 @@ describe('background => library.processors', function() {
   // Instead, we return a promise. If it fails, it will fail the test.
   it('should handle processors correctly (XPATH with cache for visited URLs)', function() {
 
-    var p = newProcessor('test', 'page title2', 'xpath: //test', 'origin url');
+    var item = {
+      searchPattern: 'xpath: //test'
+    };
+
+    var p = newProcessor('test', 'page title2', item, 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
 
     var idleFn = function() {};
@@ -1369,10 +1460,9 @@ describe('background => library.processors', function() {
 
     var extractor = {
       invoked: false,
-      xpath: function(doc, xpathExpr) {
+      xpath: function(doc, xpathExpr, linkAttr, fileNameAttr) {
         this.invoked = true;
-        // Put some duplicate here => unified in the resulting array
-        return ['test1', 'test2'];
+        return new Map([['test1', ''], ['test2', '']]);
       }
     };
 
@@ -1403,7 +1493,11 @@ describe('background => library.processors', function() {
   // Instead, we return a promise. If it fails, it will fail the test.
   it('should handle processors correctly (XPATH with duplicate)', function() {
 
-    var p = newProcessor('test', 'page title2', 'xpath: //test', 'origin url');
+    var item = {
+      searchPattern: 'xpath: //test'
+    };
+
+    var p = newProcessor('test', 'page title2', item, 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
 
     var idleFn = function() {};
@@ -1416,10 +1510,11 @@ describe('background => library.processors', function() {
 
     var extractor = {
       invoked: false,
-      xpath: function(doc, xpathExpr) {
+      xpath: function(doc, xpathExpr, linkAttr, fileNameAttr) {
         this.invoked = true;
-        // Put some duplicate here => unified in the resulting array
-        return ['test1', 'test1'];
+        // It's a map, the only solution to get duplicates
+        // is to mix relative and absolute links to a same resource
+        return new Map([['test1', ''], ['http://localhost:9876/base/tests/resources/test1', '']]);
       }
     };
 
@@ -1444,7 +1539,11 @@ describe('background => library.processors', function() {
   // Instead, we return a promise. If it fails, it will fail the test.
   it('should handle processors correctly (XPATH and no cache for visited URLs)', function() {
 
-    var p = newProcessor('test', 'page title2', 'xpath: //test', 'origin url');
+    var item = {
+      searchPattern: 'xpath: //test'
+    };
+
+    var p = newProcessor('test', 'page title2', item, 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
 
     var idleFn = function() {};
@@ -1457,10 +1556,9 @@ describe('background => library.processors', function() {
 
     var extractor = {
       invoked: false,
-      xpath: function(doc, xpathExpr) {
+      xpath: function(doc, xpathExpr, linkAttr, nameAttr) {
         this.invoked = true;
-        // Put some duplicate here => unified in the resulting array
-        return ['test1', 'test2'];
+        return new Map([['test1', ''], ['test2', '']]);
       }
     };
 
@@ -1491,7 +1589,11 @@ describe('background => library.processors', function() {
   // Instead, we return a promise. If it fails, it will fail the test.
   it('should handle processors correctly (CSS Query and no cache for visited URLs)', function() {
 
-    var p = newProcessor('test', 'page title2', 'css query: div.ct &gt; img', 'origin url');
+    var item = {
+      searchPattern: 'css query: div.ct &gt; img'
+    };
+
+    var p = newProcessor('test', 'page title2', item, 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
 
     var idleFn = function() {};
@@ -1504,10 +1606,9 @@ describe('background => library.processors', function() {
 
     var extractor = {
       invoked: false,
-      cssQuery: function(doc, query, property) {
+      cssQuery: function(doc, query, linkAttr, fileNameAttr) {
         this.invoked = true;
-        // Put some duplicate here => unified in the resulting array
-        return ['test1', 'test2'];
+        return new Map([['test1', ''], ['test2', '']]);
       }
     };
 
@@ -1536,7 +1637,11 @@ describe('background => library.processors', function() {
 
   it('should handle processors correctly (EXPREG)', function() {
 
-    var p = newProcessor('test', 'page title2', 'expreg: src="([^)]+)"', 'origin url');
+    var item = {
+      searchPattern: 'expreg: src="([^)]+)"'
+    };
+
+    var p = newProcessor('test', 'page title2', item, 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
 
     var idleFn = function() {};
@@ -1549,9 +1654,9 @@ describe('background => library.processors', function() {
 
     var extractor = {
       invoked: false,
-      expreg: function(doc, xpathExpr) {
+      expreg: function(doc, xpathExpr, linkAttr, fileNameAttr) {
         this.invoked = true;
-        return ['test1'];
+        return new Map([['test1', '']]);
       }
     };
 
@@ -1574,7 +1679,11 @@ describe('background => library.processors', function() {
 
   it('should handle processors correctly (remote document is not a valid one)', function() {
 
-    var p = newProcessor('test', 'page title2', 'xpath: //test', 'origin url');
+    var item = {
+      searchPattern: 'xpath: //test'
+    };
+
+    var p = newProcessor('test', 'page title2', item, 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/simple.txt';
 
     var idleFn = function() {};
@@ -1600,7 +1709,11 @@ describe('background => library.processors', function() {
 
   it('should handle processors correctly (invalid strategy)', function() {
 
-    var p = newProcessor('test', 'page title2', 'this is invalid', 'origin url');
+    var item = {
+      searchPattern: 'this is invalid'
+    };
+
+    var p = newProcessor('test', 'page title2', item, 'origin url');
     p.matchingUrl = 'http://localhost:9876/base/tests/resources/empty.html';
 
     var idleFn = function() {};

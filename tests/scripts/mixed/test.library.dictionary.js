@@ -172,7 +172,7 @@ describe('background => library.dictionary', function() {
     createAttribute(dictionary.documentElement, 'id', 'id');
     dictionary.documentElement.innerHTML = `
         <host id="coppermine">
-          <domain>_$CURRENT$_</domain>
+          <domain>_$ANY$_</domain>
           <path-pattern>.+\\.jpg</path-pattern>
           <search-pattern>expreg: src="(.*\\.jpg)"</search-pattern>
         </host>
@@ -181,12 +181,76 @@ describe('background => library.dictionary', function() {
     var obj = parseAndVerifyDictionary(dictionary);
     expect(obj.errors.length).to.eql(0);
     expect(obj.items.length).to.eql(1);
-    expect(obj.items[0].domain).to.eql(globalCurrent);
+    expect(obj.items[0].domain).to.eql(globalAny);
     expect(obj.items[0].pathPattern).to.eql('.+\\.jpg');
     expect(obj.items[0].searchPattern).to.eql('expreg: src="(.*\\.jpg)"');
     expect(obj.items[0].errors.length).to.eql(0);
     expect(obj.items[0].interceptors1.length).to.eql(0);
     expect(obj.items[0].interceptors2.length).to.eql(0);
+    expect(obj.items[0].linkAttribute).to.eql(undefined);
+    expect(obj.items[0].fileNameAttribute).to.eql(undefined);
+    done();
+  });
+
+
+  it('should validate a dictionary item with the current domain and attributes (spec 1.0)', function(done) {
+
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
+        <host id="coppermine">
+          <domain>_$ANY$_</domain>
+          <path-pattern>.+\\.jpg</path-pattern>
+          <search-pattern>css query: something img</search-pattern>
+          <link-attribute>href</link-attribute>
+          <file-name-attribute>alt</file-name-attribute>
+        </host>
+    `;
+
+    var obj = parseAndVerifyDictionary(dictionary);
+    expect(obj.errors.length).to.eql(0);
+    expect(obj.items.length).to.eql(1);
+    expect(obj.items[0].domain).to.eql(globalAny);
+    expect(obj.items[0].pathPattern).to.eql('.+\\.jpg');
+    expect(obj.items[0].searchPattern).to.eql('css query: something img');
+    expect(obj.items[0].errors.length).to.eql(0);
+    expect(obj.items[0].interceptors1.length).to.eql(0);
+    expect(obj.items[0].interceptors2.length).to.eql(0);
+    expect(obj.items[0].linkAttribute).to.eql('href');
+    expect(obj.items[0].fileNameAttribute).to.eql('alt');
+    done();
+  });
+
+
+  it('should validate a dictionary item with the current domain and attributes (spec 1.1)', function(done) {
+
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
+        <host id="coppermine">
+          <domain>_$ANY$_</domain>
+          <path-pattern>.+\\.jpg</path-pattern>
+          <link-search-pattern>css query: something img</link-search-pattern>
+          <link-attribute>href</link-attribute>
+          <file-name-attribute>alt</file-name-attribute>
+        </host>
+    `;
+
+    var obj = parseAndVerifyDictionary(dictionary);
+    expect(obj.errors.length).to.eql(0);
+    expect(obj.items.length).to.eql(1);
+    expect(obj.items[0].domain).to.eql(globalAny);
+    expect(obj.items[0].pathPattern).to.eql('.+\\.jpg');
+    expect(obj.items[0].searchPattern).to.eql('css query: something img');
+    expect(obj.items[0].errors.length).to.eql(0);
+    expect(obj.items[0].interceptors1.length).to.eql(0);
+    expect(obj.items[0].interceptors2.length).to.eql(0);
+    expect(obj.items[0].linkAttribute).to.eql('href');
+    expect(obj.items[0].fileNameAttribute).to.eql('alt');
     done();
   });
 
@@ -215,6 +279,8 @@ describe('background => library.dictionary', function() {
     expect(obj.items[0].domain).to.eql('titi.fr');
     expect(obj.items[0].pathPattern).to.eql('.+\\.jpg');
     expect(obj.items[0].searchPattern).to.eql('expreg: src="(.*\\.jpg)"');
+    expect(obj.items[0].linkAttribute).to.eql(undefined);
+    expect(obj.items[0].fileNameAttribute).to.eql(undefined);
     expect(obj.items[0].errors.length).to.eql(0);
 
     expect(obj.items[0].interceptors1.length).to.eql(2);
@@ -224,6 +290,113 @@ describe('background => library.dictionary', function() {
     expect(obj.items[0].interceptors2.length).to.eql(2);
     expect(obj.items[0].interceptors2[0]).to.eql({replace: 's', by: 't', string: 'replace: \'s\', \'t\''});
     expect(obj.items[0].interceptors2[1]).to.eql({replace: 'q', by: 'a', string: 'replace: \'q\', \'a\''});
+    done();
+  });
+
+
+  it('should validate a dictionary item with interceptors and attributes (DOM)', function(done) {
+
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
+        <host id="titi">
+          <domain>titi.fr</domain>
+          <path-pattern>.+\\.jpg</path-pattern>
+          <interceptor>replace: 't', 'p'</interceptor>
+          <search-pattern>css query: test img</search-pattern>
+          <link-attribute>href</link-attribute>
+          <interceptor>replace: 's', 't'</interceptor>
+          <file-name-attribute>title</file-name-attribute>
+          <interceptor>replace: '-jpg', '.jpg'</interceptor>
+        </host>
+    `;
+
+    var obj = parseAndVerifyDictionary(dictionary);
+    expect(obj.errors.length).to.eql(0);
+    expect(obj.items.length).to.eql(1);
+    expect(obj.items[0].domain).to.eql('titi.fr');
+    expect(obj.items[0].pathPattern).to.eql('.+\\.jpg');
+    expect(obj.items[0].searchPattern).to.eql('css query: test img');
+    expect(obj.items[0].linkAttribute).to.eql('href');
+    expect(obj.items[0].fileNameAttribute).to.eql('title');
+    expect(obj.items[0].errors.length).to.eql(0);
+
+    expect(obj.items[0].interceptors1.length).to.eql(1);
+    expect(obj.items[0].interceptors1[0]).to.eql({replace: 't', by: 'p', string: 'replace: \'t\', \'p\''});
+
+    expect(obj.items[0].interceptors2.length).to.eql(1);
+    expect(obj.items[0].interceptors2[0]).to.eql({replace: 's', by: 't', string: 'replace: \'s\', \'t\''});
+
+    expect(obj.items[0].interceptors3.length).to.eql(1);
+    expect(obj.items[0].interceptors3[0]).to.eql({replace: '-jpg', by: '.jpg', string: 'replace: \'-jpg\', \'.jpg\''});
+    done();
+  });
+
+
+  it('should validate a dictionary item with interceptors and attributes (text)', function(done) {
+
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
+        <host id="titi">
+          <domain>titi.fr</domain>
+          <path-pattern>.+\\.jpg</path-pattern>
+          <interceptor>replace: 't', 'p'</interceptor>
+          <search-pattern>expreg: src="(.*\\.jpg)"</search-pattern>
+          <interceptor>replace: 's', 't'</interceptor>
+          <file-name-attribute></file-name-attribute>
+          <interceptor>replace: '-jpg', '.jpg'</interceptor>
+        </host>
+    `;
+
+    var obj = parseAndVerifyDictionary(dictionary);
+    expect(obj.errors.length).to.eql(0);
+    expect(obj.items.length).to.eql(1);
+    expect(obj.items[0].domain).to.eql('titi.fr');
+    expect(obj.items[0].pathPattern).to.eql('.+\\.jpg');
+    expect(obj.items[0].searchPattern).to.eql('expreg: src="(.*\\.jpg)"');
+    expect(obj.items[0].linkAttribute).to.eql(undefined);
+    expect(obj.items[0].fileNameAttribute).to.eql('');
+    expect(obj.items[0].errors.length).to.eql(0);
+
+    expect(obj.items[0].interceptors1.length).to.eql(1);
+    expect(obj.items[0].interceptors1[0]).to.eql({replace: 't', by: 'p', string: 'replace: \'t\', \'p\''});
+
+    expect(obj.items[0].interceptors2.length).to.eql(1);
+    expect(obj.items[0].interceptors2[0]).to.eql({replace: 's', by: 't', string: 'replace: \'s\', \'t\''});
+
+    expect(obj.items[0].interceptors3.length).to.eql(1);
+    expect(obj.items[0].interceptors3[0]).to.eql({replace: '-jpg', by: '.jpg', string: 'replace: \'-jpg\', \'.jpg\''});
+    done();
+  });
+
+
+  it('should detect dictionary attributes with an incompatible strategy', function(done) {
+
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
+        <host id="titi">
+          <domain>titi.fr</domain>
+          <path-pattern>.+\\.jpg</path-pattern>
+          <interceptor>replace: 't', 'p'</interceptor>
+          <search-pattern>expreg: src="(.*\\.jpg)"</search-pattern>
+          <link-attribute>href</link-attribute>
+          <interceptor>replace: 's', 't'</interceptor>
+          <file-name-attribute>title</file-name-attribute>
+        </host>
+    `;
+
+    var obj = parseAndVerifyDictionary(dictionary);
+    expect(obj.errors.length).to.eql(2);
+    expect(obj.errors[0]).to.eql('[titi] "link-attribute" mark-ups are only compatible with the "ID", "class", "XPath" and "CSS query" strategies.');
+    expect(obj.errors[1]).to.eql('[titi] "file-name-attribute" mark-ups must be empty for the "self", "replace" and "expreg" strategies.');
     done();
   });
 
@@ -334,7 +507,7 @@ describe('background => library.dictionary', function() {
     expect(obj.items.length).to.eql(1);
     expect(obj.errors[0]).to.eql('[titi] A domain or a domain pattern was expected.');
     expect(obj.errors[1]).to.eql('[titi] A path-pattern was expected.');
-    expect(obj.errors[2]).to.eql('[titi] A search-pattern was expected.');
+    expect(obj.errors[2]).to.eql('[titi] A link-search-pattern was expected.');
     done();
   });
 
@@ -575,6 +748,72 @@ describe('background => library.dictionary', function() {
   });
 
 
+  it('should detect a dictionary item with a file name attribute at an invalid position', function(done) {
+
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
+      <host id="titi">
+        <domain>titi.fr</domain>
+        <path-pattern>.+\\.jpg</path-pattern>
+        <file-name-attribute>alt</file-name-attribute>
+        <search-pattern>self</search-pattern>
+      </host>
+  `;
+
+    var obj = parseAndVerifyDictionary(dictionary);
+    expect(obj.errors.length).to.eql(1);
+    expect(obj.errors[0]).to.eql('[titi] A file name attribute was found at an invalid position.');
+    expect(obj.items.length).to.eql(1);
+    expect(obj.items[0].domain).to.eql('titi.fr');
+    expect(obj.items[0].pathPattern).to.eql('.+\\.jpg');
+    expect(obj.items[0].searchPattern).to.eql('self');
+    expect(obj.items[0].fileNameAttribute).to.eql(undefined);
+    expect(obj.items[0].interceptors1.length).to.eql(0);
+    expect(obj.items[0].interceptors2.length).to.eql(0);
+    done();
+  });
+
+
+  it('should detect a dictionary item with a link attribute at an invalid position', function(done) {
+
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.0');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
+      <host id="titi">
+        <domain>titi.fr</domain>
+        <path-pattern>.+\\.jpg</path-pattern>
+        <link-attribute>src</link-attribute>
+        <search-pattern>id: toto</search-pattern>
+        <file-name-attribute>alt</file-name-attribute>
+      </host>
+  `;
+
+    var obj = parseAndVerifyDictionary(dictionary);
+    expect(obj.errors.length).to.eql(1);
+    expect(obj.errors[0]).to.eql('[titi] A link attribute mark-up was found at an invalid position.');
+
+    dictionary.documentElement.innerHTML = `
+      <host id="tutu">
+        <domain>tutu.fr</domain>
+        <path-pattern>.+\\.jpg</path-pattern>
+        <search-pattern>id: toto</search-pattern>
+        <file-name-attribute>alt</file-name-attribute>
+        <link-attribute>src</link-attribute>
+      </host>
+  `;
+
+    var obj = parseAndVerifyDictionary(dictionary);
+    expect(obj.errors.length).to.eql(1);
+    expect(obj.errors[0]).to.eql('[tutu] A link attribute mark-up was found at an invalid position.');
+    done();
+  });
+
+
   it('should detect an unknown element in the dictionary', function(done) {
 
     var dictionary = document.implementation.createDocument('', 'root');
@@ -638,7 +877,7 @@ describe('background => library.dictionary', function() {
     var obj = parseAndVerifyDictionary(dictionary);
     expect(obj.errors.length).to.eql(2);
     expect(obj.errors[0]).to.eql('[titi] Invalid search pattern. Unrecognized strategy.');
-    expect(obj.errors[1]).to.eql('[titi] A search-pattern was expected.');
+    expect(obj.errors[1]).to.eql('[titi] A link-search-pattern was expected.');
 
     expect(obj.items.length).to.eql(1);
     expect(obj.items[0].domain).to.eql('titi.fr');
@@ -650,22 +889,27 @@ describe('background => library.dictionary', function() {
   });
 
 
-  it('should validate test dictionaries - 1', function() {
-    return verifyDictionary('host.background.library.test.xml');
+  it('should validate test dictionaries - spec 1.0', function() {
+    return verifyDictionary('host.background.library.test_spec_1.0.xml');
   });
 
 
-  it('should validate test dictionaries - 2', function() {
+  it('should validate test dictionaries - spec 1.1', function() {
+    return verifyDictionary('host.background.library.test_spec_1.1.xml');
+  });
+
+
+  it('should validate test dictionaries - CData', function() {
     return verifyDictionary('host.background.library.test.cdata.xml');
   });
 
 
-  it('should validate test dictionaries - 3', function() {
+  it('should validate test dictionaries - domain pattern', function() {
     return verifyDictionary('host.background.library.test.domain-pattern.xml');
   });
 
 
-  it('should validate test dictionaries - 4', function() {
+  it('should validate test dictionaries - no domain', function() {
     return verifyDictionary('host.background.library.test.no-domain.xml');
   });
 

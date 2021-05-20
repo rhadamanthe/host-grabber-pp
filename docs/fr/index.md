@@ -100,6 +100,8 @@ des téléchargements, tous ceux qui se sont terminés avec succès. Ceux avec d
 des téléchargements <strong>de Firefox</strong>, tous ceux qui se sont terminés avec succès. Ceux avec des échecs resteront visibles.
 * **Ouvrir la vue des téléchargements quand une page est analysée** : par défaut, cette vue s'ouvre chaque fois
 qu'une page est analysée. Ce comportement peut être modifié.
+* **Préfixer le nom des fichiers avec un compteur** : lorsqu'elle est activée, cette option rajoute un préfixe au
+nom des fichiers téléchargés, de sorte que le classement des fichiers respecte l'ordre de téléchargement.
 * **Limiter le nombre de téléchargements simultanés** : cette option permet de limiter
 le nombre de téléchargements lancés par HG ++. Il faut noter aussi que Firefox limite de toute
 façon le nombre de connexions simultanées vers un même serveur (par défaut,

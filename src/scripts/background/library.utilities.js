@@ -182,7 +182,7 @@ function buildUrlPatterns(pageUrl, domain, pathPattern, hostId) {
   var res = [];
   var domainIsRegExp = domain instanceof RegExp;
   var domainMatch = domainIsRegExp ? null : domain.match(globalDomainPattern);
-  if (domain !== globalCurrent
+  if (domain !== globalAny
         && ! domainIsRegExp
         && (! domainMatch || domainMatch.length === 0)) {
     console.log('Invalid domain for ' + hostId);
@@ -195,7 +195,7 @@ function buildUrlPatterns(pageUrl, domain, pathPattern, hostId) {
     const esc = '[^<>"]';
 
     // Deal with the current page
-    if (domain === globalCurrent) {
+    if (domain === globalAny) {
       domain = new URL(pageUrl).hostname;
     }
 
@@ -273,11 +273,12 @@ function pageUrlMatches(pageUrl, domainPattern) {
  * Builds the download options for the browser API.
  * @param {object} linkObject A link object.
  * @param {object} processor A processor object.
- * @param {integer} strategy The download strategy.
+ * @param {string} counterPrefix The counter prefix for file names (may be empty).
+ * @param {integer} dlStrategy The download strategy.
  * @param {string} dlCustomPattern The pattern for the custom download strategy.
  * @returns {object} The download options, as an object.
  */
-function buildDownloadOptions(linkObject, processor, strategy, dlCustomPattern) {
+function buildDownloadOptions(linkObject, processor, counterPrefix, dlStrategy, dlCustomPattern) {
 
   var options = {
     conflictAction: 'uniquify',
@@ -287,22 +288,22 @@ function buildDownloadOptions(linkObject, processor, strategy, dlCustomPattern) 
 
   // The real question is whether we download in a sub-directory
   var subDirPattern = '';
-  if (strategy === DL_STRATEGY_DIR_PER_DOMAIN ) {
+  if (dlStrategy === DL_STRATEGY_DIR_PER_DOMAIN ) {
     subDirPattern = DL_DIR_PAGE_DOMAIN;
 
-  } else if (strategy === DL_STRATEGY_DIR_PER_ALPHA_DATE) {
+  } else if (dlStrategy === DL_STRATEGY_DIR_PER_ALPHA_DATE) {
     subDirPattern = DL_DIR_DATE_YEAR + '-' + DL_DIR_DATE_MONTH + '-' + DL_DIR_DATE_DAY;
 
-  } else if (strategy === DL_STRATEGY_DIR_PER_TREE_DATE) {
+  } else if (dlStrategy === DL_STRATEGY_DIR_PER_TREE_DATE) {
     subDirPattern = DL_DIR_DATE_YEAR + '/' + DL_DIR_DATE_MONTH + '/' + DL_DIR_DATE_DAY;
 
-  }  else if (strategy === DL_STRATEGY_DIR_PER_PAGE_TITLE) {
+  }  else if (dlStrategy === DL_STRATEGY_DIR_PER_PAGE_TITLE) {
     subDirPattern = DL_DIR_PAGE_TITLE;
 
-  }  else if (strategy === DL_STRATEGY_PROMPT_USER) {
+  }  else if (dlStrategy === DL_STRATEGY_PROMPT_USER) {
     subDirPattern = processor.promptedDirectoryName || '';
 
-  } else if (strategy === DL_STRATEGY_CUSTOM) {
+  } else if (dlStrategy === DL_STRATEGY_CUSTOM) {
     subDirPattern = dlCustomPattern || '';
   }
 
@@ -313,11 +314,9 @@ function buildDownloadOptions(linkObject, processor, strategy, dlCustomPattern) 
   // Replace mark-ups in the sub-directory pattern
   var subDir = buildDlDirectoryFromPattern(new Date(), subDirPattern, processor);
 
-  // When there is a sub-directory, we need to specify the file name
-  if (subDir !== '') {
-    var name = linkObject.link.split('/').pop().split('#')[0].split('?')[0];
-    options.filename = subDir + name;
-  }
+  // Handle the file name
+  var name = counterPrefix + linkObject.fileName;
+  options.filename = subDir + name;
 
   return options;
 }
@@ -349,6 +348,28 @@ function buildDlDirectoryFromPattern(date, subDirPattern, processor) {
 
   res = res.substring(0, 160);
   return res;
+}
+
+
+/**
+ * Finds the file name for a download link.
+ * @param {string} link The download URL.
+ * @param {string} optionalName A preferred file name (can be empty).
+ * @param {array} interceptorsForFileNames A non-null array of interceptors.
+ * @returns {string} The file name.
+ */
+function findFileName(link, optionalName, interceptorsForFileNames) {
+
+  let fileName = !! optionalName ?
+    optionalName :
+    link.split('/').pop().split('#')[0].split('?')[0];
+
+  interceptorsForFileNames.forEach( function(interceptor) {
+    let interceptorRegex = new RegExp(interceptor.replace, 'ig');
+    fileName = fileName.replace(interceptorRegex, interceptor.by);
+  });
+
+  return fileName;
 }
 
 

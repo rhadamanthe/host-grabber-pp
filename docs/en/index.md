@@ -97,7 +97,9 @@ all the downloads that were successful. Those with failures will remain visible.
 * **Remove successful downloads from Firefox's download view**: this option removes from Firefox's download view
 all the downloads that were successful. Those with failures will remain visible.
 * **Open the download view when pages are analyzed**: this option seems quite explicit.
-The default behavior is to open the view. It can be disabled with this option. 
+The default behavior is to open the view. It can be disabled with this option.
+* **Prefix file names with a counter**: prefix all the file names with a counter, which guarantees file ordering
+will be the same as the download order. 
 * **Limit the number of simultaneous downloads**: this option allows to limit the number of
 parallel downloads started by HG ++. Notice that by default, Firefox already limits the number
 of active connections towards a same server (by default,

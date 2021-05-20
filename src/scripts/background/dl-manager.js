@@ -12,6 +12,8 @@ function newDlManager(queue) {
     maxDownloadLimit: -1,
     dlStrategy: 0,
     dlStrategyCustomPattern: '',
+    dlPrefixWithCounter: false,
+    effectiveDlCounter: 0,
     hideSuccessfulDownloadItems: true,
     onDonwloadComplete: onDonwloadComplete,
     startDownload: startDownload,
@@ -23,11 +25,13 @@ function newDlManager(queue) {
   browser.storage.local.get([
     'dlMaxParallel',
     'hideSuccessfulDownloadItems',
+    'dlPrefixFilenamesWithCounter',
     'dlStrategy',
     'dlStrategyCustomPattern']).then((res) => {
 
     dlManager.maxDownloadLimit = res.dlMaxParallel || defaultDlMaxParallel;
     dlManager.hideSuccessfulDownloadItems = res.hideSuccessfulDownloadItems || defaultHideSuccessfulDownloadItems;
+    dlManager.dlPrefixWithCounter = res.dlPrefixFilenamesWithCounter || defaultDlPrefixFilenamesWithCounter;
     dlManager.dlStrategy = res.dlStrategy || defaultDlStrategy;
     dlStrategyCustomPattern = res.dlStrategyCustomPattern || defaultDlStrategyCustomPattern;
   });
@@ -44,6 +48,10 @@ function newDlManager(queue) {
 
     if (changes.hasOwnProperty( 'hideSuccessfulDownloadItems' )) {
       dlManager.hideSuccessfulDownloadItems = changes.hideSuccessfulDownloadItems.newValue;
+    }
+
+    if (changes.hasOwnProperty( 'dlPrefixFilenamesWithCounter' )) {
+      dlManager.dlPrefixWithCounter = changes.dlPrefixFilenamesWithCounter.newValue;
     }
 
     if (changes.hasOwnProperty( 'dlStrategy' )) {
@@ -182,12 +190,21 @@ function newDlManager(queue) {
     // We do not want Firefox to start too many downloads at once.
     dlManager.ongoingDownloadsCpt ++;
 
+    // Is there a prefix for file names?
+    var namePrefix = '';
+    if (dlManager.dlPrefixWithCounter) {
+      namePrefix = dlManager.effectiveDlCounter.toString().padStart(5, '0') + '_';
+    }
+
     // Start the download
     var options = buildDownloadOptions(
       linkObject,
       processor,
+      namePrefix,
       dlManager.dlStrategy,
       dlManager.dlStrategyCustomPattern);
+
+    dlManager.effectiveDlCounter ++;
 
     // Bug in Chrome: https://bugs.chromium.org/p/chromium/issues/detail?id=417112
     var downloading = browser.downloads.download(options).then( function(downloadItemId) {

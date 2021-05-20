@@ -3,7 +3,7 @@
 // This script is also reusable (use environment variables).
 
 var path = process.env.RHAD_SCRIPT || '../../src/scripts/mixed/library.dictionary.js';
-var dictPath = process.env.RHAD_DICTIONARY || '../resources/host.background.library.test.xml';
+var dictPath = process.env.RHAD_DICTIONARY || '../resources/host.background.library.test_spec_1.1.xml';
 
 var fs = require('fs');
 var lib = require(path)

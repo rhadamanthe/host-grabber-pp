@@ -3,6 +3,7 @@
 
 const globalDomainPattern = /^\w[-\w\.]*\w$/;
 const globalCurrent = '_$CURRENT$_';
+const globalAny = '_$ANY$_';
 
 // i18n is defined in this file
 const i18nLocal = {
@@ -82,7 +83,7 @@ const i18nLocal = {
   },
 
   dictionary_err_16: {
-    fr: 'Une balise \'search-pattern\' a été trouvée à un mauvais endroit.',
+    fr: 'Une balise \'link-search-pattern\' a été trouvée à un mauvais endroit.',
     en: 'A search pattern was found at an invalid position.'
   },
 
@@ -107,8 +108,28 @@ const i18nLocal = {
   },
 
   dictionary_err_21: {
-    fr: 'Une balise \'search-pattern\' était attendue.',
-    en: 'A search-pattern was expected.'
+    fr: 'Une balise \'link-search-pattern\' était attendue.',
+    en: 'A link-search-pattern was expected.'
+  },
+
+  dictionary_err_22: {
+    fr: 'Une balise \'link-attribute\' a été trouvée à un mauvais endroit.',
+    en: 'A link attribute mark-up was found at an invalid position.'
+  },
+
+  dictionary_err_23: {
+    fr: 'Une balise \'file-name-attribute\' a été trouvée à un mauvais endroit.',
+    en: 'A file name attribute was found at an invalid position.'
+  },
+
+  dictionary_err_24: {
+    fr: 'La balise "link-attribute" ne s\'applique qu\'aux stratégies "ID", "class", "XPath" et "CSS query".',
+    en: '"link-attribute" mark-ups are only compatible with the "ID", "class", "XPath" and "CSS query" strategies.'
+  },
+
+  dictionary_err_25: {
+    fr: 'La balise "file-name-attribute" doit être vide pour les stratégies "self", "replace" et "expreg".',
+    en: '"file-name-attribute" mark-ups must be empty for the "self", "replace" and "expreg" strategies.'
   }
 };
 
@@ -215,23 +236,24 @@ function parseAndVerifyDictionaryItem(domElement) {
   result.errors = [];
   result.interceptors1 = [];
   result.interceptors2 = [];
+  result.interceptors3 = [];
   result.id = domElement.getAttribute('id');
 
   // Parse children nodes
   var current = '';
   var loopCount = 0;
   getElementChildren(domElement).forEach( function(elt) {
-    var tempErrorCodes = [];
+    let tempErrorCodes = [];
 
     // Domain
     if (elt.tagName === 'domain') {
-      var domain = elt.textContent.trim();
+      let domain = elt.textContent.trim();
       if (loopCount !== 0) {
         tempErrorCodes.push(['dictionary_err_7']);
       }
 
-      var matchRes = domain.match(globalDomainPattern);
-      if (domain !== globalCurrent &&
+      let matchRes = domain.match(globalDomainPattern);
+      if (domain !== globalAny &&
             (! matchRes || matchRes.length === 0)) {
         tempErrorCodes.push(['dictionary_err_8', domain]);
       }
@@ -244,7 +266,7 @@ function parseAndVerifyDictionaryItem(domElement) {
 
     // Domain pattern
     else if (elt.tagName === 'domain-pattern') {
-      var domainP = elt.textContent.trim();
+      let domainP = elt.textContent.trim();
       if (loopCount !== 0) {
         tempErrorCodes.push(['dictionary_err_9']);
       }
@@ -257,8 +279,14 @@ function parseAndVerifyDictionaryItem(domElement) {
 
     // Interceptor
     else if (elt.tagName === 'interceptor') {
-      var interceptorAsString = elt.textContent.trim();
-      if (current !== 'interceptor1' && current !== 'interceptor2' && current !== 'search-pattern' && current !== 'path-pattern') {
+      let interceptorAsString = elt.textContent.trim();
+      if (current !== 'path-pattern' &&
+          current !== 'interceptor1' &&
+          current !== 'search-pattern' &&
+          current !== 'link-attribute' &&
+          current !== 'interceptor2' &&
+          current !== 'file-name-attribute' &&
+          current !== 'interceptor3') {
         tempErrorCodes.push(['dictionary_err_10']);
       }
 
@@ -267,23 +295,30 @@ function parseAndVerifyDictionaryItem(domElement) {
       }
 
       if (tempErrorCodes.length === 0) {
-        var match = ExtMethods.REPLACE.pattern.exec(interceptorAsString);
-        var interceptor = {replace: match[1].trim(), by: match[2].trim(), string: interceptorAsString};
+        let match = ExtMethods.REPLACE.pattern.exec(interceptorAsString);
+        let interceptor = {replace: match[1].trim(), by: match[2].trim(), string: interceptorAsString};
         ExtMethods.REPLACE.pattern.lastIndex = 0;
 
         if (current === 'interceptor1' || current === 'path-pattern') {
           result.interceptors1.push(interceptor);
           current = 'interceptor1';
-        } else {
+
+        } else if (current === 'interceptor2' ||
+            current === 'link-attribute' ||
+            current === 'search-pattern') {
           result.interceptors2.push(interceptor);
           current = 'interceptor2';
+
+        } else {
+          result.interceptors3.push(interceptor);
+          current = 'interceptor3';
         }
       }
     }
 
     // Path pattern
     else if (elt.tagName === 'path-pattern') {
-      var pathPattern = elt.textContent.trim();
+      let pathPattern = elt.textContent.trim();
       if (current !== 'domain') {
         tempErrorCodes.push(['dictionary_err_12']);
       }
@@ -307,9 +342,9 @@ function parseAndVerifyDictionaryItem(domElement) {
     }
 
     // Search pattern
-    else if (elt.tagName === 'search-pattern') {
-      var searchPattern = elt.textContent.trim();
-      var fixedSearchPattern = removeCDataMarkups(searchPattern);
+    else if (elt.tagName === 'link-search-pattern' || elt.tagName === 'search-pattern') {
+      let searchPattern = elt.textContent.trim();
+      let fixedSearchPattern = removeCDataMarkups(searchPattern);
 
       if (current !== 'path-pattern' && current !== 'interceptor1') {
         tempErrorCodes.push(['dictionary_err_16']);
@@ -322,6 +357,50 @@ function parseAndVerifyDictionaryItem(domElement) {
       if (tempErrorCodes.length === 0) {
         result.searchPattern = fixedSearchPattern;
         current = 'search-pattern';
+      }
+    }
+
+    // Link attribute
+    else if (elt.tagName === 'link-attribute') {
+      if (current !== 'search-pattern') {
+        tempErrorCodes.push(['dictionary_err_22']);
+      }
+
+      const snap = result.searchPattern;
+      if (!!snap
+           && !snap.match(ExtMethods.ID.pattern)
+           && !snap.match(ExtMethods.CLASS.pattern)
+           && !snap.match(ExtMethods.XPATH.pattern)
+           && !snap.match(ExtMethods.CSS_QUERY.pattern)) {
+        tempErrorCodes.push(['dictionary_err_24']);
+      }
+
+      if (tempErrorCodes.length === 0) {
+        result.linkAttribute = elt.textContent.trim();
+        current = 'link-attribute';
+      }
+    }
+
+    // File name strategy
+    else if (elt.tagName === 'file-name-attribute') {
+      if (current !== 'search-pattern' && current !== 'interceptor2' && current !== 'link-attribute') {
+        tempErrorCodes.push(['dictionary_err_23']);
+      }
+
+      const value = elt.textContent.trim();
+      const snap = result.searchPattern;
+      if (!!snap
+          && !snap.match(ExtMethods.ID.pattern)
+          && !snap.match(ExtMethods.CLASS.pattern)
+          && !snap.match(ExtMethods.XPATH.pattern)
+          && !snap.match(ExtMethods.CSS_QUERY.pattern)
+          && !!value) {
+        tempErrorCodes.push(['dictionary_err_25']);
+      }
+
+      if (tempErrorCodes.length === 0) {
+        result.fileNameAttribute = value;
+        current = 'file-name-attribute';
       }
     }
 
@@ -359,7 +438,7 @@ function parseAndVerifyDictionaryItem(domElement) {
 
 
 /**
- * A function that find children elements from a DOM node.
+ * A function that finds children elements from a DOM node.
  * <p>
  * This function relies on the standard and portable 'childNodes' property.
  * </p>
