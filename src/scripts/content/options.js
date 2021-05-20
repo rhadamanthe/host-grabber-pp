@@ -26,6 +26,9 @@ function restoreOptions() {
     document.querySelector('#dl-always-show-view-when-dl-starts').checked =
       res.hasOwnProperty('dlAlwaysShowViewWhenDlStarts') ? res.dlAlwaysShowViewWhenDlStarts : defaultDlAlwaysShowViewWhenDlStarts;
 
+    document.querySelector('#dl-prefix-filenames-with-counter').checked =
+      res.hasOwnProperty('dlPrefixFilenamesWithCounter') ? res.dlPrefixFilenamesWithCounter : defaultDlPrefixFilenamesWithCounter;
+
     document.querySelector('#remove-successful-dl-from-native-dl-view').checked =
       res.hasOwnProperty('hideSuccessfulDownloadItems') ? res.hideSuccessfulDownloadItems : defaultHideSuccessfulDownloadItems;
 
@@ -71,8 +74,9 @@ var defaultListener = function() {
     dlClearCompleted: document.querySelector('#dl-clear-completed').checked,
     dlShowViewWhenDlStarts: document.querySelector('#dl-show-view-when-dl-starts').checked,
     dlAlwaysShowViewWhenDlStarts: document.querySelector('#dl-always-show-view-when-dl-starts').checked,
-    automaticallyUpdateDictionary: document.querySelector('#automatic-dictionary-update').checked,
+    dlPrefixFilenamesWithCounter: document.querySelector('#dl-prefix-filenames-with-counter').checked,
     dlCacheDownloadLinks: document.querySelector('#dl-cache-download-links').checked,
+    automaticallyUpdateDictionary: document.querySelector('#automatic-dictionary-update').checked,
     hideSuccessfulDownloadItems: document.querySelector('#remove-successful-dl-from-native-dl-view').checked,
     dlStrategy: parseInt(document.querySelector('input[name="dl-strategy"]:checked').value)
   });
@@ -82,9 +86,10 @@ var defaultListener = function() {
 document.querySelector('#dl-max-parallel').addEventListener('change', defaultListener);
 document.querySelector('#dl-clear-completed').addEventListener('change', defaultListener);
 document.querySelector('#dl-show-view-when-dl-starts').addEventListener('change', defaultListener);
+document.querySelector('#dl-prefix-filenames-with-counter').addEventListener('change', defaultListener);
 document.querySelector('#dl-always-show-view-when-dl-starts').addEventListener('change', defaultListener);
-document.querySelector('#automatic-dictionary-update').addEventListener('change', defaultListener);
 document.querySelector('#dl-cache-download-links').addEventListener('change', defaultListener);
+document.querySelector('#automatic-dictionary-update').addEventListener('change', defaultListener);
 document.querySelector('#remove-successful-dl-from-native-dl-view').addEventListener('change', defaultListener);
 document.querySelectorAll('input[name="dl-strategy"]').forEach(function(radioButton) {
   radioButton.addEventListener('change', defaultListener);

@@ -7,7 +7,7 @@ describe('background => library.strategies', function() {
 
     var ext = extractor();
     var res = ext.self('htp://toto.fr');
-    expect(res).to.eql(['htp://toto.fr']);
+    expect(res).to.eql(new Map([['htp://toto.fr', '']]));
     done();
   });
 
@@ -15,11 +15,14 @@ describe('background => library.strategies', function() {
   it('should verify the XPath function with a single result', function(done) {
 
     var sourceDocument = document.implementation.createHTMLDocument('');
-    sourceDocument.documentElement.innerHTML = '<html><body><img src="http://titi.fr/gallery/t.jpg" class="paf" /></body></html>';
+    sourceDocument.documentElement.innerHTML = '<html><body><img src="http://titi.fr/gallery/t.jpg" alt="nice.jpg" class="paf" /></body></html>';
 
     var ext = extractor();
-    var res = ext.xpath(sourceDocument, '//img[@class=\'paf\']/@src');
-    expect(res).to.eql(['http://titi.fr/gallery/t.jpg']);
+    var res = ext.xpath(sourceDocument, '//img[@class=\'paf\']', 'src', '');
+    expect(res).to.eql(new Map([['http://titi.fr/gallery/t.jpg', '']]));
+
+    res = ext.xpath(sourceDocument, '//img[@class=\'paf\']', 'src', 'alt');
+    expect(res).to.eql(new Map([['http://titi.fr/gallery/t.jpg', 'nice.jpg']]));
     done();
   });
 
@@ -30,7 +33,7 @@ describe('background => library.strategies', function() {
     sourceDocument.documentElement.innerHTML = `<html><body>
       <img src="http://titi.fr/gallery/t1.jpg" class="paf" />
       <br />
-      <img src="http://titi.fr/gallery/t2.jpg" class="paf" />
+      <img src="http://titi.fr/gallery/t2.jpg" title="another.jpg" class="paf" />
       <br />
       <img src="http://titi.fr/gallery/t1.jpg" class="paf" />
       <br />
@@ -39,11 +42,19 @@ describe('background => library.strategies', function() {
     `;
 
     var ext = extractor();
-    var res = ext.xpath(sourceDocument, '//img[@class=\'paf\']/@src');
-    expect(res).to.eql([
-      'http://titi.fr/gallery/t1.jpg',
-      'http://titi.fr/gallery/t2.jpg',
-      'http://titi.fr/gallery/t4.jpg']);
+    var res = ext.xpath(sourceDocument, '//img[@class=\'paf\']', 'src', '');
+    expect(res).to.eql(new Map([
+      ['http://titi.fr/gallery/t1.jpg', ''],
+      ['http://titi.fr/gallery/t2.jpg', ''],
+      ['http://titi.fr/gallery/t4.jpg', '']
+    ]));
+
+    res = ext.xpath(sourceDocument, '//img[@class=\'paf\']', 'src', 'title');
+    expect(res).to.eql(new Map([
+      ['http://titi.fr/gallery/t1.jpg', ''],
+      ['http://titi.fr/gallery/t2.jpg', 'another.jpg'],
+      ['http://titi.fr/gallery/t4.jpg', '']
+    ]));
 
     done();
   });
@@ -52,11 +63,14 @@ describe('background => library.strategies', function() {
   it('should verify the CSS Query function with a single result', function(done) {
 
     var sourceDocument = document.implementation.createHTMLDocument('');
-    sourceDocument.documentElement.innerHTML = '<html><body><img src="http://titi.fr/gallery/t.jpg" class="paf" /></body></html>';
+    sourceDocument.documentElement.innerHTML = '<html><body><img src="http://titi.fr/gallery/t.jpg" class="paf" alt="good.jpg" /></body></html>';
 
     var ext = extractor();
-    var res = ext.cssQuery(sourceDocument, 'img.paf', 'src');
-    expect(res).to.eql(['http://titi.fr/gallery/t.jpg']);
+    var res = ext.cssQuery(sourceDocument, 'img.paf', 'src', '');
+    expect(res).to.eql(new Map([['http://titi.fr/gallery/t.jpg', '']]));
+
+    res = ext.cssQuery(sourceDocument, 'img.paf', 'src', 'alt');
+    expect(res).to.eql(new Map([['http://titi.fr/gallery/t.jpg', 'good.jpg']]));
     done();
   });
 
@@ -71,16 +85,24 @@ describe('background => library.strategies', function() {
       <br />
       <img src="http://titi.fr/gallery/t1.jpg" class="paf" />
       <br />
-      <img src="http://titi.fr/gallery/t4.jpg" class="paf" />
+      <img src="http://titi.fr/gallery/t4.jpg" src-data="something.jpg" class="paf" />
     </body></html>
     `;
 
     var ext = extractor();
-    var res = ext.cssQuery(sourceDocument, 'img.paf', 'src');
-    expect(res).to.eql([
-      'http://titi.fr/gallery/t1.jpg',
-      'http://titi.fr/gallery/t2.jpg',
-      'http://titi.fr/gallery/t4.jpg']);
+    var res = ext.cssQuery(sourceDocument, 'img.paf', 'src', '');
+    expect(res).to.eql(new Map([
+      ['http://titi.fr/gallery/t1.jpg', ''],
+      ['http://titi.fr/gallery/t2.jpg', ''],
+      ['http://titi.fr/gallery/t4.jpg', '']
+    ]));
+
+    res = ext.cssQuery(sourceDocument, 'img.paf', 'src', 'src-data');
+    expect(res).to.eql(new Map([
+      ['http://titi.fr/gallery/t1.jpg', ''],
+      ['http://titi.fr/gallery/t2.jpg', ''],
+      ['http://titi.fr/gallery/t4.jpg', 'something.jpg']
+    ]));
 
     done();
   });
@@ -112,23 +134,26 @@ describe('background => library.strategies', function() {
 
     var ext = extractor();
     var res = ext.cssQuery(sourceDocument, 'div.ct > img', 'src');
-    expect(res).to.eql([
-      'http://titi.fr/gallery/t1.jpg',
-      'http://titi.fr/gallery/t2.jpg',
-      'http://toto.fr/gallery/t1147.jpg']);
+    expect(res).to.eql(new Map([
+      ['http://titi.fr/gallery/t1.jpg', ''],
+      ['http://titi.fr/gallery/t2.jpg', ''],
+      ['http://toto.fr/gallery/t1147.jpg', '']
+    ]));
 
     res = ext.cssQuery(sourceDocument, 'div.ct &gt; img', 'src');
-    expect(res).to.eql([
-      'http://titi.fr/gallery/t1.jpg',
-      'http://titi.fr/gallery/t2.jpg',
-      'http://toto.fr/gallery/t1147.jpg']);
+    expect(res).to.eql(new Map([
+      ['http://titi.fr/gallery/t1.jpg', ''],
+      ['http://titi.fr/gallery/t2.jpg', ''],
+      ['http://toto.fr/gallery/t1147.jpg', '']
+    ]));
 
     res = ext.cssQuery(sourceDocument, 'div.ct img', 'src');
-    expect(res).to.eql([
-      'http://titi.fr/gallery/t1.jpg',
-      'http://titi.fr/gallery/t2.jpg',
-      'http://titi.fr/gallery/t3.jpg',
-      'http://toto.fr/gallery/t1147.jpg']);
+    expect(res).to.eql(new Map([
+      ['http://titi.fr/gallery/t1.jpg', ''],
+      ['http://titi.fr/gallery/t2.jpg', ''],
+      ['http://titi.fr/gallery/t3.jpg', ''],
+      ['http://toto.fr/gallery/t1147.jpg', '']
+    ]));
 
     done();
   });
@@ -138,7 +163,10 @@ describe('background => library.strategies', function() {
 
     var ext = extractor();
     var res = ext.replace('http://titi.fr/view.php?t.jpg', 'view.php\\?', 'gallery/');
-    expect(res).to.eql(['http://titi.fr/gallery/t.jpg']);
+    expect(res).to.eql(new Map([
+      ['http://titi.fr/gallery/t.jpg', '']
+    ]));
+
     done();
   });
 
@@ -147,7 +175,10 @@ describe('background => library.strategies', function() {
 
     var ext = extractor();
     var res = ext.replace('http://titi.fr/view.php?t.jpg', 'view.php\\?(.*)', 'gallery/$1');
-    expect(res).to.eql(['http://titi.fr/gallery/t.jpg']);
+    expect(res).to.eql(new Map([
+      ['http://titi.fr/gallery/t.jpg', '']
+    ]));
+
     done();
   });
 
@@ -168,10 +199,17 @@ describe('background => library.strategies', function() {
 
     var ext = extractor();
     var res = ext.expreg(sourceDocument, 'http[^"]+\.jpg');
-    expect(res).to.eql(['http://titi.fr/gallery/t1.jpg', 'http://titi.fr/gallery/t2.jpg', 'http://titi.fr/gallery/t4.jpg']);
+    expect(res).to.eql(new Map([
+      ['http://titi.fr/gallery/t1.jpg', ''],
+      ['http://titi.fr/gallery/t2.jpg', ''],
+      ['http://titi.fr/gallery/t4.jpg', '']
+    ]));
 
     res = ext.expreg(sourceDocument, 'http[^"]+\.gif');
-    expect(res).to.eql(['http://titi.fr/gallery/t5.gif']);
+    expect(res).to.eql(new Map([
+      ['http://titi.fr/gallery/t5.gif', '']
+    ]));
+
     done();
   });
 
@@ -192,7 +230,12 @@ describe('background => library.strategies', function() {
 
     var ext = extractor();
     var res = ext.expreg(sourceDocument, '<div class="toto">\\s*<a href="([^"]+\.jpg)"');
-    expect(res).to.eql(['http://here.com/im1.jpg', 'http://here.com/im4.jpg', 'http://here.com/im5.jpg']);
+    expect(res).to.eql(new Map([
+      ['http://here.com/im1.jpg', ''],
+      ['http://here.com/im4.jpg', ''],
+      ['http://here.com/im5.jpg', '']
+    ]));
+
     done();
   });
 });

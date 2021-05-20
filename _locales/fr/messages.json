@@ -84,6 +84,11 @@
     "description": "L'étiquette pour cette option (page d'options)"
   },
 
+  "optionsPage_prefixFilenamesWithCounter": {
+    "message": "Préfixer le nom des fichiers avec un compteur",
+    "description": "L'étiquette pour cette option (page d'options)"
+  },
+
   "optionsPage_alwaysShowViewWhenDlStarts": {
     "message": "Toujours ouvrir la vue des téléchargements quand un téléchargement démarre",
     "description": "L'étiquette pour cette option (page d'options)"

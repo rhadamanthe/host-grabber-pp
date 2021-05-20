@@ -35,7 +35,7 @@ describe('background => library.utilities', function() {
   it('should load remote documents', function() {
 
     // Test resources are served by Karma
-    return loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml').then( function(xmlDoc) {
+    return loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test_spec_1.1.xml').then( function(xmlDoc) {
       expect(xmlDoc.documentElement.tagName).to.eql('root');
     });
   });
@@ -46,7 +46,7 @@ describe('background => library.utilities', function() {
   it('should load remote documents, even when forcing the MIME type', function() {
 
     // Test resources are served by Karma
-    return loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml', true, 'text/xml').then( function(xmlDoc) {
+    return loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test_spec_1.1.xml', true, 'text/xml').then( function(xmlDoc) {
       expect(xmlDoc.documentElement.tagName).to.eql('root');
     });
   });
@@ -57,7 +57,7 @@ describe('background => library.utilities', function() {
   it('should load remote documents as text files', function() {
 
     // Test resources are served by Karma
-    return loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test.xml', false).then( function(sourceAsText) {
+    return loadRemoteDocument('http://localhost:9876/base/tests/resources/host.background.library.test_spec_1.1.xml', false).then( function(sourceAsText) {
       expect(typeof sourceAsText).to.eql('string');
     });
   });
@@ -294,7 +294,7 @@ describe('background => library.utilities', function() {
 
   it('should prepare a processor for messaging correctly', function(done) {
 
-    var p = newProcessor('http://this.is.the/matching/url', 'page title', 'search-pattern', 'origin url', []);
+    var p = newProcessor('http://this.is.the/matching/url', 'page title', {}, 'origin url');
     p.status = ProcessorStatus.SUCCESS;
     p.downloadLinks.push({
       id: 'i2',
@@ -333,8 +333,8 @@ describe('background => library.utilities', function() {
 
   it('should prepare processors for messaging correctly', function(done) {
 
-    var p1 = newProcessor('http://this.is.the/matching/url', 'page title', 'search-pattern1', 'origin url', []);
-    var p2 = newProcessor('http://this.is.another/matching/url', 'page title', 'search-pattern2', 'origin url', []);
+    var p1 = newProcessor('http://this.is.the/matching/url', 'page title', {}, 'origin url');
+    var p2 = newProcessor('http://this.is.another/matching/url', 'page title', {}, 'origin url');
 
     var res = prepareProcessorsForMessaging([ p1, p2 ]);
     expect(res.length).to.eql(2);
@@ -344,18 +344,38 @@ describe('background => library.utilities', function() {
 
   it('should verify the building of download options (default strategy)', function(done) {
 
-    var p = newProcessor('http://this.is.the/matching/url', 'page title', 'search-pattern1', 'https://origin.url/dir');
+    var p = newProcessor('http://this.is.the/matching/url', 'page title', {}, 'https://origin.url/dir');
     var dlLink = {
       id: p.id + '-1',
       link: 'https://web.host.net/directory/file.jpg',
+      fileName: 'file.jpg',
       status: DlStatus.WAITING
     };
 
-    var options = buildDownloadOptions(dlLink, p, DL_STRATEGY_DEFAULT);
+    var options = buildDownloadOptions(dlLink, p, '', DL_STRATEGY_DEFAULT);
     expect(options.saveAs).to.eql(false);
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/file.jpg');
-    expect(options.filename).to.be(undefined);
+    expect(options.filename).to.be('file.jpg');
+
+    options = buildDownloadOptions(dlLink, p, '00005_', DL_STRATEGY_DEFAULT);
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/file.jpg');
+    expect(options.filename).to.be('00005_file.jpg');
+
+    dlLink.fileName = 'force-this-name.png';
+    options = buildDownloadOptions(dlLink, p, '', DL_STRATEGY_DEFAULT);
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/file.jpg');
+    expect(options.filename).to.be('force-this-name.png');
+
+    options = buildDownloadOptions(dlLink, p, '00005_', DL_STRATEGY_DEFAULT);
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/file.jpg');
+    expect(options.filename).to.be('00005_force-this-name.png');
 
     done();
   });
@@ -363,18 +383,25 @@ describe('background => library.utilities', function() {
 
   it('should verify the building of download options (invalid strategy => default)', function(done) {
 
-    var p = newProcessor('http://this.is.the/matching/url', 'page title', 'search-pattern1', 'https://origin.url/dir');
+    var p = newProcessor('http://this.is.the/matching/url', 'page title', {}, 'https://origin.url/dir');
     var dlLink = {
       id: p.id + '-1',
       link: 'https://web.host.net/directory/file.jpg',
+      fileName: 'file.jpg',
       status: DlStatus.WAITING
     };
 
-    var options = buildDownloadOptions(dlLink, p, -87);
+    var options = buildDownloadOptions(dlLink, p, '', -87);
     expect(options.saveAs).to.eql(false);
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/file.jpg');
-    expect(options.filename).to.be(undefined);
+    expect(options.filename).to.be('file.jpg');
+
+    options = buildDownloadOptions(dlLink, p, '0124_', -87);
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/file.jpg');
+    expect(options.filename).to.be('0124_file.jpg');
 
     done();
   });
@@ -382,18 +409,25 @@ describe('background => library.utilities', function() {
 
   it('should verify the building of download options (by domain)', function(done) {
 
-    var p = newProcessor('http://this.is.the/matching/url', 'page title', 'search-pattern1', 'https://origin.url/dir');
+    var p = newProcessor('http://this.is.the/matching/url', 'page title', {}, 'https://origin.url/dir');
     var dlLink = {
       id: p.id + '-1',
       link: 'https://web.host.net/directory/file.jpg',
+      fileName: 'file.jpg',
       status: DlStatus.WAITING
     };
 
-    var options = buildDownloadOptions(dlLink, p, DL_STRATEGY_DIR_PER_DOMAIN);
+    var options = buildDownloadOptions(dlLink, p, '', DL_STRATEGY_DIR_PER_DOMAIN);
     expect(options.saveAs).to.eql(false);
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/file.jpg');
     expect(options.filename).to.be('origin.url/file.jpg');
+
+    options = buildDownloadOptions(dlLink, p, '0001-', DL_STRATEGY_DIR_PER_DOMAIN);
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/file.jpg');
+    expect(options.filename).to.be('origin.url/0001-file.jpg');
 
     done();
   });
@@ -401,18 +435,25 @@ describe('background => library.utilities', function() {
 
   it('should verify the building of download options (by domain, with www. and complex URL)', function(done) {
 
-    var p = newProcessor('http://this.is.the/matching/url', 'page title', 'search-pattern1', 'https://www.origin.url/dir');
+    var p = newProcessor('http://this.is.the/matching/url', 'page title', {}, 'https://www.origin.url/dir');
     var dlLink = {
       id: p.id + '-1',
       link: 'https://web.host.net/directory/index.php#anchor?file.jpg',
+      fileName: 'index.php',
       status: DlStatus.WAITING
     };
 
-    var options = buildDownloadOptions(dlLink, p, DL_STRATEGY_DIR_PER_DOMAIN);
+    var options = buildDownloadOptions(dlLink, p, '', DL_STRATEGY_DIR_PER_DOMAIN);
     expect(options.saveAs).to.eql(false);
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/index.php#anchor?file.jpg');
     expect(options.filename).to.be('origin.url/index.php');
+
+    options = buildDownloadOptions(dlLink, p, 'some_prefix_', DL_STRATEGY_DIR_PER_DOMAIN);
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/index.php#anchor?file.jpg');
+    expect(options.filename).to.be('origin.url/some_prefix_index.php');
 
     done();
   });
@@ -420,15 +461,16 @@ describe('background => library.utilities', function() {
 
   it('should verify the building of download options (by alpha date)', function(done) {
 
-    var p = newProcessor('http://this.is.the/matching/url', 'page title', 'search-pattern1', 'https://www.origin.url/dir');
+    var p = newProcessor('http://this.is.the/matching/url', 'page title', {}, 'https://www.origin.url/dir');
     var dlLink = {
       id: p.id + '-1',
       link: 'https://web.host.net/directory/index.php?file.jpg#anchor',
+      fileName: 'index.php',
       status: DlStatus.WAITING
     };
 
     var now = new Date();
-    var options = buildDownloadOptions(dlLink, p, DL_STRATEGY_DIR_PER_ALPHA_DATE);
+    var options = buildDownloadOptions(dlLink, p, '', DL_STRATEGY_DIR_PER_ALPHA_DATE);
     expect(options.saveAs).to.eql(false);
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
@@ -441,21 +483,25 @@ describe('background => library.utilities', function() {
     var expected = buildDlDirectoryFromPattern(now, expectedDate, p);
     expect(options.filename).to.be(expected + '/index.php');
 
+    options = buildDownloadOptions(dlLink, p, '123-', DL_STRATEGY_DIR_PER_ALPHA_DATE);
+    expect(options.filename).to.be(expected + '/123-index.php');
+
     done();
   });
 
 
   it('should verify the building of download options (by tree date)', function(done) {
 
-    var p = newProcessor('http://this.is.the/matching/url', 'page title', 'search-pattern1', 'https://www.origin.url/dir');
+    var p = newProcessor('http://this.is.the/matching/url', 'page title', {}, 'https://www.origin.url/dir');
     var dlLink = {
       id: p.id + '-1',
       link: 'https://web.host.net/directory/index.php?file.jpg#anchor',
+      fileName: 'index.php',
       status: DlStatus.WAITING
     };
 
     var now = new Date();
-    var options = buildDownloadOptions(dlLink, p, DL_STRATEGY_DIR_PER_TREE_DATE);
+    var options = buildDownloadOptions(dlLink, p, '', DL_STRATEGY_DIR_PER_TREE_DATE);
     expect(options.saveAs).to.eql(false);
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
@@ -468,6 +514,9 @@ describe('background => library.utilities', function() {
     var expected = buildDlDirectoryFromPattern(now, expectedDate, p);
     expect(options.filename).to.be(expected + '/index.php');
 
+    options = buildDownloadOptions(dlLink, p, 'prefix0_', DL_STRATEGY_DIR_PER_TREE_DATE);
+    expect(options.filename).to.be(expected + '/prefix0_index.php');
+
     done();
   });
 
@@ -477,20 +526,27 @@ describe('background => library.utilities', function() {
     var p = newProcessor(
       'http://this.is.the/matching/url',
       'APPEARANCE - Someone famous - Entertainment Weekly Pre-SAG Party in Los Angeles! - 01/26/19 | Art Forum',
-      'search-pattern1',
+      {},
       'https://www.origin.url/dir');
 
     var dlLink = {
       id: p.id + '-1',
       link: 'https://web.host.net/directory/file.jpg',
+      fileName: 'file.jpg',
       status: DlStatus.WAITING
     };
 
-    var options = buildDownloadOptions(dlLink, p, DL_STRATEGY_DIR_PER_PAGE_TITLE);
+    var options = buildDownloadOptions(dlLink, p, '', DL_STRATEGY_DIR_PER_PAGE_TITLE);
     expect(options.saveAs).to.eql(false);
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/file.jpg');
     expect(options.filename).to.be('APPEARANCE_Someone_famous_Entertainment_Weekly_Pre_SAG_Party_in_Los_Angeles_01_26_19_Art_Forum/file.jpg');
+
+    options = buildDownloadOptions(dlLink, p, '00001-', DL_STRATEGY_DIR_PER_PAGE_TITLE);
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/file.jpg');
+    expect(options.filename).to.be('APPEARANCE_Someone_famous_Entertainment_Weekly_Pre_SAG_Party_in_Los_Angeles_01_26_19_Art_Forum/00001-file.jpg');
 
     done();
   });
@@ -499,20 +555,21 @@ describe('background => library.utilities', function() {
   it('should verify the building of download options (custom pattern)', function(done) {
 
     var now = new Date();
-    var p = newProcessor('http://this.is.the/matching/url', 'page title', 'search-pattern1', 'https://www.origin.url/dir');
+    var p = newProcessor('http://this.is.the/matching/url', 'page title', {}, 'https://www.origin.url/dir');
     var dlLink = {
       id: p.id + '-1',
       link: 'https://web.host.net/directory/index.php?file.jpg#anchor',
+      fileName: 'index.php',
       status: DlStatus.WAITING
     };
 
-    var options = buildDownloadOptions(dlLink, p, DL_STRATEGY_CUSTOM, '%year%');
+    var options = buildDownloadOptions(dlLink, p, '', DL_STRATEGY_CUSTOM, '%year%');
     expect(options.saveAs).to.eql(false);
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
     expect(options.filename).to.be(now.getFullYear() + '/index.php');
 
-    options = buildDownloadOptions(dlLink, p, DL_STRATEGY_CUSTOM, '%year%/%day%/');
+    options = buildDownloadOptions(dlLink, p, '', DL_STRATEGY_CUSTOM, '%year%/%day%/');
     var day = ('0' + now.getDate()).slice(-2);
 
     expect(options.saveAs).to.eql(false);
@@ -520,11 +577,17 @@ describe('background => library.utilities', function() {
     expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
     expect(options.filename).to.be(now.getFullYear() + '/' + day + '/index.php');
 
-    options = buildDownloadOptions(dlLink, p, DL_STRATEGY_CUSTOM, '%year%/fix/%domain%/');
+    options = buildDownloadOptions(dlLink, p, '', DL_STRATEGY_CUSTOM, '%year%/fix/%domain%/');
     expect(options.saveAs).to.eql(false);
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
     expect(options.filename).to.be(now.getFullYear() + '/fix/origin.url/index.php');
+
+    options = buildDownloadOptions(dlLink, p, '845_', DL_STRATEGY_CUSTOM, '%year%/fix/%domain%/');
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
+    expect(options.filename).to.be(now.getFullYear() + '/fix/origin.url/845_index.php');
 
     done();
   });
@@ -533,32 +596,50 @@ describe('background => library.utilities', function() {
   it('should verify the building of download options (user prompt)', function(done) {
 
     var now = new Date();
-    var p = newProcessor('http://this.is.the/matching/url', 'page title', 'search-pattern1', 'https://www.origin.url/dir');
+    var p = newProcessor('http://this.is.the/matching/url', 'page title', {}, 'https://www.origin.url/dir');
     var dlLink = {
       id: p.id + '-1',
       link: 'https://web.host.net/directory/index.php?file.jpg#anchor',
+      fileName: 'index.php',
       status: DlStatus.WAITING
     };
 
-    p.promptedDirectoryName = 'something-personal';
-    var options = buildDownloadOptions(dlLink, p, DL_STRATEGY_CUSTOM, 'not-using-prompt');
+    var options = buildDownloadOptions(dlLink, p, '', DL_STRATEGY_CUSTOM);
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
+    expect(options.filename).to.be('index.php');
+
+    options = buildDownloadOptions(dlLink, p, '', DL_STRATEGY_CUSTOM, 'not-using-prompt');
     expect(options.saveAs).to.eql(false);
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
     expect(options.filename).to.be('not-using-prompt/index.php');
 
-    options = buildDownloadOptions(dlLink, p, DL_STRATEGY_PROMPT_USER, 'not-using-prompt');
+    options = buildDownloadOptions(dlLink, p, '0005_', DL_STRATEGY_CUSTOM, 'not-using-prompt');
     expect(options.saveAs).to.eql(false);
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
-    expect(options.filename).to.be('something-personal/index.php');
+    expect(options.filename).to.be('not-using-prompt/0005_index.php');
+
+    options = buildDownloadOptions(dlLink, p, '', DL_STRATEGY_PROMPT_USER, 'not-using-prompt');
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
+    expect(options.filename).to.be('index.php');
 
     p.promptedDirectoryName = '%year%--something-personal';
-    options = buildDownloadOptions(dlLink, p, DL_STRATEGY_PROMPT_USER, 'not-using-prompt');
+    options = buildDownloadOptions(dlLink, p, '', DL_STRATEGY_PROMPT_USER, 'not-using-prompt');
     expect(options.saveAs).to.eql(false);
     expect(options.conflictAction).to.eql('uniquify');
     expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
     expect(options.filename).to.be(now.getFullYear() + '--something-personal/index.php');
+
+    options = buildDownloadOptions(dlLink, p, '0008_', DL_STRATEGY_PROMPT_USER, 'not-using-prompt');
+    expect(options.saveAs).to.eql(false);
+    expect(options.conflictAction).to.eql('uniquify');
+    expect(options.url).to.eql('https://web.host.net/directory/index.php?file.jpg#anchor');
+    expect(options.filename).to.be(now.getFullYear() + '--something-personal/0008_index.php');
 
     done();
   });
@@ -570,7 +651,7 @@ describe('background => library.utilities', function() {
     var p = newProcessor(
       'http://this.is.the/matching/url',
       'page title',
-      'search-pattern1',
+      {},
       'https://www.origin.url/dir');
 
     expect(buildDlDirectoryFromPattern(date, DL_DIR_DATE_YEAR, p)).to.eql('2018');
@@ -626,6 +707,57 @@ describe('background => library.utilities', function() {
 
     var dictionaryWrapper = buildDictionaryWrapperForDirectImages();
     expect(dictionaryWrapper.errors.length).to.eql(0);
+    done();
+  });
+
+
+  it('should verify file names are found correctly)', function(done) {
+
+    expect('index.php').to.eql(findFileName(
+      'https://web.host.net/directory/index.php#anchor?file.jpg',
+      '',
+      []));
+
+    expect('file.jpg').to.eql(findFileName(
+      'https://web.host.net/directory/file.jpg',
+      '',
+      []));
+
+    expect('').to.eql(findFileName(
+      'https://web.host.net/directory/',
+      '',
+      []));
+
+    expect('directory').to.eql(findFileName(
+      'https://web.host.net/directory',
+      '',
+      []));
+
+    expect('toto.png').to.eql(findFileName(
+      'https://web.host.net/directory/file.jpg',
+      'toto.png',
+      []));
+
+    let interceptors = [
+      {replace: '\.png', by: '.jpg'},
+      {replace: '\.jpg', by: '.webp'},
+      {replace: '^(\\d+)$', by: '$1.jpg'}];
+
+    expect('toto.webp').to.eql(findFileName(
+      'https://web.host.net/directory/file.jpg',
+      'toto.png',
+      interceptors));
+
+    expect('file.webp').to.eql(findFileName(
+      'https://web.host.net/directory/file.jpg',
+      '',
+      interceptors));
+
+    expect('1489.jpg').to.eql(findFileName(
+      'https://web.host.net/directory/1489',
+      '',
+      interceptors));
+
     done();
   });
 });

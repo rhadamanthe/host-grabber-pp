@@ -82,9 +82,10 @@ const defaultDlClearCompleted = false;
 const defaultDlShowViewWhenDlStarts = true;
 const defaultDlAlwaysShowViewWhenDlStarts = true;
 const defaultDlMoveDownloadViewWhenDlStarts = true;
-const defaultAutomaticallyUpdateDictionary = true;
 const defaultDlCacheDownloadLinks = true;
+const defaultDlPrefixFilenamesWithCounter = false;
 const defaultHideSuccessfulDownloadItems = true;
+const defaultAutomaticallyUpdateDictionary = true;
 const defaultDlStrategy = DL_STRATEGY_DEFAULT;
 const defaultDlStrategyCustomPattern = '';
 
@@ -112,4 +113,4 @@ const DlStatus = {
   ALREADY_DOWNLOADED: 7
 };
 
-const supportedDictionarySpecs = ['1.0'];
+const supportedDictionarySpecs = ['1.0', '1.1'];

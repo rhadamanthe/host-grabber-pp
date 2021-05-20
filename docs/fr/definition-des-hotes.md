@@ -25,13 +25,13 @@ Le fichier XML contient une structure hiérarchique qui ressemble à...
 	<host id="host 1">
 		<domain>...</domain>
 		<path-pattern>...</path-pattern>
-		<search-pattern>...</search-pattern>
+		<link-search-pattern>...</link-search-pattern>
 	</host>
 	
 	<host id="host 2">
 		<domain>...</domain>
 		<path-pattern>...</path-pattern>
-		<search-pattern>...</search-pattern>
+		<link-search-pattern>...</link-search-pattern>
 	</host>
 
 </root>
@@ -48,13 +48,13 @@ Il est même possible de définir plusieurs items pour un même hôte. Par exemp
 	<host id="instagram-pics">
 		<domain>...</domain>
 		<path-pattern>...</path-pattern>
-		<search-pattern>...</search-pattern>
+		<link-search-pattern>...</link-search-pattern>
 	</host>
 	
 	<host id="instagram-vids">
 		<domain>...</domain>
 		<path-pattern>...</path-pattern>
-		<search-pattern>...</search-pattern>
+		<link-search-pattern>...</link-search-pattern>
 	</host>
 
 </root>
@@ -62,6 +62,42 @@ Il est même possible de définir plusieurs items pour un même hôte. Par exemp
 
 Il est recommandé de leur donner des ID différents.  
 Cet identifiant sert en cas d'erreur à corriger ou en cas d'évolution.
+
+
+## Principe Général
+
+Tout part de l'analyse du code source de la page web.
+Celle-ci se fait en 3 grandes étapes :
+
+1\. Où doit-on rechercher les liens des fichiers à télécharger ?
+  * Sur la page actuelle ?
+  * Ou sur une autre page, référencée depuis l'actuelle ?
+
+C'est ce que les propriétés **domain** et **path-pattern** définissent, à savoir
+quelle(s) page(s) analyser pour collecter les liens de téléchargement. 
+
+2\. Une fois ces pages connues, la recherche des liens peut commencer.
+Ce sont les propriétés **link-search-pattern** et **link-attribute** qui déterminent
+le comportement, et en particulier **link-search-pattern** :
+
+  * Il peut rechercher les liens de manière textuelle (stratégies `expreg`, `replace`, `self`).
+  * Il peut aussi rechercher des éléments dans le DOM de la page web (stratégies `ID`, `class`, `XPath`, `CSS query`). Dans ce cas, il faut compléter la définition pour préciser l'attribut HTML à considérer, à l'aide de la propriété **link-attribute**.
+
+3\. Quand on a défini comment les liens de téléchargement doivent être collectés, alors on peut préciser la politique de nommage : quels noms donner aux fichiers téléchargés ? Par défaut, ce nom est déduit de l'URL, mais pour les stratégies basées sur une approche DOM, le nom peut être récupéré depuis un autre attribut HTML. Ainsi, si l'on se sert de la stratégie `XPath` pour repérer les éléments HTML `img`, alors le lien de téléchargement est pris dans l'attribut `src`, tandis que le nom du fichier peut être pioché dans l'attribut `alt` ou `title`.
+
+4\. Enfin, entre chacune de ces étapes peuvent s'intercaler des intercepteurs, qui peuvent procéder à des réécritures ou des remplacements. Ainsi, un intercepteur peut...
+
+  * ... modifier où l'on va rechercher des liens.
+  * ... corriger des liens de téléchargement.
+  * ... retravailler le nom des fichiers. 
+
+Créer un item dans le catalogue revient à spécifier ces étapes, qui sont toutes séquentielles et qui s'étendent depuis l'analyse de la page web visitée jusqu'au téléchargement de fichiers.
+ 
+C'est ce que synthétise le schéma ci-dessous.
+
+<img src="../assets/images/fr-principe-general.png" alt="Schéma qui illustre les différentes étapes" />
+
+A chaque analyse de page, l'intégralité des règles du catalogue suivent cette séquence et enrichissent la liste des liens à récupérer. Cela peut potentiellement être utilisé pour n'importe quel type de fichiers (images, médias). Le catalogue ressemble au fichier XML illustré dans la section précédente, alors que les propriétés qu'il accepte sont présentées plus en détail dans les paragraphes suivants.
 
 
 ## Domaine
@@ -84,16 +120,16 @@ expression régulière.
 ### Règle Particulière (indépendante du domaine)
 
 Si la règle s'applique à de nombreux sites web, alors il est possible d'utiliser la
-valeur `_$CURRENT$_`.
+valeur `_$ANY$_`.
 
 ```xml
-<domain>_$CURRENT$_</domain>
+<domain>_$ANY$_</domain>
 ```
 
 Plusieurs sites proposent une galerie basée sur
 [Coppermine](http://coppermine-gallery.net/). La règle associée ne spécifie donc pas de
 domaine particulier. Elle s'applique sur tous les sites. Lors de l'analyse d'une page, la
-valeur `_$CURRENT$_` signfie que l'on utilise **le nom d'hôte de la page courante**.
+valeur `_$ANY$_` signfie que l'on utilise **le nom d'hôte de la page courante**.
 
 Si l'on garde l'exemple de Coppermine, imaginons qu'une telle galerie soit hébergée
 sur *toto.net*. Lors d'une visite sur ce site, IHG ++ trouverait tous les médias
@@ -101,7 +137,7 @@ hébergés sur *toto.net* utilisant la règle Coppermine. Cependant, si quelque 
 page apparaît un lien vers une autre galerie Coppermine (hébergée par exemple sur
 *un-autre-site.com*), alors ce lien ne sera pas pris en compte.
 
-La valeur `_$CURRENT$_` s'applique potentiellement à n'importe quel domaine.  
+La valeur `_$ANY$_` s'applique potentiellement à n'importe quel domaine.  
 Mais dés qu'elle est utilisée sur une page donnée, alors seul le domaine courant est considéré.
 
 
@@ -120,7 +156,7 @@ toto1, toto2, toto24, toto528, etc.
 
 Tout comme pour un domaine, les préfixes *http*, *https*,
 *www.*, ainsi que les sous-domaines, sont gérés automatiquement.
-Contrairement à la constante `_$CURRENT$_`, cette règle acceptera n'importe quel lien
+Contrairement à la constante `_$ANY$_`, cette règle acceptera n'importe quel lien
 dont le domaine correspond à l'expression régulière, et quelle que soit la page courante.
 
 
@@ -171,7 +207,7 @@ Elle permet d'appliquer les modèles de recherche (XPath, *replace*, etc)
 sur la page courante.
 
 
-## Modèle de Recherche
+## Modèle de Recherche des Liens
 
 Le modèle d'URL permet de trouver quoi explorer.    
 **The modèle de recherche (*search pattern*) permet de trouver les liens de téléchargement parmi ce qu'il faut explorer.**
@@ -197,7 +233,7 @@ Ici, le modèle d'URL détermine quoi télécharger.
 ```xml
 <domain>toto.com</domain>
 <path-pattern>.*\.(jpg|png|gif)</path-pattern>
-<search-pattern>SELF</search-pattern>
+<link-search-pattern>SELF</link-search-pattern>
 ```
 
 Le modèle d'URL permet ici de trouver tous les fichiers JPG, PNG et GIF dans la page.  
@@ -215,7 +251,7 @@ Elle repose sur l'idée que le lien de téléchargement peut être déduit du mo
 ```xml
 <domain>toto.com</domain>
 <path-pattern>.*\.(jpg|png|gif)</path-pattern>
-<search-pattern>replace: 'tn_', ''</search-pattern>
+<link-search-pattern>replace: 'tn_', ''</link-search-pattern>
 ```
 
 Ce modèle d'URL identifie des images qui pourraient être des miniatures.  
@@ -226,7 +262,7 @@ Notez que l'on peut aussi utiliser une expression régulière pour la recherche.
 ```xml
 <domain>toto.com</domain>
 <path-pattern>.*\.(jpg|png|gif)</path-pattern>
-<search-pattern>replace: 'images/mini/([^/]+)/tn_(.*)', 'images/originales/$1/$2'</search-pattern>
+<link-search-pattern>replace: 'images/mini/([^/]+)/tn_(.*)', 'images/originales/$1/$2'</link-search-pattern>
 ```
 
 Avec ce modèle de recherche, une miniature située à l'adresse `http://toto.com/images/mini/novembre-2017/tn_01.jpg`
@@ -252,7 +288,7 @@ Pour rappel, un ID est unique au sein d'une page web. Deux éléments ne peuvent
 ```xml
 <domain>mon-hebergeur.com</domain>
 <path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
-<search-pattern>ID: image</search-pattern>
+<link-search-pattern>ID: image</link-search-pattern>
 ```
 
 En supposant que ce modèle d'URL mène à des liens du genre `http://mon-hebergeur.com/view.php?01.jpg`,
@@ -277,7 +313,7 @@ les liens de téléchargement sont trouvés en cherchant les éléments **img** 
 ```xml
 <domain>mon-hebergeur.com</domain>
 <path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
-<search-pattern>Class: image</search-pattern>
+<link-search-pattern>Class: image</link-search-pattern>
 ```
 
 En supposant que ce modèle d'URL mène à des liens du genre `http://mon-hebergeur.com/view.php?01.jpg`,
@@ -302,7 +338,7 @@ les liens de téléchargement sont trouvés en cherchant un élément ou un attr
 ```xml
 <domain>mon-hebergeur.com</domain>
 <path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
-<search-pattern>XPath: //div[@class=image-container]/img/@src</search-pattern>
+<link-search-pattern>XPath: //div[@class=image-container]/img</link-search-pattern>
 ```
 
 En supposant que ce modèle d'URL mène à des liens du genre `http://mon-hebergeur.com/view.php?01.jpg`,
@@ -329,7 +365,7 @@ les liens de téléchargement sont trouvés grâce à une expression régulière
 ```xml
 <domain>mon-hebergeur.com</domain>
 <path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
-<search-pattern><![CDATA[expreg: <meta property="og:image"\s+content="([^"]+)"]]></search-pattern>
+<link-search-pattern><![CDATA[expreg: <meta property="og:image"\s+content="([^"]+)"]]></link-search-pattern>
 ```
 
 En supposant que ce modèle d'URL mène à des liens du genre `http://mon-hebergeur.com/view.php?01.jpg`,
@@ -341,7 +377,7 @@ pour illustrer ce cas (aucune parenthèse dans l'expression régulière).
 ```xml
 <domain>mon-hebergeur.com</domain>
 <path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
-<search-pattern><![CDATA[expreg: http://.*/grandes/.*\.jpg]]></search-pattern>
+<link-search-pattern><![CDATA[expreg: http://.*/grandes/.*\.jpg]]></link-search-pattern>
 ```
 
 Ici, seules les images localisées dans le répertoire **grandes** seront téléchargées.
@@ -367,7 +403,7 @@ les liens de téléchargement sont trouvés en cherchant un élément **img** gr
 ```xml
 <domain>mon-hebergeur.com</domain>
 <path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
-<search-pattern>CSS query: div.col-md-12 img</search-pattern>
+<link-search-pattern>CSS query: div.col-md-12 img</link-search-pattern>
 ```
 
 En supposant que ce modèle d'URL mène à des liens du genre `http://mon-hebergeur.com/view.php?01.jpg`,
@@ -389,11 +425,52 @@ Ainsi, dans cet exemple...
 ```xml
 <domain>toto.com</domain>
 <path-pattern>_$CURRENT$_</path-pattern>
-<search-pattern>CLASS: img</search-pattern>
+<link-search-pattern>CLASS: img</link-search-pattern>
 ```
 
 ... si l'on visite une page du site *toto.com*, alors on va chercher toutes les images
 dont la classe CSS est *img*. Ce mécanisme fonctionne avec toutes les stratégies des modèles de recherche.
+
+
+## Attribut pour les liens
+
+Comme son nom l'indique, le modèle de recherche de liens permet de trouver des liens.  
+Quand cette recherche s'appuie sur l'analyse du DOM, alors la propriété doit désigner un élément HTML, ce qui implique qu'il faut préciser un attribut HTML en plus. C'est l'objet de cette propriété.
+
+```xml
+<domain>toto.com</domain>
+<path-pattern>_$CURRENT$_</path-pattern>
+<link-search-pattern>CLASS: img</link-search-pattern>
+<link-attribute>src</link-attribute>
+``` 
+
+Cette balise est optionnelle et n'a de sens que pour les stratégies `ID`, `class`, `XPath` et `CSS query`. Elle permet d'indiquer le nom de l'attribut HTML pour extraire le lien de téléchargement. Sa valeur par défaut est `src` (ce qui explique pourquoi elle est optionnelle).
+
+
+## Attribut pour les noms de fichiers
+
+Cette balise est optionnelle et peut être utilisée à deux fins.
+
+Pour les stratégies `ID`, `class`, `XPath` et `CSS query`, elle permet d'indiquer le nom de l'attribut HTML pour extraire le nom du fichier. Puisque ces stratégies ciblent des éléments HTML, on peut piocher dans un de ses attributs. Par exemple, plusieurs hébergeurs d'images génèrent des noms aléatoires pour les liens, et conservent le nom d'origine dans les attributs `alt` ou `title`. Dans un tel cas, c'est donc le nom d'un de ces attributs que l'on mettrait dans la balise. A noter qu'en cas d'absence, le nom sera déduit depuis l'URL.
+
+```xml
+<domain>toto.com</domain>
+<path-pattern>_$CURRENT$_</path-pattern>
+<link-search-pattern>CLASS: img</link-search-pattern>
+<link-attribute>src</link-attribute>
+<file-name-attribute>alt</file-name-attribute>
+``` 
+
+Elle peut aussi être utilisée en tant que séparateur, pour ajouter des intercepteurs sur le nom du fichier (y compris pour les stratégies textuelles comme `self`, `expreg` et `replace`). Quand cette propriété est vide, alors le nom par défaut (déduit de l'URL) est utilisé.
+
+```xml
+<domain>toto.com</domain>
+<path-pattern>_$CURRENT$_</path-pattern>
+<link-search-pattern>CLASS: img</link-search-pattern>
+<link-attribute>src</link-attribute>
+<file-name-attribute></file-name-attribute>
+<interceptor>replace: '\.jpeg', '.jpg'</interceptor>
+```
 
 
 ## Intercepteurs
@@ -401,8 +478,7 @@ dont la classe CSS est *img*. Ce mécanisme fonctionne avec toutes les stratégi
 HG ++ explore des pages web afin de découvrir des liens de téléchargement. Parfois,
 ces liens ne sont exactement ceux que l'on souhaiterait. Il peut aussi arriver que
 certains hébergeurs changent de nom de domaine. C'est assez rare, mais c'est pourtant
-ce qui est arrivé à PixHost. Jusqu'à fin 2017, ce site utilisait le domaine **pixhost.org**.
-Depuis 2018, il a perdu ce nom de domaine et a dû basculer sur **pixhost.to**.
+ce qui est arrivé à PixHost. Jusqu'à fin 2017, ce site utilisait le domaine **pixhost.org**. Depuis 2018, il a perdu ce nom de domaine et a dû basculer sur **pixhost.to**.
 
 Host Grabber ++ propose un mécanisme de redirection qui peut être utilisé dans les dictionnaires.
 On peut s'en servir pour, par exemple, rediriger depuis un ancien domaine vers un plus récent.
@@ -417,17 +493,18 @@ page mais sur le domaine pixhost.to.
 	<domain>pixhost.org</domain
 	<path-pattern>show/.+</path-pattern>
 	<interceptor>replace: '\.org/', '.to/'</interceptor>
-	<search-pattern>ID: image</search-pattern>
+	<link-search-pattern>ID: image</link-search-pattern>
 </host>
 ```
 
 L'intercepteur remplace une partie de l'URL par autre chose.  
 La syntaxe est la même que pour [la directive de remplacement dans les modèles de recherche](#replace).
 
-Un intercepteur peut apparaître en plusieurs emplacements.
+Un intercepteur peut apparaître en plusieurs endroits.
 
 * Après une balise **path-pattern** : le remplacement se fera sur les liens trouvés dans l'onglet d'origine et qui sont à explorer.
-* Après une balise **search-pattern** : le remplacement se fera sur les liens trouvés durant l'exploration.
+* Après une balise **link-search-pattern** : le remplacement se fera sur les liens trouvés durant l'exploration.
+* Après une balise **file-name-attribute** : le remplacement se fera sur le nom du fichier (quel que soit l'endroit où il a été trouvé).
 
 Il est aussi possible de définir plusieurs intercepteurs.
 
@@ -439,7 +516,7 @@ Il est aussi possible de définir plusieurs intercepteurs.
 	<!-- Explorer une autre page que celle découverte dans l'onglet courant. -->
 	<interceptor>replace: '\.org/', '.to/'</interceptor>
 	<interceptor>replace: 'show/', 'view/'</interceptor>
-	<search-pattern>ID: image</search-pattern>
+	<link-search-pattern>ID: image</link-search-pattern>
 	
 	<!-- L'explotation a découvert des miniatures. Redirection vers des images plus grandes. -->
 	<interceptor>replace: '_tn\.jpg', '_big.jpg'</interceptor>

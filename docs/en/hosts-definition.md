@@ -25,13 +25,13 @@ The XML file contains a hierarchical structure that looks like...
 	<host id="host 1">
 		<domain>...</domain>
 		<path-pattern>...</path-pattern>
-		<search-pattern>...</search-pattern>
+		<link-search-pattern>...</link-search-pattern>
 	</host>
 	
 	<host id="host 2">
 		<domain>...</domain>
 		<path-pattern>...</path-pattern>
-		<search-pattern>...</search-pattern>
+		<link-search-pattern>...</link-search-pattern>
 	</host>
 
 </root>
@@ -48,13 +48,13 @@ It is even possible for a host to be associated with several items. As an exampl
 	<host id="instagram-pics">
 		<domain>...</domain>
 		<path-pattern>...</path-pattern>
-		<search-pattern>...</search-pattern>
+		<link-search-pattern>...</link-search-pattern>
 	</host>
 	
 	<host id="instagram-vids">
 		<domain>...</domain>
 		<path-pattern>...</path-pattern>
-		<search-pattern>...</search-pattern>
+		<link-search-pattern>...</link-search-pattern>
 	</host>
 
 </root>
@@ -62,6 +62,42 @@ It is even possible for a host to be associated with several items. As an exampl
 
 Just give the items a different ID.  
 The ID is useful when there is an error to fix or an upgrade to perform.
+
+
+## General Principle
+
+Everything starts from analyzing the source code from the current page / browser tab.
+There are 3 stages in this analysis:
+
+1\. Where do we want to search download links?
+  * In the current page?
+  * In a page referenced on the current one?
+
+This is what the **domain** and **path-pattern** properties are used for.
+They allow to define which (other) pages should be analyzed to find download links. 
+
+2\. Once we know which pages we have to analyze, we can start searching links.
+This is achieved with the **link-search-pattern** and **link-attribute** properties.
+The search pattern can...
+
+  * ... either make a text-search (`expreg`, `replace`, `self` strategies).
+  * ... or analyze the DOM document of the HTML page (`ID`, `class`, `XPath`, `CSS query` strategies). In this case, the search pattern helps to find a HTML element and the **link-attribute** selects which HTML attribute consider.
+
+3\. Once download links have been found, we can consider the file name that will be used to save the target file. By default, it is deduced from the download URL, but for DOM-based strategies, it can also be retrieved from another HTML attribute. As an example, if one used the `XPath` strategy to find `img` elements, the download link can be retrieved with the `src` attribute and the file name from the `alt` (or `title`) attribute.
+
+4\. Eventually, between all these stages, it is possible to use interceptors. Interceptors can rewrite information by replacing parts of it. An interceptor can:
+
+  * ... update where to search download links.
+  * ... rewrite download links before they are stored.
+  * ... fix the target file name. 
+
+Therefore, defining a dictionary item just specifies a sequential processing workflow that starts with the analysis of the current web page and leads to downloading files.
+ 
+We can summarize it with the diagram below.
+
+<img src="../assets/images/en-general-principle.png" alt="Diagram showing the different stages" />
+
+Everytime this extension is used, all the dictionary rules are applied on the page. It can be used to retrieve any kind of file (even if the official dictionary focuses on images and media files). This dictionary is defined in a XML file, as shown in the previous section. You will find below more details about the different properties it can contain.
 
 
 ## Domain
@@ -83,15 +119,15 @@ When you define a domain, HG ++ will consider all the links with *http*, *https*
 ### Specific Rule (not restricted to any domain)
 
 If the rule definition targets a tool that can appear on several web sites, you can use
-the `_$CURRENT$_` value.
+the `_$ANY$_` value.
 
 ```xml
-<domain>_$CURRENT$_</domain>
+<domain>_$ANY$_</domain>
 ```
 
 This is what the [Coppermine](http://coppermine-gallery.net/) uses in the default catalog.
 Many web sites run such a gallery system. The Coppermine rule indicates we should apply it
-to every web site, not for a single domain. When a web page is analyzed, the `_$CURRENT$_`
+to every web site, not for a single domain. When a web page is analyzed, the `_$ANY$_`
 value means we use **the host name of the current page**.
 
 If we keep the Coppermine example, let's imagine we have such a gallery hosted on
@@ -100,7 +136,7 @@ hosted on *toto.net* by using the Coppermine rule. But if somewhere in the page,
 is a reference to another Coppermine gallery (e.g. a link to *other-web-site.com*), then
 it will be skipped.
 
-The `_$CURRENT$_` value applies to a several domains.  
+The `_$ANY$_` value applies to a several domains.  
 But within the scope of a single page, it will only apply to this domain.
 
 
@@ -118,7 +154,7 @@ toto1, toto2, toto24, toto548, etc.
 ```
 
 Just like for a domain, *http*, *https*, *www.* prefixes and sub-domains
-will be managed automatically. Unlike the `_$CURRENT$_` value, this rule
+will be managed automatically. Unlike the `_$ANY$_` value, this rule
 will accept any link that matches the domain pattern, no matter what is the
 current web page.
 
@@ -162,15 +198,15 @@ There are some rules to know when setting this property
 ### Explore the Current Page Only
 
 Using a regular expression allows to find what pages to explore.  
-But sometimes, you just want to exploire the current page.
+But sometimes, you just want to explore the current page.
 `_$CURRENT$_` is the solution then.
 
 It allows to apply search patterns (XPath, replace, etc) on the current page.
 
 
-## Search Patterns
+## Link Search Patterns
 
-The URL pattern allows to find what to explore.  
+The path pattern allows to find what to explore.  
 **The search pattern allows to find download links once we know what to explore.**
 And there are several strategies. Some are more greedy than others. Let's take a look at them.
 
@@ -194,7 +230,7 @@ It considers the URL pattern allows to find what to download.
 ```xml
 <domain>toto.com</domain>
 <path-pattern>.*\.(jpg|png|gif)</path-pattern>
-<search-pattern>SELF</search-pattern>
+<link-search-pattern>SELF</link-search-pattern>
 ```
 
 The URL pattern here allows to find all the JPG, PNG and GIF images referenced in the page.  
@@ -212,7 +248,7 @@ It assumes we can find a download link from the matches we found with the URL pa
 ```xml
 <domain>toto.com</domain>
 <path-pattern>.*\.(jpg|png|gif)</path-pattern>
-<search-pattern>replace: 'tn_', ''</search-pattern>
+<link-search-pattern>replace: 'tn_', ''</link-search-pattern>
 ```
 
 The URL patterns identifies images, that may be thumbnails.  
@@ -223,7 +259,7 @@ Notice you can use regular expressions for the search.
 ```xml
 <domain>toto.com</domain>
 <path-pattern>.*\.(jpg|png|gif)</path-pattern>
-<search-pattern>replace: 'images/thumbs/([^/]+)/tn_(.*)', 'images/originals/$1/$2'</search-pattern>
+<link-search-pattern>replace: 'images/thumbs/([^/]+)/tn_(.*)', 'images/originals/$1/$2'</link-search-pattern>
 ```
 
 With such a search pattern, a thumbnail located at `http://toto.com/images/thumbs/november-2017/tn_01.jpg`
@@ -249,7 +285,7 @@ a HTML ID is supposed to be unique within a page.
 ```xml
 <domain>image-host.com</domain>
 <path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
-<search-pattern>ID: image</search-pattern>
+<link-search-pattern>ID: image</link-search-pattern>
 ```
 
 Assuming this URL pattern finds a set of links that look like `http://image-host.com/view.php?01.jpg`,
@@ -275,7 +311,7 @@ All the **img** elements with the specified class will be downloaded.
 ```xml
 <domain>image-host.com</domain>
 <path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
-<search-pattern>Class: image</search-pattern>
+<link-search-pattern>Class: image</link-search-pattern>
 ```
 
 Assuming this URL pattern finds a set of links that look like `http://image-host.com/view.php?01.jpg`,
@@ -300,7 +336,7 @@ links are found by searching a HTML element or attribute with a [XPath expressio
 ```xml
 <domain>image-host.com</domain>
 <path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
-<search-pattern>XPath: //div[@class=image-container]/img/@src</search-pattern>
+<link-search-pattern>XPath: //div[@class=image-container]/img</link-search-pattern>
 ```
 
 Assuming this URL pattern finds a set of links that look like `http://image-host.com/view.php?01.jpg`,
@@ -327,7 +363,7 @@ links are found by searching with a regular expression.
 ```xml
 <domain>image-host.com</domain>
 <path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
-<search-pattern><![CDATA[expreg: <meta property="og:image"\s+content="([^"]+)"]]></search-pattern>
+<link-search-pattern><![CDATA[expreg: <meta property="og:image"\s+content="([^"]+)"]]></link-search-pattern>
 ```
 
 Assuming this URL pattern finds a set of links that look like `http://image-host.com/view.php?01.jpg`,
@@ -339,7 +375,7 @@ bracket in the regular expression).
 ```xml
 <domain>image-host.com</domain>
 <path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
-<search-pattern><![CDATA[expreg: http://.*/big/.*\.jpg]]></search-pattern>
+<link-search-pattern><![CDATA[expreg: http://.*/big/.*\.jpg]]></link-search-pattern>
 ```
 
 Here, it will only keep JPG images located in the **big** directory.
@@ -365,7 +401,7 @@ links are found by searching **img** elements with a [CSS query](https://www.w3s
 ```xml
 <domain>my-image-host.com</domain>
 <path-pattern>view\.php\?.*\.(jpg|png|gif)</path-pattern>
-<search-pattern>CSS query: div.col-md-12 img</search-pattern>
+<link-search-pattern>CSS query: div.col-md-12 img</link-search-pattern>
 ```
 
 Assuming this URL pattern finds a set of links that look like `http://my-image-host.com/view.php?01.jpg`,
@@ -387,11 +423,52 @@ In this example...
 ```xml
 <domain>toto.com</domain>
 <path-pattern>_$CURRENT$_</path-pattern>
-<search-pattern>CLASS: img</search-pattern>
+<link-search-pattern>CLASS: img</link-search-pattern>
 ```
 
 ... if we are visiting a page from the *toto.com* domain, we will search for all the images
 whose CSS class is *img*. It works with all the search pattern strategies.
+
+
+## Link Attribute
+
+The link search pattern allows to find links.  
+When this search is based on a DOM analysis, it must target a HTML element. It means it must be completed with a HTML attribute and this is what this property is used for. 
+
+```xml
+<domain>toto.com</domain>
+<path-pattern>_$CURRENT$_</path-pattern>
+<link-search-pattern>CLASS: img</link-search-pattern>
+<link-attribute>src</link-attribute>
+```
+
+The link attribute property is optional and only makes sense for the `ID`, `class`, `XPath` and `CSS query` strategies. It allows to specify the HTML attribute to get the download link. By default, it is `src` (which is why this property is optional).
+
+
+## File Name Attribute
+
+The file name attribute property is optional and has two roles.
+
+First, for the `ID`, `class`, `XPath` and `CSS query` strategies, it allows to specify the HTML attribute to get the file name. Since these strategies target HTML elements, we can retrieve the file name from one of its attribute. As an exemple, several web hosts for images generate random file names for links and put the original file name in the `alt` or `title` attribute. In this case, we could use this mark-up and set its value to `alt` or `title`. If not specified, the file name will be deduced from the URL. 
+
+```xml
+<domain>toto.com</domain>
+<path-pattern>_$CURRENT$_</path-pattern>
+<link-search-pattern>CLASS: img</link-search-pattern>
+<link-attribute>src</link-attribute>
+<file-name-attribute>alt</file-name-attribute>
+```
+ 
+It can also be used to define interceptors on the file name (even for strategies that do not rely on the DOM analysis, such as `self`, `expreg` and `replace`). When this property has the empty value, it simply indicates to use the default name (deduced from the URL).
+
+```xml
+<domain>toto.com</domain>
+<path-pattern>_$CURRENT$_</path-pattern>
+<link-search-pattern>CLASS: img</link-search-pattern>
+<link-attribute>src</link-attribute>
+<file-name-attribute></file-name-attribute>
+<interceptor>replace: '\.jpeg', '.jpg'</interceptor>
+```
 
 
 ## Interceptors
@@ -415,7 +492,7 @@ but on pixhost.to.
 	<domain>pixhost.org</domain
 	<path-pattern>show/.+</path-pattern>
 	<interceptor>replace: '\.org/', '.to/'</interceptor>
-	<search-pattern>ID: image</search-pattern>
+	<link-search-pattern>ID: image</link-search-pattern>
 </host>
 ```
 
@@ -425,7 +502,8 @@ The syntax is the same than [the replace directive in search patterns](#replace)
 An interceptor may appear in several locations.
 
 * After a **path-pattern** mark-up: replacement will be done on the found links, those that must be explored.
-* After a **search-pattern** mark-up: replacement will be done on the links found after exploration.
+* After a **link-search-pattern** mark-up: replacement will be done on the links found after exploration.
+* After a **file-name-attribute** mark-up: replacement will be done on the file name (no matter where it is found).
 
 You can define several interceptors if necessary.
 
@@ -437,7 +515,7 @@ You can define several interceptors if necessary.
 	<!-- Explore another page that the one found in the current tab. -->
 	<interceptor>replace: '\.org/', '.to/'</interceptor>
 	<interceptor>replace: 'show/', 'view/'</interceptor>
-	<search-pattern>ID: image</search-pattern>
+	<link-search-pattern>ID: image</link-search-pattern>
 	
 	<!-- We found links to thumbnails in the document. Redirect to bigger images. -->
 	<interceptor>replace: '_tn\.jpg', '_big.jpg'</interceptor>
