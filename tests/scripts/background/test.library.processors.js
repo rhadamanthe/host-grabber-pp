@@ -1224,8 +1224,8 @@ describe('background => library.processors', function() {
         <a href="http://host44.fr/gallery/path/msqd_big.jpg?t=opfdglm">
           <img src="http://host44.fr/gallery/msqd.jpg" />
         </a>
-        <a href="http://host_not_the_same.fr/gallery/path/msqb_big_800x600.jpg">
-          <img src="http://host44.fr/gallery/msqb.jpg" />
+        <a href="http://host_not_the_same.fr/gallery/path/msqb_big_800x600.webp">
+          <img src="http://host44.fr/gallery/msqb.webp" />
         </a>
     </body></html>
     `;
@@ -1251,7 +1251,7 @@ describe('background => library.processors', function() {
     expect(p.downloadLinks[0].link).to.eql('http://host44.fr/gallery/t1_big.jpg');
     expect(p.downloadLinks[1].link).to.eql('http://host44.fr/gallery/m1_big.png');
     expect(p.downloadLinks[2].link).to.eql('http://host44.fr/gallery/path/msqd_big.jpg');
-    expect(p.downloadLinks[3].link).to.eql('http://host_not_the_same.fr/gallery/path/msqb_big.jpg');
+    expect(p.downloadLinks[3].link).to.eql('http://host_not_the_same.fr/gallery/path/msqb_big.webp');
     done();
   });
 

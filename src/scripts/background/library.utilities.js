@@ -418,8 +418,8 @@ function buildDictionaryWrapperForDirectImages() {
     <host id="direct_images">
       <domain-pattern>.*</domain-pattern>
       <path-pattern>_$CURRENT$_</path-pattern>
-      <search-pattern><![CDATA[expreg: <a\\s+[^>]*href="([^"]+\\.(jpg|gif|png))(\\?[^"]*)?"[^>]*>\\s*<img]]></search-pattern>
-      <interceptor>replace: '_\\d+x\\d+\\.(jpg|png|gif)', '.$1'</interceptor>
+      <search-pattern><![CDATA[expreg: <a\\s+[^>]*href="([^"]+\\.(jpg|gif|png|webp))(\\?[^"]*)?"[^>]*>\\s*<img]]></search-pattern>
+      <interceptor>replace: '_\\d+x\\d+\\.(jpg|png|gif|webp)', '.$1'</interceptor>
     </host>
     </root>
     `;
