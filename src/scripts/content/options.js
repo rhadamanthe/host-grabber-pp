@@ -61,11 +61,16 @@ function restoreOptions() {
 
 // Save stuff
 document.querySelector('#save-btn').addEventListener('click', function() {
+  var dictionaryUrl = document.querySelector('#dictionary-url').value;
   browser.storage.local.set({
-    dictionaryUrl: document.querySelector('#dictionary-url').value
+    dictionaryUrl: dictionaryUrl
   });
 
-  reloadDictionary();
+  if (dictionaryUrl.toLowerCase().startsWith('file:/')) {
+    handleEventsReporting({req: 'dictionary-reload-cb', status: 'ko'});
+  } else {
+    reloadDictionary();
+  }
 });
 
 var defaultListener = function() {
@@ -116,9 +121,9 @@ function reloadDictionary() {
 
 document.querySelector('#reload-btn').addEventListener('click', reloadDictionary);
 document.querySelector('#restore-btn').addEventListener('click', function() {
-  document.querySelector('#dictionary-url').value = defaultUrl;
+  document.querySelector('#dictionary-url').value = defaultDictionaryUrl;
   browser.storage.local.set({
-    dictionaryUrl: defaultUrl
+    dictionaryUrl: defaultDictionaryUrl
   });
 
   reloadDictionary();
@@ -129,7 +134,15 @@ document.querySelector('#clear-cache-btn').addEventListener('click', function() 
 });
 
 
-browser.runtime.onMessage.addListener(request => {
+browser.runtime.onMessage.addListener(handleEventsReporting);
+
+/**
+ * Handles events and reporting.
+ * @param {object} request The request object.
+ * @returns {undefined}
+ */
+function handleEventsReporting(request) {
+
   if (request.req === 'dictionary-reload-cb') {
     if (request.status === 'ok') {
       document.querySelector('#dictionary-url').className = 'updated-ok';
@@ -150,4 +163,4 @@ browser.runtime.onMessage.addListener(request => {
       document.querySelector('#clear-cache-btn').className = '';
     }, 3000);
   }
-});
+}

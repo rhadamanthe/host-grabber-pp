@@ -220,7 +220,6 @@ function downloadDictionary() {
     }, function(details) {
       notifyDictionaryReload('ko');
       console.log('Dictionary could not be loaded from ' + url + '.');
-      console.log(details);
     });
   });
 }
