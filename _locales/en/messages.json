@@ -379,8 +379,13 @@
     "description": "The label for this element (debug page)"
   },
 
-  "debugPage_inputSearchPattern": {
-    "message": "Search Pattern:",
+  "debugPage_inputLinkSearchPattern": {
+    "message": "Link Search Pattern:",
+    "description": "The label for this element (debug page)"
+  },
+
+  "debugPage_inputLinkAttribute": {
+    "message": "Link Attribute:",
     "description": "The label for this element (debug page)"
   },
 

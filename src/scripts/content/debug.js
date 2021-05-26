@@ -1,5 +1,6 @@
 
 var dictionaryItems = [];
+var dictionaryItemIsSelected = false;
 browser.runtime.sendMessage({req: 'get-dictionary'});
 browser.runtime.onMessage.addListener(request => {
 
@@ -18,6 +19,7 @@ document.querySelector('#simulateButton').addEventListener('click', showFeedback
 document.querySelector('#backButton').addEventListener('click', backToForm);
 document.querySelector('#exportButton').addEventListener('click', showExportSection);
 document.querySelector('#dictionary-items').addEventListener('change', fillInItemProperties);
+document.querySelector('#xml-catalog').addEventListener('click', selectDictionaryItem);
 
 
 // Functions
@@ -29,6 +31,24 @@ document.querySelector('#dictionary-items').addEventListener('change', fillInIte
 function backToForm() {
   document.querySelector('#exportSection').style.display = 'none';
   document.querySelector('#formSection').style.display = 'block';
+}
+
+
+/**
+ * Updates the selection when exporting a catalog item.
+ * @returns {undefined}
+ */
+function selectDictionaryItem() {
+
+  var selection = window.getSelection();
+  selection.removeAllRanges();
+  dictionaryItemIsSelected = ! dictionaryItemIsSelected;
+
+  if (dictionaryItemIsSelected) {
+    var range = document.createRange();
+    range.selectNodeContents(document.querySelector('#xml-catalog'));
+    selection.addRange(range);
+  }
 }
 
 
@@ -54,11 +74,11 @@ function showExportSection() {
     if (firstPos === item.length - 1) {
       highlight(xmlCatalog, 'xml-markup', item.substring(0));
     } else {
-      highlight(xmlCatalog, 'xml-markup', '  ' + item.substring(0, firstPos + 1));
-      xmlCatalog.appendChild( document.createElement('br'));
-      highlight(xmlCatalog, '', '  ' + item.substring(firstPos + 1, endPos));
-      xmlCatalog.appendChild( document.createElement('br'));
-      highlight(xmlCatalog, 'xml-markup', '  ' + item.substring(endPos));
+      highlight(xmlCatalog, 'xml-markup', '\t' + item.substring(0, firstPos + 1));
+      //xmlCatalog.appendChild( document.createElement('br'));
+      highlight(xmlCatalog, '', item.substring(firstPos + 1, endPos));
+      //xmlCatalog.appendChild( document.createElement('br'));
+      highlight(xmlCatalog, 'xml-markup', item.substring(endPos));
     }
   });
 
@@ -82,7 +102,6 @@ function highlight(xmlCatalog, className, content) {
   markup.className = className;
   markup.textContent = content;
 }
-
 
 
 /**
@@ -132,7 +151,8 @@ function fillInItemProperties() {
       if (item.id === selected) {
 
         // Simple fields
-        document.querySelector('#search-pattern').value = item.searchPattern;
+        document.querySelector('#link-search-pattern').value = item.searchPattern;
+        document.querySelector('#link-attribute').value = item.linkAttribute || '';
         document.querySelector('#path-pattern').value = item.pathPattern;
 
         // The domain is special
@@ -218,19 +238,49 @@ function simulateAction() {
  */
 function buildDictionaryItem() {
 
-  var dictionaryAsString = '<host id="x">';
-  var suffix = document.querySelector('#domain-is-regexp').checked ? '-pattern' : '';
-  dictionaryAsString += '\n<domain' + suffix + '>' + document.querySelector('#domain').value + '</domain' + suffix + '>';
-  dictionaryAsString += '\n<path-pattern><![CDATA[' + document.querySelector('#path-pattern').value + ']]></path-pattern>';
+  var domain = document.querySelector('#domain').value;
+  var pathPattern = wrapWithCData(document.querySelector('#path-pattern').value);
+  var linkSearchPattern = wrapWithCData(document.querySelector('#link-search-pattern').value);
+  var linkAttribute = document.querySelector('#link-attribute').value;
+
+  var domainIsRegexp = document.querySelector('#domain-is-regexp').checked;
+  var id = domainIsRegexp ? 'x' : domain.replace(/\..*/i, '');
+  var suffix = domainIsRegexp ? '-pattern' : '';
+
+  var dictionaryAsString = '<host id="' + id + '">';
+  dictionaryAsString += '\n<domain' + suffix + '>' + domain + '</domain' + suffix + '>';
+  dictionaryAsString += '\n<path-pattern>' + pathPattern + '</path-pattern>';
   if (document.querySelector('#interceptor1').value.trim().length !== 0) {
     dictionaryAsString += '\n<interceptor>' + document.querySelector('#interceptor1').value + '</interceptor>';
   }
 
-  dictionaryAsString += '\n<search-pattern><![CDATA[' + document.querySelector('#search-pattern').value + ']]></search-pattern>';
+  dictionaryAsString += '\n<link-search-pattern>' + linkSearchPattern + '</link-search-pattern>';
   if (document.querySelector('#interceptor2').value.trim().length !== 0) {
     dictionaryAsString += '\n<interceptor>' + document.querySelector('#interceptor2').value + '</interceptor>';
   }
 
+  if (!! linkAttribute) {
+    dictionaryAsString += '\n<link-attribute>' + linkAttribute + '</link-attribute>';
+  }
+
   dictionaryAsString += '\n</host>';
   return dictionaryAsString;
+}
+
+
+/**
+ * Wraps a text in a CDATA section when necessary.
+ * @param {string} content A text content.
+ * @returns {string} The same string, possibly wrapped in a CDATA section.
+ */
+function wrapWithCData(content) {
+
+  var res = content;
+  if (res.indexOf('<') !== -1 ||
+      res.indexOf('>') !== -1 ||
+      res.indexOf('&') !== -1) {
+    res = '<![CDATA[' + content + ']]>';
+  }
+
+  return res;
 }

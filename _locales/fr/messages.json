@@ -379,8 +379,13 @@
     "description": "L'étiquette pour cet élément (page de débogage)"
   },
 
-  "debugPage_inputSearchPattern": {
-    "message": "Modèle de Recherche :",
+  "debugPage_inputLinkSearchPattern": {
+    "message": "Modèle de Recherche de Liens :",
+    "description": "L'étiquette pour cet élément (page de débogage)"
+  },
+
+  "debugPage_inputLinkAttribute": {
+    "message": "Attribut pour les Liens :",
     "description": "L'étiquette pour cet élément (page de débogage)"
   },
 
