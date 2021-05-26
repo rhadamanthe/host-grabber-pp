@@ -27,7 +27,7 @@
     "sinon-chrome": "^2.1.2",
     "web-ext": "^2.7.0",
     "webextension-polyfill": "^0.3.1",
-    "xmldom": "^0.1.27"
+    "xmldom": "0.6"
   },
   "bugs": {
     "url": "https://github.com/rhadamanthe/host-grabber-pp/issues"
