@@ -84,6 +84,21 @@ It is also possible to download direct image links and download
 images from a selection on the page.
 
 
+## Browser Permissions
+
+This extension [needs to introspect the source code of the current web page to find files to download](https://github.com/rhadamanthe/host-grabber-pp/blob/master/manifest.json#L67).
+By doing so, it could also access private information (such as usernames).
+**It could, but it does not**. The extension is only executed in your web browser and does 
+not any of your data. For the record, Image Host Grabber used to work the same way. The 
+only difference is that Firefox and Chrome now tell users what permissions a web extension 
+requires.
+
+You can find more information about permissions on the following pages:
+
+* [Firefox permissions](https://support.mozilla.org/en-US/kb/permission-request-messages-firefox-extensions) 
+* [Chrome permissions](https://developer.chrome.com/docs/extensions/reference/)
+
+
 ## Preferences
 
 Here is a short description of the preferences.

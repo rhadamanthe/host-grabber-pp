@@ -85,6 +85,21 @@ Il est également possible de télécharger les liens directs vers des images,
 ainsi que de n'analyser qu'une portion sélectionnée de la page.
 
 
+## Permissions dans les Navigateurs
+
+Cette extension [inspecte le code source de la page courante pour repérer les liens de téléchargment](https://github.com/rhadamanthe/host-grabber-pp/blob/master/manifest.json#L67).
+Ce faisant, elle pourrait aussi accéder à des informations confidentielles (comme des noms 
+d'utilisateurs). **Elle pourrait, mais ne le fait pas**. Cette extension ne s'exécute que
+dans votre navigateur et ne partage aucune de vos données. L'extension Image Host Grabber 
+fonctionnait sur le même modèle. La seule différence, c'est que Firefox et Chrome informent
+maintenant les utilisateurs des permissions requises par une extension.
+
+Vous trouverez de plus amples informations sur les pages suivantes :
+
+* [Permissions dans Firefox](https://support.mozilla.org/fr/kb/messages-demande-permission-extensions-firefox) 
+* [Permissions dans Chrome](https://developer.chrome.com/docs/extensions/reference/) (en Anglais)
+
+
 ## Préférences
 
 Voici une présentation des préférences disponibles.
