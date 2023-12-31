@@ -33,7 +33,7 @@ function newDlManager(queue) {
     dlManager.hideSuccessfulDownloadItems = res.hideSuccessfulDownloadItems || defaultHideSuccessfulDownloadItems;
     dlManager.dlPrefixWithCounter = res.dlPrefixFilenamesWithCounter || defaultDlPrefixFilenamesWithCounter;
     dlManager.dlStrategy = res.dlStrategy || defaultDlStrategy;
-    dlStrategyCustomPattern = res.dlStrategyCustomPattern || defaultDlStrategyCustomPattern;
+    dlManager.dlStrategyCustomPattern = res.dlStrategyCustomPattern || defaultDlStrategyCustomPattern;
   });
 
   // Listen to changes for these preferences
