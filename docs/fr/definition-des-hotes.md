@@ -106,7 +106,7 @@ A chaque analyse de page, l'intégralité des règles du catalogue suivent cette
 
 Le domaine concerne celui des liens à découvrir et explorer.  
 Par exemple, si l'on souhaite trouver tous les liens qui pointent vers `http://toto.net`,
-alors le nom de domain est `toto.net`.
+alors le nom de domaine est `toto.net`.
 
 ```xml
 <domain>toto.net</domain>
@@ -149,7 +149,7 @@ Il faut alors utiliser la balise `domain-pattern`.
 ```xml
 <domain-pattern>toto\d+\.net</domain-pattern>
 <!--
-Cet exemple accepte n'importe quel déclinaison du domaine qui se termine par un entier :
+Cet exemple accepte n'importe quelle déclinaison du domaine qui se termine par un entier :
 toto1, toto2, toto24, toto528, etc.
 -->
 ```
@@ -200,7 +200,7 @@ Il y a quelques règles à connaître pour la définition de cette propriété.
 ### Explorer la Page Actuelle Uniquement
 
 L'utilisation d'une expression régulière est réservée à la découverte
-de page à explorer. Mais parfois, seule le code source de la page actuelle
+de page à explorer. Mais parfois, seul le code source de la page actuelle
 devrait être exploré. La valeur `_$CURRENT$_` est alors la solution.
 
 Elle permet d'appliquer les modèles de recherche (XPath, *replace*, etc)
