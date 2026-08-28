@@ -11,10 +11,10 @@ var lib = require(path)
 fs.readFile(dictPath, 'utf8', function(err, data) {
 
   var malformedXml = false;
-  var DOMParser = require('xmldom').DOMParser;
+  var DOMParser = require('@xmldom/xmldom').DOMParser;
   var parser = new DOMParser({
     locator:{},
-    errorHandler:function(level,msg) {
+    onError:function(level,msg) {
       malformedXml = level === 'error' || level === 'fatalError';
       console.log(level, msg)
     }

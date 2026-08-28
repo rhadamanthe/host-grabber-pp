@@ -1,0 +1,34 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[**.md]
+trim_trailing_whitespace = false
+
+[**.yaml]
+indent_size = 2
+indent_style = space
+
+[**.sh]
+indent_size = tab
+indent_style = tab
+
+[**.json]
+indent_size = 2
+indent_style = space
+
+[**.js]
+indent_size = 2
+indent_style = space
+
+[**.cjs]
+indent_size = 2
+indent_style = space
+
+[Dockerfile]
+indent_size = tab
+indent_style = tab

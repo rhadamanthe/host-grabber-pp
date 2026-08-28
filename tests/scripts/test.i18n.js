@@ -6,7 +6,7 @@ describe('i18n', function() {
    * Verifies two objects have the exact same properties.
    * @param {object} obj1 The first object.
    * @param {object} obj2 The second object.
-   * @return {boolean} True if the objects have the same properties, false otherwise.
+   * @returns {boolean} True if the objects have the same properties, false otherwise.
    */
   function compareObjectProperties(obj1, obj2) {
 

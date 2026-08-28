@@ -66,6 +66,9 @@ function newDlManager(queue) {
   // Register a listener on downloads
   browser.downloads.onChanged.addListener(dlManager.onDonwloadComplete);
 
+  // Short function to wait for throttling.
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 
   /**
    * Reacts to the completion of a download item.
@@ -122,6 +125,7 @@ function newDlManager(queue) {
       dlManager.ongoingDownloadsCpt --;
 
       // Process the next one, if there is one
+      // (we do not verify the implicit returned promise)
       startNextWaitingDownload();
     }
   }
@@ -131,11 +135,23 @@ function newDlManager(queue) {
    * Starts the next waiting download.
    * @returns {undefined}
    */
-  function startNextWaitingDownload() {
+  async function startNextWaitingDownload() {
+
+    // Do not pull any object if the download limit was reached.
+    if (dlManager.maxDownloadLimit > 0 &&
+          dlManager.ongoingDownloadsCpt >= dlManager.maxDownloadLimit) {
+      return;
+    }
 
     // Download the next file, if any
     var obj = dlManager.waitingDownloads.shift();
     if(!! obj) {
+
+      // Some web sites need throttling
+      if (!!obj.link.throttlingPeriod) {
+        await delay(obj.link.throttlingPeriod);
+      }
+
       startDownload(obj.link, obj.processor);
     }
 
@@ -170,19 +186,6 @@ function newDlManager(queue) {
       return;
     }
 
-    // Can we start the download right now?
-    // Or should we make it wait?
-    if (dlManager.maxDownloadLimit > 0 &&
-          dlManager.ongoingDownloadsCpt >= dlManager.maxDownloadLimit) {
-
-      dlManager.waitingDownloads.push({
-        link: linkObject,
-        processor: processor
-      });
-
-      return;
-    }
-
     // Update the structure of a download link locally
     linkObject.processor = processor;
 
@@ -204,6 +207,7 @@ function newDlManager(queue) {
       dlManager.dlStrategy,
       dlManager.dlStrategyCustomPattern);
 
+    // The download is about to be requested
     dlManager.effectiveDlCounter ++;
 
     // Bug in Chrome: https://bugs.chromium.org/p/chromium/issues/detail?id=417112
@@ -222,6 +226,8 @@ function newDlManager(queue) {
     }, function(error) {
       // The download could not be started, try another one
       dlManager.ongoingDownloadsCpt --;
+
+      // We do not verify the implicit returned promise
       startNextWaitingDownload();
 
       // Update the status

@@ -11,32 +11,35 @@
     "48": "icons/logo_x48.png"
   },
 
-  "applications": {
+  "browser_specific_settings": {
     "gecko": {
       "id": "{1a70f086-e7b8-43da-8171-e3e5c532ad4f}",
-      "strict_min_version": "58.0"
+      "strict_min_version": "142.0",
+      "data_collection_permissions": {
+        "required": ["none"],
+        "optional": []
+      }
     }
   },
 
   "options_ui": {
-  	"page": "src/html/options.html",
-  	"browser_style": true,
-  	"open_in_tab": true
+    "page": "src/html/options.html",
+    "browser_style": true,
+    "open_in_tab": true
   },
 
   "background": {
-	"scripts": [
-	  "src/scripts/npm/browser-polyfill.min.0.3.1.js",
-	  "src/scripts/background/library.utilities.js",
-	  "src/scripts/background/library.strategies.js",
-	  "src/scripts/background/library.processors.js",
-	  "src/scripts/background/library.queue.js",
-	  "src/scripts/mixed/commons.js",
-	  "src/scripts/mixed/library.commons.js",
-	  "src/scripts/mixed/library.dictionary.js",
-	  "src/scripts/background/dl-manager.js",
-	  "src/scripts/background/background.hg.js",
-	  "src/scripts/background/background.debug.hg.js"
+    "scripts": [
+      "src/scripts/background/library.utilities.js",
+      "src/scripts/background/library.strategies.js",
+      "src/scripts/background/library.processors.js",
+      "src/scripts/background/library.queue.js",
+      "src/scripts/mixed/commons.js",
+      "src/scripts/mixed/library.commons.js",
+      "src/scripts/mixed/library.dictionary.js",
+      "src/scripts/background/dl-manager.js",
+      "src/scripts/background/background.hg.js",
+      "src/scripts/background/background.debug.hg.js"
     ]
   },
 
@@ -44,7 +47,6 @@
   {
     "matches": ["<all_urls>"],
     "js": [
-      "src/scripts/npm/browser-polyfill.min.0.3.1.js",
       "src/scripts/content/content.hg.js"
     ]
   }],
@@ -55,7 +57,7 @@
       "description": "Download media files from the current page"
     }
   },
-  
+
   "sidebar_action": {
     "default_title": "Debug - IHG ++",
     "default_panel": "src/html/debug.html",
@@ -63,11 +65,11 @@
   },
 
   "permissions": [
-  	"contextMenus",
-  	"tabs",
-  	"storage",
-  	"downloads",
-  	"downloads.open",
-  	"<all_urls>"
+    "contextMenus",
+    "tabs",
+    "storage",
+    "downloads",
+    "downloads.open",
+    "<all_urls>"
   ]
 }

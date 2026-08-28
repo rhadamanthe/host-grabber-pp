@@ -7,7 +7,7 @@ describe('background => library.dictionary', function() {
    * @param {object} element A DOM element.
    * @param {string} attributeName The attribute name.
    * @param {string} attributeValue The attribute value.
-   * @return {undefined}
+   * @returns {undefined}
    */
   function createAttribute(element, attributeName, attributeValue) {
     var att = element.ownerDocument.createAttribute(attributeName);
@@ -19,8 +19,7 @@ describe('background => library.dictionary', function() {
   /**
    * Verifies a dictionary.
    * @param {string} fileName The name of the file that contains the dictionary.
-   * @param {function} done The done function.
-   * @return {undefined}
+   * @returns {undefined}
    */
   function verifyDictionary(fileName) {
 
@@ -883,6 +882,63 @@ describe('background => library.dictionary', function() {
     expect(obj.items[0].domain).to.eql('titi.fr');
     expect(obj.items[0].pathPattern).to.eql('.+\\.jpg');
     expect(obj.items[0].searchPattern).to.eql(undefined);
+    expect(obj.items[0].interceptors1.length).to.eql(0);
+    expect(obj.items[0].interceptors2.length).to.eql(0);
+    done();
+  });
+
+
+  it('should validate throttling periods', function(done) {
+
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.1');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
+      <host id="titi" throttling-period="3">
+        <domain>titi.fr</domain>
+        <path-pattern>.+\\.jpg</path-pattern>
+        <search-pattern>self</search-pattern>
+      </host>
+    `;
+
+    var obj = parseAndVerifyDictionary(dictionary);
+    expect(obj.errors.length).to.eql(0);
+
+    expect(obj.items.length).to.eql(1);
+    expect(obj.items[0].domain).to.eql('titi.fr');
+    expect(obj.items[0].pathPattern).to.eql('.+\\.jpg');
+    expect(obj.items[0].searchPattern).to.eql('self');
+    expect(obj.items[0].throttlingPeriod).to.eql(3);
+    expect(obj.items[0].interceptors1.length).to.eql(0);
+    expect(obj.items[0].interceptors2.length).to.eql(0);
+    done();
+  });
+
+
+  it('should detect invalid throttling periods', function(done) {
+
+    var dictionary = document.implementation.createDocument('', 'root');
+    createAttribute(dictionary.documentElement, 'version', '1.0');
+    createAttribute(dictionary.documentElement, 'spec', '1.1');
+    createAttribute(dictionary.documentElement, 'id', 'id');
+    dictionary.documentElement.innerHTML = `
+      <host id="titi" throttling-period="3thousands">
+        <domain>titi.fr</domain>
+        <path-pattern>.+\\.jpg</path-pattern>
+        <search-pattern>self</search-pattern>
+      </host>
+    `;
+
+    var obj = parseAndVerifyDictionary(dictionary);
+    expect(obj.errors.length).to.eql(1);
+    expect(obj.errors[0]).to.eql('[titi] Invalid throttling period. The value must be a positive integer.');
+
+    expect(obj.items.length).to.eql(1);
+    expect(obj.items[0].domain).to.eql('titi.fr');
+    expect(obj.items[0].pathPattern).to.eql('.+\\.jpg');
+    expect(obj.items[0].searchPattern).to.eql('self');
+    expect(Number.isNaN(obj.items[0].throttlingPeriod)).to.be(true);
     expect(obj.items[0].interceptors1.length).to.eql(0);
     expect(obj.items[0].interceptors2.length).to.eql(0);
     done();

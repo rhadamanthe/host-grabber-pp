@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Audit dependencies
+        run: npm audit
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npm run pretest; npm run test
+
+      # Make sure the dictionary validator
+      # can run independently
+      - name: Dictionary validator
+        run: cd tests/node.js && node validate-dictionary.js
