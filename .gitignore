@@ -2,15 +2,16 @@ bin/
 target/
 state/
 coverage/
+browsers/
+node_modules/
+web-ext-artifacts/
+
 .project
 *.local.launch
 Copy of *.launch
-node_modules
 *~
 ~*.docx
 ~*.pptx
 com.chronon.sb.browser.launcher.prefs
 Corel Auto-Preserve/
 .DS_Store
-package-lock.json
-web-ext-artifacts

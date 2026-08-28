@@ -130,6 +130,11 @@ const i18nLocal = {
   dictionary_err_25: {
     fr: 'La balise "file-name-attribute" doit être vide pour les stratégies "self", "replace" et "expreg".',
     en: '"file-name-attribute" mark-ups must be empty for the "self", "replace" and "expreg" strategies.'
+  },
+
+  dictionary_err_26: {
+    fr: 'Délai invalide : la properiété "throttling-period" doit être un nombre entier positif.',
+    en: 'Invalid throttling period. The value must be a positive integer.'
   }
 };
 
@@ -238,6 +243,15 @@ function parseAndVerifyDictionaryItem(domElement) {
   result.interceptors2 = [];
   result.interceptors3 = [];
   result.id = domElement.getAttribute('id');
+  let tp = domElement.getAttribute('throttling-period');
+  if (!!tp) {
+    result.throttlingPeriod = Number(tp)
+  }
+
+  // Verify the throttling period
+  if (Number.isNaN(result.throttlingPeriod)) {
+    result.errors.push( resolveI18n(['dictionary_err_26']));
+  }
 
   // Parse children nodes
   var current = '';

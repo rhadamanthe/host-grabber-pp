@@ -7,7 +7,7 @@ describe('background => library.processors', function() {
    * @param {object} element A DOM element.
    * @param {string} attributeName The attribute name.
    * @param {string} attributeValue The attribute value.
-   * @return {undefined}
+   * @returns {undefined}
    */
   function createAttribute(element, attributeName, attributeValue) {
     var att = element.ownerDocument.createAttribute(attributeName);
@@ -116,7 +116,7 @@ describe('background => library.processors', function() {
           <img src="http://c91-23.ca/it/should/not/be/ignored.jpg" />
         </div>
       </div>
-      
+
       <img src="http://bibi.com/path/to/this/image3.jpg" />
       <div class="not-ct">
         <img src="http://c91-23.ca/it/should/not/be/ignored/either.jpg" />
@@ -1259,7 +1259,7 @@ describe('background => library.processors', function() {
   /**
    * A utility promise that waits for a given time.
    * @param {integer} ms The number of milliseconds to wait.
-   * @return {Promise} A promise.
+   * @returns {Promise} A promise.
    */
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));

@@ -3,31 +3,32 @@
   "version": "0.1.0",
   "description": "The descriptor that allows to run tests for this extension",
   "scripts": {
+    "pretest": "npx @puppeteer/browsers install chrome@stable --path ./browsers",
     "test": "karma start",
-    "test-firefox": "karma start --browsers Firefox",
-    "test-chrome": "karma start --browsers Chrome",
     "test:debug": "karma start --no-single-run --auto-watch",
-    "lint": "eslint . && web-ext lint --ignore-files \"coverage/**/*\" --ignore-files \"docs/**/*\"",
+    "lint": "eslint . && web-ext lint --ignore-files \"browsers/**/*\" --ignore-files \"coverage/**/*\" --ignore-files \"docs/**/*\"",
     "web-ext": "web-ext run --browser-console",
-    "build": "web-ext build --ignore-files tests coverage docs karma.conf.js package*.json readme.md"
+    "build": "web-ext build --ignore-files browsers tests coverage docs *.js package*.json readme.md"
   },
   "author": "Rhadamanthe",
   "license": "MPL-2.0",
   "homepage": "https://rhadamanthe.github.io/host-grabber-pp",
   "devDependencies": {
-    "addons-linter": "^1.1.0",
-    "eslint": "4.18.2",
+    "@puppeteer/browsers": "^3.2.1",
+    "@xmldom/xmldom": "^0.9.12",
+    "addons-linter": "^10.10.0",
+    "eslint": "10.9.1",
+    "eslint-plugin-jsdoc": "^63.3.3",
     "expect.js": "^0.3.1",
-    "karma": "^1.3.0",
-    "karma-coverage": "^1.1.1",
-    "karma-firefox-launcher": "^1.0.0",
-    "karma-chrome-launcher": "^1.0.0",
-    "karma-mocha": "^1.3.0",
-    "mocha": "^3.1.2",
-    "sinon-chrome": "^2.1.2",
-    "web-ext": "^2.7.0",
-    "webextension-polyfill": "^0.3.1",
-    "xmldom": "0.6"
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-coverage": "^2.2.1",
+    "karma-mocha": "^2.0.1",
+    "karma-mocha-reporter": "^2.2.5",
+    "mocha": "^11.8.0",
+    "sinon-chrome": "^3.0.1",
+    "web-ext": "^10.6.0",
+    "webextension-polyfill": "^0.12.0"
   },
   "bugs": {
     "url": "https://github.com/rhadamanthe/host-grabber-pp/issues"

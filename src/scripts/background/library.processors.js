@@ -113,6 +113,7 @@ function newProcessor(matchingUrl, pageTitle, item, originUrl) {
     extMethod: findExtractionMethod(item.searchPattern),
     status: ProcessorStatus.WAITING,
     fileNameAttribute: item.fileNameAttribute,
+    throttlingPeriod: item.throttlingPeriod,
     linkAttribute: item.linkAttribute,
     interceptorsForLinks: item.interceptors2 || [],
     interceptorsForFileNames: item.interceptors3 || [],
@@ -231,11 +232,15 @@ function onFoundLinks(processor, links, queue, startDownloadFn, updateProcessorI
       // Prepare the file name
       let fileName = findFileName(fixedLink, optionalName, processor.interceptorsForFileNames);
 
+      // Some web sites need a throttling period
+      let throttlingPeriod = !! processor.throttlingPeriod ? processor.throttlingPeriod : null;
+
       // Update the processor links
       processor.downloadLinks.push({
         id: processor.id + '-' + index,
         link: fixedLink,
         fileName: fileName,
+        throttlingPeriod: throttlingPeriod,
         status: already ? DlStatus.ALREADY_DOWNLOADED : DlStatus.WAITING
       });
     }

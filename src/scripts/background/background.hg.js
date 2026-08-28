@@ -279,7 +279,6 @@ function notifyOptionsPage(message) {
 
 /**
  * Shows the download list.
- * @param {boolean} checkPreferences True to check preferences before showing the list, false to directly show the list.
  * @returns {undefined}
  */
 function showDownloadsList() {
