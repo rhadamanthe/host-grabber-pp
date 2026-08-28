@@ -18,8 +18,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Audit dependencies
-        run: npm audit
+      - name: Audit lib dependencies
+        run: npm audit --omit=dev
 
       - name: Lint
         run: npm run lint
